@@ -1,26 +1,104 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f8fafc;
   --foreground: #171717;
+  --main-bg: #FEF2DC;
+  --main-bg-dark: #f6e6c2;
+  --accent: #0B5FFF;
+  /* Bleu Doctolib pour logo temporaire et accents */
+  --primary: #1E3518;
+  --primary-light: #2c5234;
+  --primary-hover: #202b1f;
+  --secondary: #f0ddbb;
+  --danger: #dc2626;
+  --calendar-header-radius: 20px;
+  --calendar-header-shadow: 0 2px 8px 0 #f6e6c2;
+  --calendar-header-padding-x: 32px;
+  --calendar-header-padding-y: 50px;
+  --calendar-pill-radius: 999px;
+  --calendar-pill-shadow: 0 1px 4px 0 #e2d6b7;
+  --calendar-pill-font: 1.125rem;
+  --calendar-pill-height: 44px;
+  --calendar-pill-hover: #f6e6c2;
+  --calendar-pill-active: #1E3518;
+  --calendar-pill-active-text: #fff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Empêche le scroll global, tout doit être géré par les layouts internes */
+  width: 100vw;
+  position: relative;
+}
+
+/* Sidebar styles */
+/* .sidebar {
+  border-radius: var(--sidebar-radius);
+  box-shadow: var(--sidebar-shadow);
+  background: var(--sidebar-bg);
+  padding: var(--sidebar-padding-y) var(--sidebar-padding-x);
+} */
+/* .sidebar-logo {
+  font-family: var(--sidebar-logo-font);
+  color: var(--primary);
+  font-size: 2rem;
+  letter-spacing: -1px;
+} */
+/* .sidebar-btn {
+  border-radius: var(--sidebar-btn-radius);
+  font-size: var(--sidebar-btn-font);
+  min-height: var(--sidebar-btn-height);
+  box-shadow: var(--sidebar-btn-shadow);
+  padding: 0 1.5rem;
+  background: var(--sidebar-btn-bg, transparent);
+  color: var(--primary);
+  border: 1px solid var(--sidebar-btn-border);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.sidebar-btn:hover,
+.sidebar-btn:focus-visible {
+  background: var(--sidebar-btn-hover);
+  outline: none;
+}
+.sidebar-btn[aria-current="page"] {
+  background: var(--sidebar-btn-active);
+  color: var(--primary);
+  box-shadow: 0 2px 8px 0 #e2d6b7;
+} */
+
+/* Calendar header styles */
+.calendar-header {
+  border-radius: var(--calendar-header-radius);
+  box-shadow: var(--calendar-header-shadow);
+  background: var(--main-bg);
+  padding: var(--calendar-header-padding-y) var(--calendar-header-padding-x);
+}
+
+.calendar-pill {
+  border-radius: var(--calendar-pill-radius);
+  font-size: var(--calendar-pill-font);
+  min-height: var(--calendar-pill-height);
+  box-shadow: var(--calendar-pill-shadow);
+  padding: 0 2rem;
+  background: var(--calendar-btn-bg);
+  color: var(--primary);
+  border: 1px solid var(--calendar-btn-border);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.calendar-pill:hover,
+.calendar-pill:focus-visible {
+  background: var(--calendar-pill-hover);
+  outline: none;
+}
+
+.calendar-pill.active {
+  background: var(--calendar-pill-active);
+  color: var(--calendar-pill-active-text);
 }
