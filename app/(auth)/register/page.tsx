@@ -15,10 +15,13 @@ export default function RegisterPage() {
     setError("");
     setSuccess("");
     const form = event.currentTarget;
-    const lastName = (form.elements.namedItem("lastName") as HTMLInputElement).value;
-    const firstName = (form.elements.namedItem("firstName") as HTMLInputElement).value;
+    const lastName = (form.elements.namedItem("lastName") as HTMLInputElement)
+      .value;
+    const firstName = (form.elements.namedItem("firstName") as HTMLInputElement)
+      .value;
     const email = (form.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement)
+      .value;
 
     const checkEmailResp = await fetch("/api/check-email-exists", {
       method: "POST",
@@ -40,7 +43,7 @@ export default function RegisterPage() {
           lastName,
           firstName,
         },
-        emailRedirectTo: "http://localhost:3000/login",
+        emailRedirectTo: "https://qrenoo.com/login",
       },
     });
     if (error) {

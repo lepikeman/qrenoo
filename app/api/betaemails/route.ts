@@ -25,7 +25,7 @@ export async function POST(request: Request) {
             <h2 style="color:#0B5FFF;font-weight:700;margin-bottom:12px;">Nouvelle inscription à la beta Qrenoo</h2>
             <p style="font-size:1.1rem;margin-bottom:16px;">Un utilisateur vient de s'inscrire à la beta :</p>
             <div style="background:#f6e6c2;padding:12px 20px;border-radius:8px;display:inline-block;font-size:1.15rem;font-weight:600;letter-spacing:0.5px;">${email}</div>
-            <p style="margin-top:28px;color:#888;font-size:0.95rem;">Qrenoo - Gestion intelligente pour professionnels du bien-être</p>
+            <p style="margin-top:28px;color:#888;font-size:0.95rem;">Qrenoo - Gestion intelligente pour professionnels</p>
           </div>
         </div>
       `

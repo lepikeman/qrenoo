@@ -11,7 +11,6 @@ export default function ProfileSetup() {
   const [specialite, setSpecialite] = useState("");
   const [siteWeb, setSiteWeb] = useState("");
   const [linkedin, setLinkedin] = useState("");
-  const [presentation, setPresentation] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -21,7 +20,7 @@ export default function ProfileSetup() {
       if (user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("profession, bio, photoUrl, specialite, site_web, linkedin, presentation")
+          .select("profession, bio, photoUrl, specialite, site_web, linkedin")
           .eq("user_id", user.id)
           .single();
         if (profile) {
@@ -31,7 +30,6 @@ export default function ProfileSetup() {
           setSpecialite(profile.specialite || "");
           setSiteWeb(profile.site_web || "");
           setLinkedin(profile.linkedin || "");
-          setPresentation(profile.presentation || "");
         }
       }
     });
@@ -57,7 +55,6 @@ export default function ProfileSetup() {
       specialite,
       site_web: siteWeb,
       linkedin,
-      presentation,
       is_profile_complete: true,
     });
     setLoading(false);
