@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Documentation de l'application RDV Kine
 
-## Getting Started
+Ce document décrit la structure et le fonctionnement des principaux fichiers du dossier `app/`.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Sommaire des fichiers et dossiers
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `app/layout.tsx` : Layout principal, applique la barre de navigation et protège les routes selon le profil utilisateur.
+- `app/page.tsx` : Page d'accueil simple.
+- `app/components/NavBar.tsx` : Barre de navigation affichée sur toutes les pages.
+- `app/components/RequireProfileComplete.tsx` : Composant qui vérifie si le profil utilisateur est complet avant d'accéder à certaines pages.
+- `app/(auth)/login/page.tsx` : Page de connexion utilisateur.
+- `app/(auth)/register/page.tsx` : Page d'inscription utilisateur.
+- `app/api/check-email-exists/route.ts` : API interne pour vérifier si un email existe déjà dans Supabase.
+- `app/book/[proID]/page.tsx` : Formulaire de réservation d'un rendez-vous pour un professionnel donné.
+- `app/profile-setup/page.tsx` : Page permettant à l'utilisateur de compléter son profil (bio et profession).
+- `app/pro/dashboard/page.tsx` : Tableau de bord professionnel, affichant les rendez-vous et les informations du profil.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Détail des fichiers principaux
 
-## Learn More
+### `app/layout.tsx`
+- Définit le layout global (polices, NavBar, protection des routes).
+- Utilise `RequireProfileComplete` pour forcer la complétion du profil sauf sur `/profile-setup`.
 
-To learn more about Next.js, take a look at the following resources:
+### `app/page.tsx`
+- Affiche la page d'accueil.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### `app/components/NavBar.tsx`
+- Affiche des liens dynamiques selon l'état de connexion de l'utilisateur (connexion, inscription, espace pro, déconnexion).
+- Gère la déconnexion via Supabase.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### `app/components/RequireProfileComplete.tsx`
+- Vérifie si le profil utilisateur est complet (champ `is_profile_complete` dans la table `profiles`).
+- Redirige vers `/profile-setup` si besoin.
 
-## Deploy on Vercel
+### `app/(auth)/login/page.tsx`
+- Formulaire de connexion par email/mot de passe.
+- Redirige vers `/pro/dashboard` après succès.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### `app/(auth)/register/page.tsx`
+- Formulaire d'inscription (nom, prénom, email, mot de passe).
+- Vérifie l'unicité de l'email via l'API interne.
+- Crée l'utilisateur dans Supabase.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### `app/api/check-email-exists/route.ts`
+- API route qui vérifie si un email existe déjà dans la base Supabase (utilise la clé service_role).
+
+### `app/book/[proID]/page.tsx`
+- Formulaire de réservation d'un rendez-vous pour un professionnel (nom, téléphone, date).
+- Insère un rendez-vous dans la table `rendezvous`.
+
+### `app/profile-setup/page.tsx`
+- Permet à l'utilisateur de compléter son profil (profession et bio).
+- Met à jour la table `profiles` et le flag `is_profile_complete`.
+
+### `app/pro/dashboard/page.tsx`
+- Affiche les informations du profil professionnel et l'agenda des rendez-vous (via FullCalendar).
+- Permet de modifier la bio du profil.
+
+---
+
+**Pour plus de détails sur chaque composant, consultez les fichiers sources dans le dossier `app/`.**
+# qrenoo
