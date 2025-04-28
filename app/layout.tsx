@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import RequireProfileComplete from "./components/RequireProfileComplete";
 import NavigationShell from "./components/NavigationShell";
 import { ReactNode } from "react";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -22,8 +17,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen">
+    <html lang="fr" className={inter.variable} suppressHydrationWarning>
+      <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
         <NavigationShell>
           <RequireProfileComplete>
             {children}

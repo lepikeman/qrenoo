@@ -12,7 +12,7 @@
  * Affiche la photo, les infos principales, les liens et un bouton pour éditer le profil.
  */
 import React from "react";
-import ProfileImageUpload from "../ProfileImageUpload/ProfileImageUpload";
+import ProfileImageUpload from "@/app/components/ProfileImageUpload";
 import { HiPencil } from "react-icons/hi2";
 import type { Profile } from "@/app/types/Profile";
 

@@ -182,7 +182,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
   useEffect(() => {
     async function syncProfileEmail() {
       if (!profileForm || !profileForm.user_id) return;
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user && user.email && profileForm.user_id === user.id) {
         // adresse_mail supprimé du PATCH (plus de colonne dans la table)
         // await supabase
@@ -206,7 +208,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
   const isLoading = Boolean(profileLoading);
 
   // Correction de setProfileForm pour respecter le type attendu (Profile)
-  function handleProfileChange(field: keyof Profile, value: Profile[keyof Profile]) {
+  function handleProfileChange(
+    field: keyof Profile,
+    value: Profile[keyof Profile]
+  ) {
     setProfileForm({ ...profileForm, [field]: value });
   }
 
@@ -256,14 +261,22 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
     mainContent = (
       <SettingsTabs
         proProfile={profileForm}
-        onProfileChange={(field: string, value: string) => handleProfileChange(field as keyof Profile, value)}
+        onProfileChange={(field, value) =>
+          handleProfileChange(
+            field as keyof Profile,
+            value as Profile[keyof Profile]
+          )
+        }
         onSave={async (profileFormToSave: Profile) => {
           setProfileLoading(true);
           const { error } = await supabase
             .from("profiles")
             .update(profileFormToSave)
             .eq("user_id", profileFormToSave.user_id);
-          console.log("PATCH payload envoyé à Supabase (DashboardPage):", profileFormToSave);
+          console.log(
+            "PATCH payload envoyé à Supabase (DashboardPage):",
+            profileFormToSave
+          );
           setProfileLoading(false);
           return !error;
         }}

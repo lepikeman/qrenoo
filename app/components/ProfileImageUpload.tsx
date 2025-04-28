@@ -54,7 +54,9 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
       .from("profiles")
       .update({ photoUrl: publicUrl })
       .eq("id", proId);
-    console.log("PATCH payload envoyé à Supabase (ProfileImageUpload):", { photoUrl: publicUrl });
+    console.log("PATCH payload envoyé à Supabase (ProfileImageUpload):", {
+      photoUrl: publicUrl,
+    });
     if (
       oldPhotoUrl &&
       oldPhotoUrl.includes("supabase.co/storage/v1/object/public/avatar/")
@@ -68,23 +70,32 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
 
   return (
     <div>
-      {warning && (
-        <div>{warning}</div>
-      )}
-      <div onClick={() => inputRef.current?.click()}>
+      {warning && <div>{warning}</div>}
+      <div
+        className="relative group cursor-pointer"
+        onClick={() => inputRef.current?.click()}
+        style={{ width: 150, height: 150 }}
+      >
         {preview ? (
           <>
             <Image
               src={preview}
               alt="Profil"
-              width={220}
-              height={220}
-              style={{ objectFit: "cover" }}
+              width={150}
+              height={150}
+              style={{
+                objectFit: "cover",
+                borderRadius: "50%",
+                alignItems: "center",
+              }}
             />
-            {/* Overlay visible uniquement au hover et seulement si image */}
-            <div>
-              <span>
-                Modifier
+            {/* Overlay visible uniquement au hover */}
+            <div
+              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+              style={{ pointerEvents: "none" }}
+            >
+              <span className="text-white font-semibold text-lg select-none">
+                Modifier la photo
               </span>
             </div>
           </>

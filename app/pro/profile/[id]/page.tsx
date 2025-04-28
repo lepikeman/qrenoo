@@ -1,14 +1,17 @@
 import { getProPublicProfile } from "../../../lib/pro";
 import ProfilePublic from "@/app/components/Profile/ProfilePublic";
+
 export const runtime = "nodejs";
+
+type ProfilePublicPageProps = {
+  params: { id: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
 
 export default async function ProfilePublicPage({
   params,
-}: {
-  params: { id: string };
-}) {
-  const param = await params;
-  const id = param.id;
+}: ProfilePublicPageProps) {
+  const id = params.id;
   const profile = await getProPublicProfile(id);
   // Ensure user_id and profession are always present for Profile interface compatibility
   const profileWithUserId = {
@@ -30,9 +33,8 @@ export default async function ProfilePublicPage({
           height: "100vh",
         }}
       >
-        Profil non trouvé pour l’id :
+        Profil non trouvé pour l&apos;id :
         <span style={{ fontFamily: "monospace", fontSize: 16, color: "#e00" }}>
-          {" "}
           {id}
         </span>
         <br />

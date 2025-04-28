@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import SettingsPanel from "./SettingsPanel";
 import ChangePasswordModal from "./ChangePasswordModal";
 import OpenHoursModal from "./OpenHoursModal";
+import ProfileImageUpload from "@/app/components/ProfileImageUpload";
 import type { Profile } from "@/app/types/Profile";
 import { supabase } from "@/utils/supabase/client";
 
@@ -109,6 +110,14 @@ export default function SettingsTabs({
       <div className="flex flex-col py-10 px-6 min-w-[220px] bg-[#f6f8f2] border-r border-[#efe9db]">
         <h2 className="text-2xl font-bold text-[#29381a] mb-8">Paramètres</h2>
         <div className="flex flex-col gap-2 mb-8">
+          {/* Bloc photo de profil */}
+          <div className="flex flex-col items-center mb-6">
+            <ProfileImageUpload
+              proId={String(proProfile.id)}
+              imageUrl={proProfile.photoUrl ?? ""}
+              onUpload={(url) => onProfileChange("photoUrl", url)}
+            />
+          </div>
           {tabs.map((tab) => (
             <button
               key={tab.key}

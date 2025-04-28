@@ -220,9 +220,9 @@ const AddEventModal: React.FC<AddEventModalProps> = ({
         date_jour: formatDateLocal(date), // Utilise la date locale !
         heure,
         client_nom,
-        client_email: client_email || undefined,
-        client_phone: client_phone || undefined,
-        message: message || undefined,
+        client_email: client_email ?? "",
+        client_phone: client_phone ?? "",
+        message: message ?? "",
         pro_id: proId,
         is_validated: true, // Validation directe
       };
