@@ -30,27 +30,44 @@ export default function NavBar() {
   };
 
   return (
-    <nav>
-      <div>
-        <Link href="/">Qrenoo</Link>
-        <button onClick={() => setMenuOpen((open) => !open)} aria-label="Menu">
-          <span />
-          <span />
-          <span />
+    <nav className="bg-[#f6f8f2] border-b border-[#efe9db] shadow-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
+        <Link href="/" className="text-2xl font-bold text-[#29381a] tracking-tight hover:text-[#405c26] transition-colors">
+          Qrenoo
+        </Link>
+        <button
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label="Menu"
+          className="flex flex-col justify-center items-center w-10 h-10 rounded-md border border-[#ded9cb] bg-white hover:bg-[#ede9e0] transition md:hidden"
+        >
+          <span className={`block w-6 h-0.5 bg-[#29381a] mb-1 transition-transform ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+          <span className={`block w-6 h-0.5 bg-[#29381a] mb-1 ${menuOpen ? 'opacity-0' : ''}`}></span>
+          <span className={`block w-6 h-0.5 bg-[#29381a] transition-transform ${menuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
         </button>
-        <div className={menuOpen ? "open" : ""}>
+        <div className={`flex-col md:flex-row md:flex items-center gap-6 md:gap-8 font-semibold text-[#29381a] text-base absolute md:static right-0 top-16 bg-[#f6f8f2] md:bg-transparent shadow-md md:shadow-none rounded-b-xl md:rounded-none transition-all duration-200 w-full md:w-auto ${menuOpen ? 'flex' : 'hidden md:flex'}`}>
           {user ? (
             <>
-              <Link href="/pro/dashboard">Espace professionnel</Link>
-              <button onClick={handleLogout}>Déconnecter</button>
+              <Link href="/pro/dashboard" className="px-4 py-2 hover:bg-[#ede9e0] rounded-lg transition">Espace professionnel</Link>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-[#29381a] text-white rounded-lg hover:brightness-105 transition"
+              >
+                Déconnecter
+              </button>
             </>
           ) : (
             <>
-              <button onClick={() => router.push("/login")}>
+              <button
+                onClick={() => router.push("/login")}
+                className="px-4 py-2 bg-[#29381a] text-white rounded-lg hover:brightness-105 transition"
+              >
                 Se connecter
               </button>
-              <button onClick={() => router.push("/register")}>
-                S&apos;inscrire
+              <button
+                onClick={() => router.push("/register")}
+                className="px-4 py-2 bg-[#29381a] text-white rounded-lg hover:brightness-105 transition"
+              >
+                S'inscrire
               </button>
             </>
           )}

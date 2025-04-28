@@ -33,6 +33,7 @@
     "**/*.tsx",
     "next-env.d.ts",
     "scripts/clean_unused_avatars.ts",
+    "next.config.cjs",
     ".next/types/**/*.ts"
   ],
   "exclude": [

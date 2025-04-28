@@ -116,6 +116,8 @@ export default function SettingsTabs({
               proId={String(proProfile.id)}
               imageUrl={proProfile.photoUrl ?? ""}
               onUpload={(url) => onProfileChange("photoUrl", url)}
+              width={150}
+              height={150}
             />
           </div>
           {tabs.map((tab) => (

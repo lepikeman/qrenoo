@@ -1,17 +1,20 @@
 import React, { useRef, useState, useEffect } from "react";
-import Image from "next/image";
 import { supabase } from "@/utils/supabase/client";
 
 interface ProfileImageUploadProps {
   proId: string;
   imageUrl?: string;
   onUpload?: (url: string) => void;
+  width?: number;
+  height?: number;
 }
 
 const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
   proId,
   imageUrl,
   onUpload,
+  width = 150,
+  height = 150,
 }) => {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | undefined>(imageUrl);
@@ -74,15 +77,15 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
       <div
         className="relative group cursor-pointer"
         onClick={() => inputRef.current?.click()}
-        style={{ width: 150, height: 150 }}
       >
         {preview ? (
           <>
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={preview}
               alt="Profil"
-              width={150}
-              height={150}
+              width={width}
+              height={height}
               style={{
                 objectFit: "cover",
                 borderRadius: "50%",
