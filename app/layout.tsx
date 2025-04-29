@@ -4,6 +4,7 @@ import "./globals.css";
 import RequireProfileComplete from "./components/RequireProfileComplete";
 import NavigationShell from "./components/NavigationShell";
 import { ReactNode } from "react";
+import Footer from "./components/Footer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,9 +21,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
       <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
         <NavigationShell>
-          <RequireProfileComplete>
-            {children}
-          </RequireProfileComplete>
+          <RequireProfileComplete>{children}</RequireProfileComplete>
+          <Footer
+            links={[
+              { label: "Mentions légales", href: "/mentions" },
+              { label: "CGU et CGV", href: "/cgu" },
+              { label: "RGPD", href: "/rgpd" },
+              { label: "Contact", href: "/contact" },
+            ]}
+          >
+          </Footer>
         </NavigationShell>
       </body>
     </html>

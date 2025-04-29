@@ -67,7 +67,7 @@ export async function POST(request: Request) {
                 <td style="color:#2F3E2E;padding:25px;line-height:1.6;font-family:Arial,sans-serif;">
                 <div style="color:#2F3E2E;">
                   <p>Bonjour ${client_nom},</p>
-                  <p>Merci d'avoir pris rendez-vous avec <strong>${proData?.profession ?? "votre praticien"}</strong> <strong>${proData?.nom ?? ""}</strong> via Qrenoo !</p>
+                  <p>Merci d'avoir pris rendez-vous avec Mme/Mr  <strong>${proData?.nom ?? ""}</strong> <strong>${proData?.profession ?? "votre praticien"}</strong> via Qrenoo !</p>
                   </div>
                   <div style="background-color:#fff;border-radius:8px;padding:15px;margin:20px 0;">
                     <p><strong>📅 Date :</strong> ${date_jour}</p>

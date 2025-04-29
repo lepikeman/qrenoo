@@ -24,6 +24,9 @@ const ProfilePublic: React.FC<ProfilePublicProps> = ({ profile }) => {
               <div className="flex flex-row items-center gap-4 mb-2">
                 <ProfileImage src={profile.photoUrl} size={90} />
                 <div className="flex flex-col">
+                  <h1 className="text-2xl md:text-3xl font-bold text-[#29381a]">
+                    {profile.nom}
+                  </h1>
                   <h1 className="text-xl md:text-2xl font-bold text-[#29381a]">
                     {profile.profession}
                   </h1>

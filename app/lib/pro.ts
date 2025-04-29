@@ -5,7 +5,7 @@ export async function getProPublicProfile(id: string) {
   // Recherche sur user_id puis id
   let { data, error } = await supabase
     .from("profiles")
-    .select("id, profession, bio, photoUrl, specialite, site_web, linkedin, phone, adresse_postale, code_postal, ville, ouverture, fermeture, intervalle_creneau, horaires_jours")
+    .select("*")
     .eq("user_id", id)
     .single();
   console.log("[getProPublicProfile] user_id", id, "data:", data, "error:", error);
@@ -13,7 +13,7 @@ export async function getProPublicProfile(id: string) {
     // Si rien trouvé, tente sur id (robustesse)
     const res = await supabase
       .from("profiles")
-      .select("id, profession, bio, photoUrl, specialite, site_web, linkedin, phone, adresse_postale, code_postal, ville, ouverture, fermeture, intervalle_creneau, horaires_jours")
+      .select("*")
       .eq("id", id)
       .single();
     data = res.data;
@@ -27,6 +27,7 @@ export async function getProPublicProfile(id: string) {
       profession: '',
       bio: '',
       photoUrl: '',
+      nom: '',
       specialite: '',
       site_web: '',
       linkedin: '',
@@ -56,6 +57,7 @@ export async function getProPublicProfile(id: string) {
       profession: '',
       bio: '',
       photoUrl: '',
+      nom: '',
       specialite: '',
       site_web: '',
       linkedin: '',

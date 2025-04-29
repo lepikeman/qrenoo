@@ -19,11 +19,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
 }) => {
   // Clean prod: commentaire dev supprimé
   return (
-    <div className="flex flex-col h-full bg-[#f6f8f2]">
+    <div className="flex flex-col h-full bg-[#f6f8f2] p-2 md:p-0">
       {/* Header sticky */}
       {/* Main content */}
       <div className="flex-1 overflow-hidden flex flex-col items-center">
-        <div className="w-full bg-white rounded-xl shadow-xl p-6 border border-[#ded9cb] grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+        <div className="w-full bg-white rounded-xl shadow-xl p-2 md:p-6 border border-[#ded9cb] grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 relative">
           <h1 className="text-3xl font-extrabold text-[#29381a] col-span-1 md:col-span-2 mb-6">
             Profil Public
           </h1>
@@ -36,7 +36,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </label>
             <input
               type="text"
-              className="dashboard-profile-input text-lg py-3 px-2"
+              className="dashboard-profile-input text-lg py-3 px-2 w-full md:w-[400px]"
               value={proProfile.nom ?? ""}
               onChange={(e) => onProfileChange("nom", e.target.value)}
               placeholder="Votre nom ou nom du cabinet"
@@ -48,7 +48,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </label>
             <input
               type="text"
-              className="dashboard-profile-input text-lg py-3 px-4"
+              className="dashboard-profile-input text-lg py-3 px-4 w-full md:w-[400px]"
               value={proProfile.profession ?? ""}
               onChange={(e) => onProfileChange("profession", e.target.value)}
               placeholder="Ex: Kinésithérapeute"
@@ -60,7 +60,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </label>
             <input
               type="url"
-              className="dashboard-profile-input text-lg py-3 px-4"
+              className="dashboard-profile-input text-lg py-3 px-4 w-full md:w-[400px]"
               value={proProfile.site_web ?? ""}
               onChange={(e) => onProfileChange("site_web", e.target.value)}
               placeholder="https://..."
@@ -72,7 +72,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </label>
             <input
               type="url"
-              className="dashboard-profile-input text-lg py-3 px-4"
+              className="dashboard-profile-input text-lg py-3 px-4 w-full md:w-[400px]"
               value={proProfile.linkedin ?? ""}
               onChange={(e) => onProfileChange("linkedin", e.target.value)}
               placeholder="https://linkedin.com/in/..."
@@ -84,7 +84,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </label>
             <input
               type="text"
-              className="dashboard-profile-input text-lg py-3 px-4"
+              className="dashboard-profile-input text-lg py-3 px-4 w-full md:w-[400px]"
               value={proProfile.specialite ?? ""}
               onChange={(e) => onProfileChange("specialite", e.target.value)}
               placeholder="Ex: Rééducation du sport"
@@ -95,7 +95,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               Présentation / Bio
             </label>
             <textarea
-              className="dashboard-profile-input text-lg py-2 px-4 min-h-[80px] max-h-[120px] w-[400px]"
+              className="dashboard-profile-input text-lg py-2 px-4 min-h-[80px] max-h-[120px] w-full md:w-[400px]"
               value={proProfile.bio ?? ""}
               onChange={(e) => onProfileChange("bio", e.target.value)}
               placeholder="Quelques mots sur vous, votre parcours, votre approche..."
@@ -108,7 +108,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </label>
             <input
               type="text"
-              className="dashboard-profile-input text-lg py-3 px-4"
+              className="dashboard-profile-input text-lg py-3 px-4 w-full md:w-[400px]"
               value={proProfile.adresse_postale ?? ""}
               onChange={(e) => onProfileChange("adresse_postale", e.target.value)}
               placeholder="Ex: 12 rue de la Santé"
@@ -120,7 +120,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </label>
             <input
               type="text"
-              className="dashboard-profile-input text-lg py-3 px-4"
+              className="dashboard-profile-input text-lg py-3 px-4 w-full md:w-[400px]"
               value={proProfile.code_postal ?? ""}
               onChange={(e) => onProfileChange("code_postal", e.target.value)}
               placeholder="75001"
@@ -136,7 +136,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </label>
             <input
               type="text"
-              className="dashboard-profile-input text-lg py-3 px-4"
+              className="dashboard-profile-input text-lg py-3 px-4 w-full md:w-[400px]"
               value={proProfile.ville ?? ""}
               onChange={(e) => onProfileChange("ville", e.target.value)}
               placeholder="Paris"
@@ -144,7 +144,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
           </div>
         </div>
         <button
-          className="dashboard-profile-btn bg-[#29381a] text-white font-semibold rounded-lg px-6 py-2 mt-10 hover:brightness-105 transition w-full md:w-auto cursor-pointer"
+          className="dashboard-profile-btn bg-[#29381a] text-white font-semibold rounded-lg px-6 py-2 mt-6 md:mt-10 hover:brightness-105 transition w-full md:w-auto cursor-pointer text-base md:text-lg"
           onClick={onSave}
           disabled={saving}
         >

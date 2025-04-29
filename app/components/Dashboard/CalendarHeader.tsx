@@ -24,7 +24,15 @@ import AddEventModal from "./AddEventModal";
 import type { Appointment } from "./DashboardPage"; // Uncomment if not already imported
 
 // Petit calendrier inline (custom minimal)
-function SimpleCalendar({ selected, onSelect, onClose }: { selected: Date; onSelect: (d: Date) => void; onClose: () => void }) {
+function SimpleCalendar({
+  selected,
+  onSelect,
+  onClose,
+}: {
+  selected: Date;
+  onSelect: (d: Date) => void;
+  onClose: () => void;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [internalDate, setInternalDate] = useState(selected);
 
@@ -64,17 +72,45 @@ function SimpleCalendar({ selected, onSelect, onClose }: { selected: Date; onSel
       style={{ minWidth: 220 }}
     >
       <div className="flex justify-between items-center mb-2">
-        <button onClick={handlePrevMonth} className="p-1 text-gray-500 hover:bg-[#fdf3df] rounded-full" aria-label="Mois précédent">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <button
+          onClick={handlePrevMonth}
+          className="p-1 text-gray-500 hover:bg-[#fdf3df] rounded-full"
+          aria-label="Mois précédent"
+        >
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+            <path
+              d="M15 18l-6-6 6-6"
+              stroke="#888"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
-        <span className="font-semibold text-sm">{format(internalDate, "MMMM yyyy", { locale: fr })}</span>
-        <button onClick={handleNextMonth} className="p-1 text-gray-500 hover:bg-[#fdf3df] rounded-full" aria-label="Mois suivant">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <span className="font-semibold text-sm">
+          {format(internalDate, "MMMM yyyy", { locale: fr })}
+        </span>
+        <button
+          onClick={handleNextMonth}
+          className="p-1 text-gray-500 hover:bg-[#fdf3df] rounded-full"
+          aria-label="Mois suivant"
+        >
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+            <path
+              d="M9 6l6 6-6 6"
+              stroke="#888"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
       </div>
       <div className="grid grid-cols-7 gap-1 text-xs text-center mb-1">
         {["L", "M", "M", "J", "V", "S", "D"].map((d, i) => (
-          <div key={d + i} className="font-semibold text-gray-500">{d}</div>
+          <div key={d + i} className="font-semibold text-gray-500">
+            {d}
+          </div>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1">
@@ -87,7 +123,10 @@ function SimpleCalendar({ selected, onSelect, onClose }: { selected: Date; onSel
           <button
             key={d.toISOString()}
             className={`rounded-full w-7 h-7 flex items-center justify-center ${d.toDateString() === selected.toDateString() ? "bg-[#1c3917] text-white" : "hover:bg-[#fdf3df]"}`}
-            onClick={() => { onSelect(d); onClose(); }}
+            onClick={() => {
+              onSelect(d);
+              onClose();
+            }}
           >
             {d.getDate()}
           </button>
@@ -99,10 +138,13 @@ function SimpleCalendar({ selected, onSelect, onClose }: { selected: Date; onSel
 
 // Nouveau composant FilterPopover
 function FilterPopover({
-  interval, onIntervalChange,
-  startHour, onStartHourChange,
-  endHour, onEndHourChange,
-  onClose
+  interval,
+  onIntervalChange,
+  startHour,
+  onStartHourChange,
+  endHour,
+  onEndHourChange,
+  onClose,
 }: {
   interval: number;
   onIntervalChange: (n: number) => void;
@@ -124,16 +166,20 @@ function FilterPopover({
   }, [onClose]);
 
   // Liste des intervalles disponibles
-  const intervals = [30, 60]; 
+  const intervals = [30, 60];
 
-  const hours = Array.from({length: 24}, (_, i) => i).map(h => h.toString().padStart(2, "0")+":00");
+  const hours = Array.from({ length: 24 }, (_, i) => i).map(
+    (h) => h.toString().padStart(2, "0") + ":00"
+  );
   return (
     <div
       ref={ref}
       className="absolute top-12 right-0 z-50 bg-white border border-[#ded9cb] rounded-xl shadow-lg p-4 min-w-[220px]"
     >
       <div className="mb-3">
-        <label className="block text-xs font-semibold text-[#888] mb-1">Intervalle</label>
+        <label className="block text-xs font-semibold text-[#888] mb-1">
+          Intervalle
+        </label>
         <div className="flex gap-2">
           {intervals.map((val) => (
             <button
@@ -147,27 +193,44 @@ function FilterPopover({
         </div>
       </div>
       <div className="mb-3">
-        <label className="block text-xs font-semibold text-[#888] mb-1">Heure de début</label>
+        <label className="block text-xs font-semibold text-[#888] mb-1">
+          Heure de début
+        </label>
         <select
           className="w-full border border-[#ded9cb] rounded px-2 py-1"
           value={startHour}
-          onChange={e => onStartHourChange(e.target.value)}
+          onChange={(e) => onStartHourChange(e.target.value)}
         >
-          {hours.map(h => <option key={h} value={h}>{h}</option>)}
+          {hours.map((h) => (
+            <option key={h} value={h}>
+              {h}
+            </option>
+          ))}
         </select>
       </div>
       <div className="mb-3">
-        <label className="block text-xs font-semibold text-[#888] mb-1">Heure de fin</label>
+        <label className="block text-xs font-semibold text-[#888] mb-1">
+          Heure de fin
+        </label>
         <select
           className="w-full border border-[#ded9cb] rounded px-2 py-1"
           value={endHour}
-          onChange={e => onEndHourChange(e.target.value)}
+          onChange={(e) => onEndHourChange(e.target.value)}
         >
-          {hours.map(h => <option key={h} value={h}>{h}</option>)}
+          {hours.map((h) => (
+            <option key={h} value={h}>
+              {h}
+            </option>
+          ))}
         </select>
       </div>
       <div className="flex justify-end">
-        <button className="px-4 py-1 rounded-full bg-[#1c3917] text-white font-medium" onClick={onClose}>Fermer</button>
+        <button
+          className="px-4 py-1 rounded-full bg-[#1c3917] text-white font-medium"
+          onClick={onClose}
+        >
+          Fermer
+        </button>
       </div>
     </div>
   );
@@ -186,7 +249,18 @@ interface CalendarHeaderProps {
   onReloadCalendar: () => void;
 }
 
-const CalendarHeader: React.FC<CalendarHeaderProps> = ({ selectedDate, setSelectedDate, interval, setInterval, startHour, setStartHour, endHour, setEndHour, profileForm, onReloadCalendar }) => {
+const CalendarHeader: React.FC<CalendarHeaderProps> = ({
+  selectedDate,
+  setSelectedDate,
+  interval,
+  setInterval,
+  startHour,
+  setStartHour,
+  endHour,
+  setEndHour,
+  profileForm,
+  onReloadCalendar,
+}) => {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [addEventOpen, setAddEventOpen] = useState(false);
@@ -195,13 +269,17 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ selectedDate, setSelect
   // Fermer calendrier si scroll (évite débordement)
   useEffect(() => {
     if (!calendarOpen) return;
-    function handleScroll() { setCalendarOpen(false); }
+    function handleScroll() {
+      setCalendarOpen(false);
+    }
     window.addEventListener("scroll", handleScroll, true);
     return () => window.removeEventListener("scroll", handleScroll, true);
   }, [calendarOpen]);
 
   // Placeholder: replace with real save logic
-  async function handleAddEventSave(event: Omit<Appointment, 'id' | 'is_validated'> & { client_email: string }) {
+  async function handleAddEventSave(
+    event: Omit<Appointment, "id" | "is_validated"> & { client_email: string }
+  ) {
     setAppointments((prev) => [
       ...prev,
       {
@@ -248,8 +326,20 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ selectedDate, setSelect
           onClick={onReloadCalendar}
         >
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-            <path d="M4 4v5h.582M20 20v-5h-.581" stroke="#1c3917" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M5.003 9A9 9 0 1 1 12 21a8.96 8.96 0 0 1-6.418-2.648" stroke="#1c3917" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path
+              d="M4 4v5h.582M20 20v-5h-.581"
+              stroke="#1c3917"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M5.003 9A9 9 0 1 1 12 21a8.96 8.96 0 0 1-6.418-2.648"
+              stroke="#1c3917"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
           Rafraîchir
         </button>

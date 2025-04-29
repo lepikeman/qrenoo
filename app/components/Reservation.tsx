@@ -436,19 +436,22 @@ export default function Reservation({
                       type="text"
                       name="name"
                       required
-                      className="input input-bordered rounded-lg text-xs md:text-base"
+                      placeholder="Votre nom"
+                      className="input input-bordered border-[#6e7b4d] rounded-lg text-xs md:text-base placeholder:text-[#6e7b4d]"
                     />
                     <label className="font-semibold text-xs md:text-base">
-                      Email (optionnel)
+                      Email
                     </label>
                     <input
                       type="email"
                       name="email"
+                      placeholder="Votre email"
+                      required
                       autoComplete="off"
-                      className="input input-bordered rounded-lg text-xs md:text-base"
+                      className="input input-bordered border-[#6e7b4d] rounded-lg text-xs md:text-base placeholder:text-[#6e7b4d]"
                     />
                     <label className="font-semibold text-xs md:text-base">
-                      Téléphone
+                      Téléphone (recommandé)
                     </label>
                     <input
                       type="text"
@@ -462,16 +465,16 @@ export default function Reservation({
                       }
                       placeholder="06 12 34 56 78"
                       autoComplete="tel"
-                      className="input input-bordered rounded-lg text-xs md:text-base"
+                      className="input input-bordered border-[#6e7b4d] rounded-lg text-xs md:text-base placeholder:text-[#6e7b4d]"
                     />
                     <label className="font-semibold text-xs md:text-base">
-                      Message
+                      Demande particulière (optionnel)
                     </label>
                     <textarea
                       name="message"
-                      required
                       rows={3}
-                      className="textarea textarea-bordered rounded-lg text-xs md:text-base"
+                      placeholder="Votre message"
+                      className="textarea border-[#6e7b4d] rounded-lg text-xs md:text-base placeholder:text-[#6e7b4d]"
                     ></textarea>
                     <button
                       type="submit"
@@ -501,7 +504,7 @@ export default function Reservation({
                       maxLength={6}
                       inputMode="numeric"
                       required
-                      className="input input-bordered rounded-lg text-center text-xl tracking-widest"
+                      className="input input-bordered border-[#6e7b4d] rounded-lg text-center text-xl tracking-widest placeholder:text-[#6e7b4d]"
                     />
                     {codeError && (
                       <div className="text-red-500 font-semibold text-center">
@@ -510,7 +513,7 @@ export default function Reservation({
                     )}
                     <button
                       type="submit"
-                      className="btn btn-primary bg-[#6e7b4d] hover:bg-[#405c26] text-white font-bold rounded-lg mt-2 text-xs md:text-base"
+                      className="btn btn-primary bg-[#6e7b4d] hover:bg-[#405c26] text-white font-bold rounded-lg mt-2 text-xs md:text-base h-[40px] mx-auto"
                     >
                       Valider le code
                     </button>
