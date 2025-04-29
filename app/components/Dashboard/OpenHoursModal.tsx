@@ -8,6 +8,7 @@
  *   - setProfileForm (function) : Fonction pour mettre à jour le formulaire de profil
  *   - onClose (function) : Fonction pour fermer la modale
  *   - onSave (function) : Fonction pour enregistrer les horaires
+ *   - open (boolean) : Indicateur d'ouverture de la modale
  *
  * Affiche une fenêtre modale pour éditer les horaires d'ouverture.
  */
@@ -21,12 +22,14 @@ interface OpenHoursModalProps {
   setProfileForm: (val: Profile) => void;
   onClose: () => void;
   onSave: (val: Profile) => void;
+  open?: boolean; // nouvelle prop pour contrôle explicite
 }
 
 const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
   profileForm,
   onClose,
   onSave,
+  open = true, // valeur par défaut pour rétrocompatibilité
 }) => {
   const [ouverture, setOuverture] = React.useState<string>(
     profileForm.ouverture || "08:00"
@@ -51,6 +54,26 @@ const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState<string>("");
+
+  // Synchronisation à chaque ouverture de la modale
+  React.useEffect(() => {
+    if (open) {
+      setOuverture(profileForm.ouverture || "08:00");
+      setFermeture(profileForm.fermeture || "18:00");
+      setIntervalleCreneau(Number(profileForm.intervalle_creneau) || 30);
+      setHorairesJours(
+        profileForm.horaires_jours || {
+          lundi: null,
+          mardi: null,
+          mercredi: null,
+          jeudi: null,
+          vendredi: null,
+          samedi: null,
+          dimanche: null,
+        }
+      );
+    }
+  }, [open, profileForm]);
 
   // --- Correction : synchroniser local state avec props quand profileForm change (évite stale state) ---
   React.useEffect(() => {
@@ -289,8 +312,8 @@ const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
                                   setHorairesJours((prev) => ({
                                     ...prev,
                                     [key]: {
-                                      ouverture: "",
-                                      fermeture: "",
+                                      ouverture: ouverture,
+                                      fermeture: fermeture,
                                       intervalle_creneau: intervalleCreneau,
                                     },
                                   }))

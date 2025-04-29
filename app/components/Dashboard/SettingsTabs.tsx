@@ -253,11 +253,10 @@ export default function SettingsTabs({
                   })
                 }
                 onClose={() => {}}
-                // --- Correction : synchroniser le parent dès la sauvegarde, sans attendre le refetch ---
                 onSave={(updatedProfile) => {
-                  console.log("[SettingsTabs] onSave from OpenHoursModal", updatedProfile);
                   onProfileChange("full" as const, updatedProfile);
                 }}
+                open={true}
               />
             </div>
           )}
