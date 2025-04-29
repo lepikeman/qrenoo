@@ -25,11 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
       <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
         <NavigationShell>
-          <RequireProfileComplete>
-            {children}
-            <SpeedInsights />
-            <Analytics />
-          </RequireProfileComplete>
+          <RequireProfileComplete>{children}</RequireProfileComplete>
 
           <Footer
             links={[
@@ -40,6 +36,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             ]}
           />
         </NavigationShell>
+        <SpeedInsights />
+        <Analytics />
         <CookieConsent />
       </body>
     </html>

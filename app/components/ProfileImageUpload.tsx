@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
+import ReactCrop, { type Crop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
 interface ProfileImageUploadProps {
   proId: string;
@@ -19,6 +21,10 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | undefined>(imageUrl);
   const [warning, setWarning] = useState<string | null>(null);
+  const [crop, setCrop] = useState<Crop>();
+  const [src, setSrc] = useState<string>();
+  const [croppedImageUrl, setCroppedImageUrl] = useState<string>();
+  const [showCropModal, setShowCropModal] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -26,8 +32,51 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
   }, [imageUrl]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    if (!e.target.files?.[0]) return;
+    
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      setSrc(reader.result as string);
+      setShowCropModal(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const getCroppedImg = async (): Promise<File> => {
+    const image = new Image();
+    image.src = src!;
+    
+    const canvas = document.createElement('canvas');
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+    
+    canvas.width = crop!.width * scaleX;
+    canvas.height = crop!.height * scaleY;
+    
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(
+      image,
+      crop!.x * scaleX,
+      crop!.y * scaleY,
+      crop!.width * scaleX,
+      crop!.height * scaleY,
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        const file = new File([blob!], 'profile-image.jpg', { type: 'image/jpeg' });
+        resolve(file);
+      }, 'image/jpeg');
+    });
+  };
+
+  const handleUpload = async (file: File) => {
     // Limite de taille : 5 Mo
     const maxSize = 5 * 1024 * 1024; // 5 Mo en octets
     if (file.size > maxSize) {
@@ -36,7 +85,6 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
     }
     setWarning(null);
     const oldPhotoUrl = preview;
-    setPreview(URL.createObjectURL(file));
     setUploading(true);
     const fileExt = file.name.split(".").pop();
     const fileName = `${proId}_${Date.now()}.${fileExt}`;
@@ -74,6 +122,43 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
   return (
     <div>
       {warning && <div>{warning}</div>}
+      {showCropModal && src && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-4 max-w-2xl w-full">
+            <ReactCrop
+              crop={crop}
+              onChange={(c) => setCrop(c)}
+              aspect={1}
+              circularCrop
+            >
+              <img src={src} alt="Recadrage" />
+            </ReactCrop>
+            
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={async () => {
+                  const croppedFile = await getCroppedImg();
+                  const url = URL.createObjectURL(croppedFile);
+                  setPreview(url);
+                  setCroppedImageUrl(url);
+                  setShowCropModal(false);
+                  await handleUpload(croppedFile);
+                }}
+                className="btn btn-primary bg-[#6e7b4d] text-white"
+              >
+                Confirmer
+              </button>
+              
+              <button
+                onClick={() => setShowCropModal(false)}
+                className="btn btn-ghost border border-gray-300"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div
         className="relative group cursor-pointer"
         onClick={() => inputRef.current?.click()}
