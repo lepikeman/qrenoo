@@ -48,7 +48,9 @@ export default function Reservation({
   const [weekStart, setWeekStart] = useState(new Date());
 
   // Onglet jour sélectionné (index dans la semaine)
-  const [selectedDayIdx, setSelectedDayIdx] = useState(0);
+  const [selectedDayIdx, setSelectedDayIdx] = useState(
+    (new Date().getDay() + 6) % 7
+  );
   const [visibleDayIdx, setVisibleDayIdx] = useState(0); // index du premier jour affiché
   const daysPerPage = 3;
   const weekDays = getWeekDays(weekStart);

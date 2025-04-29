@@ -31,7 +31,7 @@ interface SidebarProps {
 const menuItems = [
   {
     key: "overview",
-    label: "Overview",
+    label: "Aperçu",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
         <rect
@@ -49,7 +49,7 @@ const menuItems = [
   },
   {
     key: "calendar",
-    label: "Calendar",
+    label: "Calendrier",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
         <rect
@@ -67,7 +67,7 @@ const menuItems = [
   },
   {
     key: "settings",
-    label: "Settings",
+    label: "Paramètres",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
         <path d="M12 15v2M12 11v2M12 7v2" stroke="#b6b1a3" strokeWidth="2" />
@@ -266,14 +266,14 @@ const Sidebar: React.FC<
             </div>
           ) : (
             <span className="text-xs text-[#888]">
-              No upcoming appointments
+              Pas de rendez-vous prévu
             </span>
           )}
           <RippleButton
             disabled={true}
             className="w-full bg-[#29381a] disabled:opacity-50 text-white rounded-full py-1 text-[15px] font-semibold my-1 shadow-sm hover:brightness-110 transition"
           >
-            Remind me
+            Rappeler
           </RippleButton>
           <RippleButton
             className="w-full border border-[#b6b1a3] cursor-pointer rounded-full py-1 text-[15px] text-[#222] hover:bg-[#f5f5f5] transition"
@@ -399,7 +399,7 @@ const Sidebar: React.FC<
                   : "Aucun email renseigné"
             }
           >
-            Cancel
+            Annuler
           </RippleButton>
         </div>
       </div>
