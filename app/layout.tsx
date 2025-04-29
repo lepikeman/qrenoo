@@ -6,6 +6,8 @@ import NavigationShell from "./components/NavigationShell";
 import { ReactNode } from "react";
 import Footer from "./components/Footer";
 import CookieConsent from "./components/CookieConsent";
+
+import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
@@ -23,7 +25,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
       <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
         <NavigationShell>
-          <RequireProfileComplete>{children}</RequireProfileComplete>
+          <RequireProfileComplete>
+            {children}
+            <SpeedInsights />
+            <Analytics />
+          </RequireProfileComplete>
+
           <Footer
             links={[
               { label: "Mentions légales", href: "/mentions" },
@@ -34,7 +41,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           />
         </NavigationShell>
         <CookieConsent />
-        <SpeedInsights />
       </body>
     </html>
   );
