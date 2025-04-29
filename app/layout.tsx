@@ -5,6 +5,7 @@ import RequireProfileComplete from "./components/RequireProfileComplete";
 import NavigationShell from "./components/NavigationShell";
 import { ReactNode } from "react";
 import Footer from "./components/Footer";
+import CookieConsent from "./components/CookieConsent";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,9 +30,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               { label: "RGPD", href: "/rgpd" },
               { label: "Contact", href: "/contact" },
             ]}
-          >
-          </Footer>
+          />
         </NavigationShell>
+        <CookieConsent />
       </body>
     </html>
   );
