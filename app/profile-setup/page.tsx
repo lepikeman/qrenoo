@@ -99,12 +99,12 @@ export default function ProfileSetup() {
           />
         </div>
         <div>
-          <label className="block font-semibold">Photo (URL)</label>
+          <label className="block font-semibold">Photo</label>
           <input
             className="border rounded w-full p-2"
             value={photoUrl}
             onChange={(e) => setPhotoUrl(e.target.value)}
-            placeholder="https://..."
+            placeholder="Ajouter une photo"
           />
         </div>
 

@@ -209,10 +209,14 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
 
   // Correction de setProfileForm pour respecter le type attendu (Profile)
   function handleProfileChange(
-    field: keyof Profile,
-    value: Profile[keyof Profile]
+    field: keyof Profile | "full",
+    value: Profile[keyof Profile] | Partial<Profile>
   ) {
-    setProfileForm({ ...profileForm, [field]: value });
+    if (field === "full" && typeof value === "object") {
+      setProfileForm({ ...(value as Profile) });
+    } else {
+      setProfileForm({ ...profileForm, [field]: value });
+    }
   }
 
   // --- Nouvelle logique d'affichage central selon la sidebar ---
@@ -261,22 +265,26 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
     mainContent = (
       <SettingsTabs
         proProfile={profileForm}
-        onProfileChange={(field, value) =>
+        onProfileChange={(field, value) => {
+          console.log("[DashboardPage] onProfileChange", field, value);
           handleProfileChange(
             field as keyof Profile,
             value as Profile[keyof Profile]
-          )
-        }
+          );
+        }}
         onSave={async (profileFormToSave: Profile) => {
           setProfileLoading(true);
           const { error } = await supabase
             .from("profiles")
             .update(profileFormToSave)
             .eq("user_id", profileFormToSave.user_id);
-          console.log(
-            "PATCH payload envoyé à Supabase (DashboardPage):",
-            profileFormToSave
-          );
+          if (!error) {
+            console.log(
+              "[DashboardPage] setProfileForm (after save)",
+              profileFormToSave
+            );
+            setProfileForm({ ...profileFormToSave }); // force une nouvelle référence pour déclencher le rerender
+          }
           setProfileLoading(false);
           return !error;
         }}

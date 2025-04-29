@@ -30,6 +30,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({
       {showFallback ? (
         <span style={{ color: "#aaa", fontSize: size / 3 }}>?</span>
       ) : (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={src}
           alt={alt}

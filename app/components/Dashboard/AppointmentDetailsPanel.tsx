@@ -154,7 +154,7 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
       <table border="0" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: auto;">
         <tr>
           <td style="padding: 30px 0; text-align: center;">
-            <img src="../../assets/D408A4A9-5703-46D3-8C96-A80AC91ABB3A.png" alt="Qrenoo" width="120" style="display: block; margin: 0 auto 15px;">
+            <img src="https://i.postimg.cc/52mKkyXk/IMG-1576.png" alt="Qrenoo" width="200" style="display: block; margin: 0 auto 15px;">
             <h1 style="color: #2F3E2E; margin: 0; font-size: 24px;">Confirmation de votre rendez-vous</h1>
           </td>
         </tr>
@@ -283,7 +283,7 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
       <table border="0" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: auto;">
         <tr>
           <td style="padding: 30px 0; text-align: center;">
-            <img src="public/D408A4A9-5703-46D3-8C96-A80AC91ABB3A.png" alt="Qrenoo" width="120" style="display: block; margin: 0 auto 15px;">
+            <img src="https://i.postimg.cc/52mKkyXk/IMG-1576.png" alt="Qrenoo" width="200" style="display: block; margin: 0 auto 15px;">
             <h1 style="color: #a94442; margin: 0; font-size: 24px;">Annulation de votre rendez-vous</h1>
           </td>
         </tr>

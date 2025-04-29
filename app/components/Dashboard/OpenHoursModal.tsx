@@ -54,6 +54,7 @@ const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
 
   // --- Correction : synchroniser local state avec props quand profileForm change (évite stale state) ---
   React.useEffect(() => {
+    console.log("[OpenHoursModal] profileForm changed", profileForm);
     setOuverture(profileForm.ouverture || "08:00");
     setFermeture(profileForm.fermeture || "18:00");
     setIntervalleCreneau(Number(profileForm.intervalle_creneau) || 30);
@@ -113,7 +114,7 @@ const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
   // Helper pour générer les horaires selon un intervalle donné
   function generateHoraires(intervalle: number) {
     const horaires: string[] = [];
-    for (let h = 1 * 60; h <= 23 * 60; h += intervalle) {
+    for (let h = 1 * 60; h <= 24 * 60; h += intervalle) {
       const hh = Math.floor(h / 60)
         .toString()
         .padStart(2, "0");
@@ -169,61 +170,38 @@ const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
     }));
   };
 
-  async function handleSave() {
+  // --- Correction principale : ne pas reseter les horaires après sauvegarde, et mettre à jour parent/local immédiatement ---
+  const handleSave = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setSaving(true);
     setError("");
     try {
-      // Utilise id prioritairement, puis user_id si pas d'id (aligné avec la logique update)
-      const id = profileForm.id || profileForm.user_id;
-      if (!id) throw new Error("ID du profil manquant");
-      let horairesJoursToSave;
-      try {
-        horairesJoursToSave = JSON.parse(JSON.stringify(horairesJours));
-      } catch (e) {
-        throw new Error(
-          "Erreur de structure dans les horaires_jours (circular reference ou données non sérialisables)" +
-            e
-        );
-      }
-      const { error: updateError, data } = await supabase
-        .from("profiles")
-        .update({
-          ouverture,
-          fermeture,
-          intervalle_creneau: intervalleCreneau,
-          horaires_jours: horairesJoursToSave,
-        })
-        .eq("id", id)
-        .select();
-      console.log("PATCH payload envoyé à Supabase (OpenHoursModal):", {
+      const updateData: Partial<Profile> = {
         ouverture,
         fermeture,
         intervalle_creneau: intervalleCreneau,
-        horaires_jours: horairesJoursToSave,
-      });
+        horaires_jours: horairesJours,
+      };
+      const id = profileForm.id || profileForm.user_id;
+      if (!id) throw new Error("ID du profil manquant");
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update(updateData)
+        .eq("id", id);
       if (updateError) throw new Error(updateError.message);
-      if (!data || data.length === 0) {
-        setError(
-          "Aucune ligne modifiée ! Vérifie que l'id correspond à la BDD."
-        );
-        setSaving(false);
-        return;
+      const newProfile = { ...profileForm, ...updateData };
+      console.log("[OpenHoursModal] onSave called with:", newProfile);
+      if (typeof onSave === "function") onSave(newProfile);
+      if (typeof window !== "undefined") {
+        // Optionnel : feedback visuel
+        window.dispatchEvent(new CustomEvent("profile-hours-saved"));
       }
-      if (onSave)
-        onSave({
-          ...profileForm,
-          ouverture,
-          fermeture,
-          intervalle_creneau: intervalleCreneau,
-          horaires_jours: horairesJoursToSave,
-        });
-      if (onClose) onClose();
     } catch (err: unknown) {
-      setError("Erreur lors de l'enregistrement : " + (err as Error).message);
+      setError((err as Error).message);
     } finally {
       setSaving(false);
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -238,10 +216,7 @@ const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
         ) : (
           <form
             className="grid grid-cols-1 md:grid-cols-2 gap-6 relative"
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSave();
-            }}
+            onSubmit={handleSave}
           >
             <div className="flex flex-col">
               <label className="block font-semibold mb-1 text-[#29381a]">

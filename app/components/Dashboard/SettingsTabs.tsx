@@ -38,21 +38,15 @@ export default function SettingsTabs({
   const [activeTab, setActiveTab] = useState("profile");
   const [editMode, setEditMode] = useState(false);
   const [showPwdModal, setShowPwdModal] = useState(false); // Peut être utilisé dans le futur
-  const [localProfile, setLocalProfile] = useState({
-    nom: proProfile.nom ?? "",
-    phone: proProfile.phone ?? "",
-  });
+  const [localProfile, setLocalProfile] = useState<Profile>({ ...proProfile });
 
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{ phone?: string }>({});
 
-  // Synchronise localProfile si proProfile change
-  React.useEffect(() => {
-    setLocalProfile({
-      nom: proProfile.nom ?? "",
-      phone: proProfile.phone ?? "",
-    });
+  // --- Synchronise le state local avec toutes les props du profil parent à chaque changement ---
+  useEffect(() => {
+    setLocalProfile({ ...proProfile });
   }, [proProfile]);
 
   // Déconnexion
@@ -210,10 +204,7 @@ export default function SettingsTabs({
                         setFieldErrors({});
                         setErrorMsg("");
                         setSuccessMsg("");
-                        setLocalProfile({
-                          nom: proProfile.nom ?? "",
-                          phone: proProfile.phone ?? "",
-                        });
+                        setLocalProfile({ ...proProfile });
                       }}
                     >
                       Annuler
@@ -262,9 +253,10 @@ export default function SettingsTabs({
                   })
                 }
                 onClose={() => {}}
+                // --- Correction : synchroniser le parent dès la sauvegarde, sans attendre le refetch ---
                 onSave={(updatedProfile) => {
+                  console.log("[SettingsTabs] onSave from OpenHoursModal", updatedProfile);
                   onProfileChange("full" as const, updatedProfile);
-                  // Optionally, trigger a refresh or update parent state here
                 }}
               />
             </div>
