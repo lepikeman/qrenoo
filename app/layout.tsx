@@ -6,6 +6,7 @@ import NavigationShell from "./components/NavigationShell";
 import { ReactNode } from "react";
 import Footer from "./components/Footer";
 import CookieConsent from "./components/CookieConsent";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           />
         </NavigationShell>
         <CookieConsent />
+        <SpeedInsights />
       </body>
     </html>
   );
