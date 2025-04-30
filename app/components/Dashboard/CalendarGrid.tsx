@@ -184,12 +184,13 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   return (
     <div className="w-full bg-white rounded-2xl shadow border border-[#e6e2d6] p-0 relative">
       <div
-        className="flex w-full relative overflow-y-auto"
+        className="flex w-full relative overflow-x-auto overflow-y-auto"
         style={{ height: "calc(100vh - 56px - 32px)" }}
         ref={scrollableRef}
       >
         {/* Colonne heures sticky à gauche */}
-        <div className="flex flex-col w-18 min-w-[60px] sticky left-0 z-20 bg-white border-r border-[#e6e2d6] rounded-bl-2xl">
+        <div className="flex flex-col w-18 min-w-[60px] sticky left-0 z-20 bg-white border-r border-[#e6e2d6]">
+          {/* Header heures, même hauteur que le header des jours */}
           <div className="h-[60px] border-b border-[#e6e2d6] bg-white" />
           {dynamicHours.map((h, i) => (
             <div
@@ -221,10 +222,10 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
         {/* Grille principale */}
         <div
           className={`
-          w-full grid
-          ${isMobile ? "grid-cols-1" : "grid-cols-7"}
-          md:grid-cols-7
-        `}
+        w-full grid
+        ${isMobile ? "grid-cols-1" : "grid-cols-7"}
+        md:grid-cols-7
+      `}
         >
           {visibleDays.map((day) => (
             <div key={day} className="flex flex-col flex-1">

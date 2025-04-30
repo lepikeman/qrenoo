@@ -292,7 +292,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
 
   return (
     <header
-      className="calendar-header sticky top-0 z-30 flex flex-row items-center justify-between w-full bg-[#FDF3DF] border-b border-[#ded9cb] px-2 py-0 min-h-[30px] h-[30px] shadow-sm gap-1"
+      className="calendar-header sticky top-0 z-40 flex flex-row items-center justify-between w-full bg-[#FDF3DF] border-b border-[#ded9cb] px-2 py-0 min-h-[30px] h-[30px] shadow-sm gap-1"
       style={{ minHeight: 30, height: 30 }}
     >
       {/* Bloc gauche : menu + date picker */}
