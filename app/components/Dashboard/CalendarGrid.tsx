@@ -158,6 +158,18 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
     }
   }, [nowDisplay.idx, joinedHours, joinedDays, filteredAppointments.length]);
 
+  const [selectedDayIdx, setSelectedDayIdx] = React.useState(0);
+
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const visibleDays = isMobile ? [weekDays[selectedDayIdx]] : weekDays;
+
+  function handlePrevDay() {
+    setSelectedDayIdx((idx) => Math.max(0, idx - 1));
+  }
+  function handleNextDay() {
+    setSelectedDayIdx((idx) => Math.min(weekDays.length - 1, idx + 1));
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
@@ -171,7 +183,11 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
 
   return (
     <div className="w-full bg-white rounded-2xl shadow border border-[#e6e2d6] p-0 relative">
-      <div className="flex w-full relative">
+      <div
+        className="flex w-full relative overflow-y-auto"
+        style={{ height: "calc(100vh - 56px - 32px)" }}
+        ref={scrollableRef}
+      >
         {/* Colonne heures sticky à gauche */}
         <div className="flex flex-col w-18 min-w-[60px] sticky left-0 z-20 bg-white border-r border-[#e6e2d6] rounded-bl-2xl">
           <div className="h-[60px] border-b border-[#e6e2d6] bg-white" />
@@ -186,13 +202,11 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
                 height: CELL_HEIGHT,
               }}
             >
-              {/* Affiche l'heure sur le côté, toujours visible */}
               <span
                 className={`ml-auto ${i === nowDisplay.idx ? "text-[#a259ff] font-bold" : ""}`}
               >
                 {h}
               </span>
-              {/* Affiche l'heure actuelle (ex: 17:42) à droite de la cellule courante */}
               {i === nowDisplay.idx && (
                 <span
                   className="ml-2 text-xs text-[#a259ff] font-bold bg-[#f8f5ff] px-2 py-1 rounded shadow"
@@ -204,16 +218,18 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
             </div>
           ))}
         </div>
+        {/* Grille principale */}
         <div
-          className="grid grid-cols-7 w-full overflow-y-auto"
-          ref={scrollableRef}
+          className={`
+          w-full grid
+          ${isMobile ? "grid-cols-1" : "grid-cols-7"}
+          md:grid-cols-7
+        `}
         >
-          {weekDays.map((day) => (
+          {visibleDays.map((day) => (
             <div key={day} className="flex flex-col flex-1">
               {/* Header de colonne : jour + date */}
-              <div
-                className={`flex flex-col items-center justify-center h-[60px] border-b border-[#e6e2d6] bg-white sticky top-0 z-20${day === nowDisplay.todayISO ? " border-t-4 border-[#a259ff] bg-[#f8f5ff]" : ""}`}
-              >
+              <div className="flex flex-col items-center justify-center h-[60px] border-b border-[#e6e2d6] bg-white sticky top-0 z-30">
                 <span className="text-xs font-semibold text-[#888]">
                   {(() => {
                     const dObj = new Date(day);
@@ -243,20 +259,16 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
                   {filteredAppointments
                     .filter((rdv) => rdv.date_jour === day)
                     .filter((rdv) => {
-                      // RDV dans ce créneau ?
                       const rdvMin = parseHourToMinutes(rdv.heure.slice(0, 5));
                       const cellMin = parseHourToMinutes(h);
                       return rdvMin >= cellMin && rdvMin < cellMin + interval;
                     })
                     .map((rdv) => {
-                      // Calcule la hauteur relative du RDV dans la cellule
-                      // Si interval = 1h et RDV à 17h30 => hauteur 50%
                       const rdvMin = parseHourToMinutes(rdv.heure.slice(0, 5));
                       const cellMin = parseHourToMinutes(h);
                       const ratio = (rdvMin - cellMin) / interval;
-                      // Pour la durée, on suppose 30min par défaut si non précisé
-                      const duration = 30; // minutes
-                      const height = Math.max((duration / interval) * 100, 40); // min 40% pour la visibilité
+                      const duration = 30;
+                      const height = Math.max((duration / interval) * 100, 40);
                       return (
                         <div
                           key={rdv.id}
@@ -280,6 +292,43 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
               ))}
             </div>
           ))}
+          {/* Flèches navigation mobile */}
+          {isMobile && (
+            <>
+              <button
+                className="fixed left-2 top-1/2 -translate-y-1/2 z-50 bg-white/90 rounded-full p-1 shadow border border-[#ded9cb]"
+                onClick={handlePrevDay}
+                disabled={selectedDayIdx === 0}
+                style={{ touchAction: "manipulation" }}
+              >
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                  <path
+                    d="M15 18l-6-6 6-6"
+                    stroke="#222"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              <button
+                className="fixed right-2 top-1/2 -translate-y-1/2 z-50 bg-white/90 rounded-full p-1 shadow border border-[#ded9cb]"
+                onClick={handleNextDay}
+                disabled={selectedDayIdx === weekDays.length - 1}
+                style={{ touchAction: "manipulation" }}
+              >
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                  <path
+                    d="M9 6l6 6-6 6"
+                    stroke="#222"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

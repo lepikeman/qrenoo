@@ -15,9 +15,9 @@
  *
  * Affiche la structure principale du dashboard avec sidebar et contenu central.
  */
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import type { Appointment } from "./DashboardPage";
-import type { Profile } from "@/app/types/Profile"; // Corrige l'import du type Profile
+import type { Profile } from "@/app/types/Profile";
 
 interface DashboardLayoutProps {
   sidebarCollapsed: boolean;
@@ -25,9 +25,9 @@ interface DashboardLayoutProps {
   activeTab: "overview" | "calendar" | "settings" | undefined;
   setActiveTab: (tab: "overview" | "calendar" | "settings" | undefined) => void;
   children: React.ReactNode;
-  appointments?: Appointment[]; // Ajout pour la Sidebar
-  proProfile?: Profile; // Ajout de la prop proProfile
-  onReloadCalendar?: () => void; // Ajoute la prop onReloadCalendar pour la Sidebar
+  appointments?: Appointment[];
+  proProfile?: Profile;
+  onReloadCalendar?: () => void;
 }
 
 const Sidebar = lazy(() => import("./Sidebar/Sidebar"));
@@ -39,26 +39,82 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   appointments,
   proProfile,
   onReloadCalendar,
-}) => (
-  <div className="flex h-screen bg-[#fdf3df]">
-    <Suspense fallback={<div>Chargement...</div>}>
-      <Sidebar
-        active={activeTab}
-        setActiveTab={setActiveTab}
-        appointments={appointments} // Passage à Sidebar
-        proProfile={proProfile}
-        onReloadCalendar={onReloadCalendar}
-      />
-    </Suspense>
-    <main className="flex-1 ml-[260px] h-screen px-0 pb-0 flex flex-col">
-      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
-        {/* Le calendrier doit être passé ici comme children */}
-        <Suspense fallback={<div>Chargement...</div>}>
-          <div className="flex-1 min-h-0 overflow-y-auto">{children}</div>
-        </Suspense>
-      </div>
-    </main>
-  </div>
-);
+}) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Handler pour mobile : ferme la sidebar quand on clique sur un onglet
+  const handleSetActiveTab = (
+    tab: "overview" | "calendar" | "settings" | undefined
+  ) => {
+    setActiveTab(tab);
+    setSidebarOpen(false);
+  };
+
+  return (
+    <div className="flex h-screen bg-[#fdf3df] relative">
+      {/* Sidebar */}
+      {/* Hamburger bouton mobile */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 bg-white rounded-full p-2 shadow-md border border-[#ded9cb] focus:outline-none"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Ouvrir le menu"
+        type="button"
+      >
+        <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+          <rect x="4" y="6" width="16" height="2" rx="1" fill="#222" />
+          <rect x="4" y="11" width="16" height="2" rx="1" fill="#222" />
+          <rect x="4" y="16" width="16" height="2" rx="1" fill="#222" />
+        </svg>
+      </button>
+
+      {/* Sidebar mobile (overlay) */}
+      {sidebarOpen && (
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black/30 z-40 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden="true"
+          />
+          {/* Sidebar */}
+          <div className="fixed top-0 left-0 z-50 h-full w-[270px] bg-[#fdf6e3] shadow-xl border-r border-[#23283a] transition-transform duration-300 md:hidden">
+            <Suspense fallback={<div>Chargement...</div>}>
+              <Sidebar
+                active={activeTab}
+                setActiveTab={handleSetActiveTab}
+                appointments={appointments}
+                proProfile={proProfile}
+                onReloadCalendar={onReloadCalendar}
+              />
+            </Suspense>
+          </div>
+        </>
+      )}
+
+      {/* Sidebar desktop */}
+      <Suspense fallback={<div>Chargement...</div>}>
+        <div className="hidden md:flex">
+          <Sidebar
+            active={activeTab}
+            setActiveTab={setActiveTab}
+            appointments={appointments}
+            proProfile={proProfile}
+            onReloadCalendar={onReloadCalendar}
+          />
+        </div>
+      </Suspense>
+      {/* Main content */}
+      <main className="flex-1 w-full min-w-0 h-screen flex flex-col">
+        <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
+          <Suspense fallback={<div>Chargement...</div>}>
+            <div className="flex-1 min-h-0 overflow-y-auto px-0 md:pl-0">
+              {children}
+            </div>
+          </Suspense>
+        </div>
+      </main>
+    </div>
+  );
+};
 
 export default DashboardLayout;

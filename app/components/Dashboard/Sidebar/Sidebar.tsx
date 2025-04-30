@@ -144,7 +144,17 @@ const Sidebar: React.FC<
   };
 
   return (
-    <aside className="flex flex-col justify-between w-[270px] min-w-[220px] max-w-[320px] h-full max-h-screen bg-[#fdf6e3] border-r border-[#23283a] shadow-xl fixed top-0 left-0 z-40 overflow-hidden p-0 transition-all duration-500 rounded-none">
+    <aside
+      className="
+      md:flex
+      flex-col justify-between
+      w-[270px] min-w-[220px] max-w-[320px] h-screen
+      bg-[#fdf6e3] border-r border-[#23283a] shadow-xl
+      md:static
+      z-40 p-0 transition-all duration-500 rounded-none
+      overflow-y-auto
+    "
+    >
       {/* Logo & Toggle */}
       <div className="flex items-center justify-center -my-8  px-7 shrink-0 cursor-pointer">
         <Image

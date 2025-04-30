@@ -292,17 +292,17 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
 
   return (
     <header
-      className="calendar-header sticky top-0 z-30 flex items-center justify-between w-full bg-[#FDF3DF] border-b border-[#ded9cb] px-8 py-8 min-h-[56px] h-[70px] shadow-sm"
-      style={{ height: 56, minHeight: 56 }}
+      className="calendar-header sticky top-0 z-30 flex flex-row items-center justify-between w-full bg-[#FDF3DF] border-b border-[#ded9cb] px-1 py-1 md:px-6 md:py-3 min-h-[40px] h-auto md:h-[56px] shadow-sm gap-1"
+      style={{ minHeight: 40 }}
     >
       {/* Bloc gauche : date picker */}
-      <div className="flex items-center gap-5 relative">
+      <div className="flex flex-row items-center gap-1 flex-shrink-0">
         <button
-          className="bg-white border border-[#ded9cb] rounded-full px-6 py-2 text-[16px] font-medium shadow-[0_1px_4px_0_rgba(0,0,0,0.05)] flex items-center gap-2 min-w-[130px] h-[38px] focus:outline-none focus:ring-2 focus:ring-[#ded9cb]"
+          className="bg-white border border-[#ded9cb] rounded-full px-2 py-1 text-[14px] font-medium shadow flex items-center gap-1 min-w-[80px] h-[30px] focus:outline-none focus:ring-2 focus:ring-[#ded9cb] w-auto"
           onClick={() => setCalendarOpen((v) => !v)}
         >
           {format(selectedDate, "dd MMM yy", { locale: fr })}
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
             <path
               d="M6 9l6 6 6-6"
               stroke="#444"
@@ -321,11 +321,11 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         )}
         {/* Bouton de rafraîchissement du calendrier */}
         <button
-          className="ml-2 flex items-center gap-1 border border-[#ded9cb] bg-white text-[#1c3917] rounded-full px-3 py-2 font-medium shadow-[0_1px_4px_0_rgba(0,0,0,0.05)] hover:bg-[#e9f4e3] transition h-[38px] focus:outline-none"
+          className="flex items-center gap-1 border border-[#ded9cb] bg-white text-[#1c3917] rounded-full px-2 py-1 shadow hover:bg-[#e9f4e3] transition h-[30px] focus:outline-none"
           title="Rafraîchir le calendrier"
           onClick={onReloadCalendar}
         >
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
             <path
               d="M4 4v5h.582M20 20v-5h-.581"
               stroke="#1c3917"
@@ -341,16 +341,16 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
               strokeLinejoin="round"
             />
           </svg>
-          Rafraîchir
+          <span className="hidden sm:inline text-xs">Rafraîchir</span>
         </button>
       </div>
       {/* Bloc droit : filter + add event */}
-      <div className="flex items-center gap-3 relative">
+      <div className="flex flex-row items-center gap-1 flex-shrink-0">
         <button
-          className="flex items-center gap-2 border border-[#ded9cb] bg-white text-[#222] rounded-full px-5 py-2 font-medium shadow-[0_1px_4px_0_rgba(0,0,0,0.05)] hover:bg-[#f3f3f3] transition h-[38px] focus:outline-none"
+          className="flex items-center gap-1 border border-[#ded9cb] bg-white text-[#222] rounded-full px-2 py-1 shadow hover:bg-[#f3f3f3] transition h-[30px] focus:outline-none"
           onClick={() => setFilterOpen((v) => !v)}
         >
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
             <path
               d="M4 6h16M6 12h12M10 18h4"
               stroke="#222"
@@ -359,7 +359,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
               strokeLinejoin="round"
             />
           </svg>
-          Filter
+          <span className="hidden sm:inline text-xs">Filter</span>
         </button>
         {filterOpen && (
           <FilterPopover
@@ -373,10 +373,10 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
           />
         )}
         <button
-          className="flex items-center gap-2 bg-[#1c3917] text-white rounded-full px-6 py-2 font-medium shadow-[0_1px_4px_0_rgba(0,0,0,0.09)] hover:bg-[#20491a] transition h-[38px] focus:outline-none"
+          className="flex items-center gap-1 bg-[#1c3917] text-white rounded-full px-2 py-1 shadow hover:bg-[#20491a] transition h-[30px] focus:outline-none"
           onClick={() => setAddEventOpen(true)}
         >
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2" />
             <path
               d="M12 8v8M8 12h8"
@@ -385,7 +385,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
               strokeLinecap="round"
             />
           </svg>
-          Add Event
+          <span className="hidden sm:inline text-xs">Ajouter</span>
         </button>
         <AddEventModal
           open={addEventOpen}

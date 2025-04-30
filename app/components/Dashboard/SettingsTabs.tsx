@@ -113,14 +113,6 @@ export default function SettingsTabs({
     }
   }, [settingsSidebarOpen]);
 
-  useEffect(() => {
-    if (activeTab !== "calendar") {
-      setTimeout(() => {
-        window.scrollTo({ top: 0 });
-      }, 100);
-    }
-  }, [activeTab]);
-
   return (
     <div className="flex flex-col md:flex-row h-full bg-[#f6f8f2] relative">
       {/* Bouton paramètres mobile */}
