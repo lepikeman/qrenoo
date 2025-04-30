@@ -22,7 +22,36 @@ export default function RegisterPage() {
     const email = (form.elements.namedItem("email") as HTMLInputElement).value;
     const password = (form.elements.namedItem("password") as HTMLInputElement)
       .value;
+    const accessCode = (
+      form.elements.namedItem("accessCode") as HTMLInputElement
+    ).value;
 
+    // Vérifier la limite de testeurs
+    const testersResp = await fetch("/api/testers-count");
+    const { count } = await testersResp.json();
+    if (count >= 10) {
+      setError("Le nombre maximum de testeurs a été atteint.");
+      setLoading(false);
+      return;
+    }
+
+    // Vérifier le code d'accès
+    const { data: codeData, error: codeError } = await supabase
+      .from("access_codes")
+      .select("*")
+      .eq("email", email)
+      .eq("code", accessCode)
+      .eq("used", false)
+      .gte("expires_at", new Date().toISOString()) // <-- CORRECTION ICI
+      .single();
+
+    if (codeError || !codeData) {
+      setError("Code d'accès invalide ou expiré.");
+      setLoading(false);
+      return;
+    }
+
+    // Vérifier si l'email existe déjà
     const checkEmailResp = await fetch("/api/check-email-exists", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -35,29 +64,25 @@ export default function RegisterPage() {
       return;
     }
 
+    // Créer le compte
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: {
-          lastName,
-          firstName,
-        },
+        data: { lastName, firstName },
         emailRedirectTo: "https://qrenoo.com/login",
       },
     });
     if (error) {
-      if (
-        error.message.includes("already registered") ||
-        error.message.includes("Email already in use")
-      ) {
-        setError("Cet email est déjà utilisé.");
-      } else {
-        setError(error.message);
-      }
+      setError(error.message);
     } else {
       setSuccess("Inscription réussie, vérifiez vos emails.");
       form.reset();
+      // Marquer le code comme utilisé
+      await supabase
+        .from("access_codes")
+        .update({ used: true })
+        .eq("id", codeData.id);
     }
     setLoading(false);
   }
@@ -95,6 +120,13 @@ export default function RegisterPage() {
             name="password"
             type="password"
             placeholder="Mot de passe"
+            className="border px-3 py-2 rounded text-black"
+            required
+          />
+          <input
+            name="accessCode"
+            type="text"
+            placeholder="Code d'accès"
             className="border px-3 py-2 rounded text-black"
             required
           />

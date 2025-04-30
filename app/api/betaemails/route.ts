@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
-import { storeBetaEmail, readAllBetaEmails } from "./store";
+import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import crypto from "crypto";
+import { storeBetaEmail } from "./store";
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = "contact@qrenoo.com";
-const TO_EMAIL = "contact.qrenoo@gmail.com";
+
+function generateCode() {
+  return crypto.randomBytes(3).toString("hex").toUpperCase();
+}
 
 export async function POST(request: Request) {
   const { email } = await request.json();
@@ -14,41 +23,65 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
+
+  // Stocker l'email dans beta_emails
   await storeBetaEmail(email);
-  // Envoi immédiat de l'email à l'admin
-  try {
-    await resend.emails.send({
-      from: FROM_EMAIL,
-      to: TO_EMAIL,
-      subject: "Nouvelle inscription beta Qrenoo",
-      html: `
-        <div style="background:#f6f8fa;padding:32px 0;min-height:100vh;font-family:sans-serif;color:#1E3518;">
-          <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 2px 12px #e2d6b7;padding:32px 24px;">
-            <img src="https://qrenoo.com/assets/logo.png" alt="Qrenoo" style="width:64px;height:64px;object-fit:contain;margin-bottom:18px;display:block;margin-left:auto;margin-right:auto;" />
-            <h2 style="color:#0B5FFF;font-weight:700;margin-bottom:12px;">Nouvelle inscription à la beta Qrenoo</h2>
-            <p style="font-size:1.1rem;margin-bottom:16px;">Un utilisateur vient de s'inscrire à la beta :</p>
-            <div style="background:#f6e6c2;padding:12px 20px;border-radius:8px;display:inline-block;font-size:1.15rem;font-weight:600;letter-spacing:0.5px;">${email}</div>
-            <p style="margin-top:28px;color:#888;font-size:0.95rem;">Qrenoo - Gestion intelligente pour professionnels</p>
-          </div>
-        </div>
-      `,
-    });
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Erreur lors de l'envoi d'email Resend:", error, {
-      RESEND_API_KEY: !!process.env.RESEND_API_KEY,
-      FROM_EMAIL,
-      TO_EMAIL,
-    });
+
+  // Vérifier le nombre de testeurs déjà inscrits
+  const { count } = await supabase
+    .from("users")
+    .select("*", { count: "exact", head: true });
+  if (count !== null && count >= 10) {
     return NextResponse.json(
-      { error: (error as Error).message, details: error },
-      { status: 500 }
+      { error: "Le nombre maximum de testeurs est atteint." },
+      { status: 403 }
     );
   }
-}
 
-// Pour l'envoi manuel ou CRON
-export async function GET() {
-  const emails = await readAllBetaEmails();
-  return NextResponse.json({ emails });
+  // Générer et stocker le code
+  const code = generateCode();
+  const expiresAt = new Date(
+    Date.now() + 14 * 24 * 60 * 60 * 1000
+  ).toISOString();
+  await supabase
+    .from("access_codes")
+    .insert([{ email, code, expires_at: expiresAt, used: false }]);
+
+  // Envoyer le code par email
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: email,
+    subject: "Votre code d'accès à la beta Qrenoo",
+    html: `
+      <div style="font-family:sans-serif;max-width:480px;margin:auto;background:#f9f9f9;padding:24px;border-radius:12px;">
+        <h2 style="color:#2b6cb0;">Bienvenue sur Qrenoo 👋</h2>
+        <p>Merci de votre intérêt pour la beta !</p>
+        <p>Voici votre code d'accès valable <b>2 semaines</b> :</p>
+        <div style="font-size:2rem;font-weight:bold;letter-spacing:2px;background:#e2e8f0;padding:12px 0;border-radius:8px;text-align:center;color:#2b6cb0;">
+          ${code}
+        </div>
+        <p style="margin-top:24px;font-size:0.95rem;color:#555;">
+          Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
+        </p>
+      </div>
+    `,
+  });
+
+  // après l'envoi du code à l'utilisateur...
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: "contact.qrenoo@gmail.com", // notification à toi-même
+    subject: "Nouvelle inscription à la beta Qrenoo",
+    html: `
+      <div>
+        <p>Nouvelle inscription à la beta :</p>
+        <ul>
+          <li><b>Email :</b> ${email}</li>
+          <li><b>Date :</b> ${new Date().toLocaleString("fr-FR")}</li>
+        </ul>
+      </div>
+    `,
+  });
+
+  return NextResponse.json({ success: true });
 }
