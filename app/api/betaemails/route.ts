@@ -60,7 +60,9 @@ export async function POST(request: Request) {
     subject: "Votre code d'accès à la beta Qrenoo",
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:auto;background:#f9f9f9;padding:24px;border-radius:12px;">
-        <h2 style="color:#2b6cb0;">Bienvenue sur Qrenoo 👋</h2>
+      <div style="text-align:center;margin-bottom:24px;">
+      <img src="https://qrenoo.com/assets/logo.png" alt="Logo Qrenoo" style="width:100px;height:auto;margin-bottom:16px;">  
+      <h2 style="color:#2b6cb0;">Bienvenue sur Qrenoo 👋</h2>
         <p>Merci de votre intérêt pour la beta !</p>
         <p>Voici votre code d'accès valable <b>2 semaines</b> :</p>
         <div style="font-size:2rem;font-weight:bold;letter-spacing:2px;background:#e2e8f0;padding:12px 0;border-radius:8px;text-align:center;color:#2b6cb0;">

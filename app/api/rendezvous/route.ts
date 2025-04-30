@@ -56,7 +56,7 @@ export async function POST(request: Request) {
             <table width="100%" cellspacing="0" cellpadding="0">
               <tr>
                 <td style="background-color:#2F3E2E;color:#fff;padding:20px;border-radius:6px 6px 0 0;text-align:center;font-size:22px;font-weight:bold;">
-                  <img src="https://i.postimg.cc/52mKkyXk/IMG-1576.png" alt="Qrenoo" width="200" style="display:block;margin:0 auto 15px;">
+                  <img src="https://qrenoo.com/assets/logo.png" alt="Qrenoo" width="200" style="display:block;margin:0 auto 15px;">
                   Confirmation de votre rendez-vous
                 </td>
               </tr>
