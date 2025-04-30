@@ -1,4 +1,8 @@
-import { supabase } from "@/utils/supabase/client";
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Fonction pour récupérer le profil public d'un professionnel (version LinkedIn)
 export async function getProPublicProfile(id: string) {

@@ -1,4 +1,16 @@
 const nextConfig = {
+    compress: true,
+  experimental: {
+    optimizeCss: true,
+    legacyBrowsers: false,
+  },
+  productionBrowserSourceMaps: false,
+  reactStrictMode: true,
+  swcMinify: true,
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 86400,
+  },
   images: {
     remotePatterns: [
       {

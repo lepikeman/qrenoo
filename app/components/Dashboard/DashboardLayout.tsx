@@ -15,8 +15,7 @@
  *
  * Affiche la structure principale du dashboard avec sidebar et contenu central.
  */
-import React from "react";
-import Sidebar from "./Sidebar/Sidebar";
+import { lazy, Suspense } from "react";
 import type { Appointment } from "./DashboardPage";
 import type { Profile } from "@/app/types/Profile"; // Corrige l'import du type Profile
 
@@ -31,6 +30,9 @@ interface DashboardLayoutProps {
   onReloadCalendar?: () => void; // Ajoute la prop onReloadCalendar pour la Sidebar
 }
 
+const Sidebar = lazy(() => import("./Sidebar/Sidebar"));
+const CalendarGrid = lazy(() => import("./CalendarGrid"));
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   activeTab,
   setActiveTab,
@@ -40,17 +42,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   onReloadCalendar,
 }) => (
   <div className="flex h-screen bg-[#fdf3df]">
-    <Sidebar
-      active={activeTab}
-      setActiveTab={setActiveTab}
-      appointments={appointments} // Passage à Sidebar
-      proProfile={proProfile}
-      onReloadCalendar={onReloadCalendar}
-    />
+    <Suspense fallback={<div>Chargement...</div>}>
+      <Sidebar
+        active={activeTab}
+        setActiveTab={setActiveTab}
+        appointments={appointments} // Passage à Sidebar
+        proProfile={proProfile}
+        onReloadCalendar={onReloadCalendar}
+      />
+    </Suspense>
     <main className="flex-1 ml-[260px] h-screen px-0 pb-0 flex flex-col">
       <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
         {/* Le calendrier doit être passé ici comme children */}
-        <div className="flex-1 min-h-0 overflow-y-auto">{children}</div>
+        <Suspense fallback={<div>Chargement...</div>}>
+          <div className="flex-1 min-h-0 overflow-y-auto">{children}</div>
+        </Suspense>
       </div>
     </main>
   </div>
