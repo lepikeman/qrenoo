@@ -7,12 +7,16 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return; // Empêche double soumission
     setError("");
+    setLoading(true);
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       setError("Merci d'entrer un email valide.");
+      setLoading(false);
       return;
     }
     // Envoie l'email à l'API pour stockage
@@ -22,6 +26,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
+      setLoading(false); // Arrête le chargement dès la réponse reçue
       if (!res.ok) {
         const errorMessage = await res.text();
         console.error("API Error:", errorMessage);
@@ -31,6 +36,7 @@ export default function Home() {
       setSubmitted(true);
     } catch {
       setError("Erreur réseau. Veuillez réessayer.");
+      setLoading(false); // Arrête le chargement en cas d'erreur réseau
     }
   };
 
@@ -128,13 +134,15 @@ export default function Home() {
                 placeholder="Votre email"
                 className="border border-[#ded9cb] rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#b4c59b] bg-[#f6f8f2] text-[#29381a]"
                 required
+                disabled={loading}
               />
               {error && <div className="text-red-600 text-sm">{error}</div>}
               <button
                 type="submit"
                 className="bg-[#29381a] text-white font-semibold rounded-lg px-6 py-3 hover:brightness-105 transition"
+                disabled={loading}
               >
-                M&apos;inscrire à la beta
+                {loading ? "Envoi en cours..." : "M'inscrire à la beta"}
               </button>
             </form>
           )}

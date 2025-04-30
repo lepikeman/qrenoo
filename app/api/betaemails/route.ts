@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import crypto from "crypto";
-import { storeBetaEmail } from "./store";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,8 +23,10 @@ export async function POST(request: Request) {
     );
   }
 
-  // Stocker l'email dans beta_emails
-  await storeBetaEmail(email);
+  // Stocker l'email dans beta_emails seulement s'il n'existe pas déjà
+  await supabase
+    .from("beta_emails")
+    .upsert([{ email }], { onConflict: "email" });
 
   // Vérifier le nombre de testeurs déjà inscrits
   const { count } = await supabase
@@ -38,14 +39,19 @@ export async function POST(request: Request) {
     );
   }
 
-  // Générer et stocker le code
+  // Générer et stocker (ou mettre à jour) le code
   const code = generateCode();
   const expiresAt = new Date(
     Date.now() + 14 * 24 * 60 * 60 * 1000
   ).toISOString();
+
+  // Utilise upsert pour remplacer l'ancien code si l'email existe déjà
   await supabase
     .from("access_codes")
-    .insert([{ email, code, expires_at: expiresAt, used: false }]);
+    .upsert(
+      [{ email, code, expires_at: expiresAt, used: false }],
+      { onConflict: "email" }
+    );
 
   // Envoyer le code par email
   await resend.emails.send({
