@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
-import { storeBetaEmail, readAllBetaEmails} from "./store";
+import { storeBetaEmail, readAllBetaEmails } from "./store";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "contact@qrenoo.com";
+const FROM_EMAIL = "contact@qrenoo.com";
 const TO_EMAIL = "contact.qrenoo@gmail.com";
 
 export async function POST(request: Request) {
   const { email } = await request.json();
   if (!email || typeof email !== "string") {
-    return NextResponse.json({ error: "Email manquant ou invalide" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Email manquant ou invalide" },
+      { status: 400 }
+    );
   }
   await storeBetaEmail(email);
   // Envoi immédiat de l'email à l'admin
@@ -28,11 +31,14 @@ export async function POST(request: Request) {
             <p style="margin-top:28px;color:#888;font-size:0.95rem;">Qrenoo - Gestion intelligente pour professionnels</p>
           </div>
         </div>
-      `
+      `,
     });
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 }
+    );
   }
 }
 

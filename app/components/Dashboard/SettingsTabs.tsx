@@ -117,7 +117,7 @@ export default function SettingsTabs({
     <div className="flex flex-col md:flex-row h-full bg-[#f6f8f2] relative">
       {/* Bouton paramètres mobile */}
       {!sidebarOpen && !settingsSidebarOpen && (
-        <div className="md:hidden fixed top-4 left-16 z-50 flex flex-row gap-2">
+        <div className="md:hidden fixed top-4 right-4 z-50 flex flex-row gap-2">
           <button
             className="flex items-center gap-2 p-2 rounded-lg bg-white shadow"
             aria-label="Ouvrir les paramètres"
@@ -127,8 +127,8 @@ export default function SettingsTabs({
             <span className="font-semibold underline">Paramètres</span>
           </button>
         </div>
-      )}
-      {/* Overlay mobile */}
+            )}
+            {/* Overlay mobile */}
       {settingsSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden"

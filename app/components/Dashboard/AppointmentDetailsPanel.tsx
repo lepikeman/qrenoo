@@ -74,11 +74,12 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
       ? rdv.client_email
       : undefined;
 
-  const proNom: string = proProfile?.profession || "votre professionnel";
-  const proPhone: string = proProfile?.phone || "[Numéro à compléter]";
+  const proJob: string = proProfile?.profession || "votre professionnel";
+  const proNom: string = proProfile?.nom || "";
+  const proPhone: string = proProfile?.phone || "[Numéro non renseigné]";
   const proAdresse: string = proProfile?.adresse_postale
     ? `${proProfile.adresse_postale}, ${proProfile.code_postal || ""} ${proProfile.ville || ""}`
-    : "[Adresse à compléter]";
+    : "[Adresse non renseignée]";
   // Remplace l'accès à proProfile.adresse_mail par l'email du user (à récupérer via une API ou à passer en prop si besoin)
   const proEmail: string = userEmail; // Utilisation de la prop userEmail
 
@@ -166,26 +167,13 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
               <tr>
                 <td style="color: #2F3E2E; line-height: 1.6; padding-bottom: 15px;">
                   <p>Bonjour ${clientPrenom},</p>
-                  <p>Votre rendez-vous avec <strong>${proNom}</strong> a bien été confirmé.</p>
+                  <p>Votre rendez-vous avec <strong>${proNom}</strong> (${proJob}) a bien été confirmé.</p>
                   <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
                     <p style="font-size: 18px; margin: 0 0 10px 0; color: #2F3E2E;"><strong>Détails du rendez-vous</strong></p>
                     <p style="margin: 8px 0; font-size: 16px;">📅 <strong>Date :</strong> ${rdvDate}</p>
                     <p style="margin: 8px 0; font-size: 16px;">⏰ <strong>Heure :</strong> ${rdvHeure}</p>
                     <p style="margin: 8px 0; font-size: 16px;">📍 <strong>Lieu :</strong> ${proAdresse}</p>
                   </div>
-                </td>
-              </tr>
-            </table>
-            <!-- INFORMATIONS COMPLÉMENTAIRES -->
-            <table width="100%" cellspacing="0" cellpadding="0">
-              <tr>
-                <td style="color: #2F3E2E; line-height: 1.6; font-size: 14px; padding: 15px 0; border-top: 1px dashed #ccc;">
-                  <p><strong>Pour bien préparer votre rendez-vous :</strong></p>
-                  <ul style="margin: 10px 0; padding-left: 20px;">
-                    <li style="margin-bottom: 8px;">Vous recevrez un rappel par SMS/email 24h avant</li>
-                    <li style="margin-bottom: 8px;">Merci d'arriver 5 minutes à l'avance</li>
-                    <li style="margin-bottom: 8px;">Préparez [éléments à apporter si nécessaire]</li>
-                  </ul>
                 </td>
               </tr>
             </table>
@@ -294,7 +282,7 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
                 <td style="color: #2F3E2E; line-height: 1.6; padding-bottom: 15px;">
                 <div style="color: #2F3E2E;">
                   <p>Bonjour ${clientPrenom},</p>
-                  <p>Nous vous informons que votre rendez-vous initialement prévu avec <strong>${proNom}</strong> a été annulé.</p>
+                  <p>Nous vous informons que votre rendez-vous initialement prévu avec <strong>${proNom}</strong> (${proJob}) a été annulé.</p>
                   </div>
                   <div style="margin-top: 20px; text-align: center;">
                     <a href="https://www.qrenoo.com/pro/profile/${proProfile?.id || rdv.pro_id}" style="display: inline-block; padding: 12px 28px; background-color: #1c3917; color: #fff; border-radius: 6px; font-size: 16px; font-weight: bold; text-decoration: none; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04); margin-bottom: 8px;" target="_blank" rel="noopener noreferrer">Reprendre rendez-vous avec ce professionnel</a>

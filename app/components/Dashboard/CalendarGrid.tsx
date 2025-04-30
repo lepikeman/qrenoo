@@ -189,8 +189,8 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
         ref={scrollableRef}
       >
         {/* Colonne heures sticky à gauche */}
-        <div className="flex flex-col w-18 min-w-[60px] sticky left-0 z-20 bg-white border-r border-[#e6e2d6]">
-          {/* Header heures, même hauteur que le header des jours */}
+        <div className="flex flex-col w-18 min-w-[60px] sticky left-0 z-20 mt-[60px] bg-white border-r border-[#e6e2d6]">
+          {/* Carré vide pour aligner avec le header des jours */}
           <div className="h-[60px] border-b border-[#e6e2d6] bg-white" />
           {dynamicHours.map((h, i) => (
             <div

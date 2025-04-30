@@ -23,6 +23,8 @@ export default function Home() {
         body: JSON.stringify({ email }),
       });
       if (!res.ok) {
+        const errorMessage = await res.text();
+        console.error("API Error:", errorMessage);
         setError("Erreur lors de l'enregistrement. Veuillez réessayer.");
         return;
       }
