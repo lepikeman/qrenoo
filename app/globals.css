@@ -104,3 +104,17 @@ body {
   background: var(--calendar-pill-active);
   color: var(--calendar-pill-active-text);
 }
+
+/* Pour les mobiles */
+@media (max-width: 768px) {
+  .calendar-cell {
+    min-width: auto !important;
+    width: 95% !important;
+    margin: 0 auto;
+  }
+
+  .calendar-header {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

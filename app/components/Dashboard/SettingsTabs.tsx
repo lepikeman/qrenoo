@@ -1,6 +1,6 @@
 // Clean prod: tous les TODO et commentaires dev supprimés
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import SettingsPanel from "./SettingsPanel";
 import ChangePasswordModal from "./ChangePasswordModal";
 import OpenHoursModal from "./OpenHoursModal";
@@ -34,7 +34,11 @@ export default function SettingsTabs({
   onProfileChange,
   onSave,
   saving,
-}: SettingsTabsProps) {
+  sidebarOpen,
+}: SettingsTabsProps & {
+  sidebarOpen?: boolean;
+  setSidebarOpen?: (open: boolean) => void;
+}) {
   const [activeTab, setActiveTab] = useState("profile");
   const [editMode, setEditMode] = useState(false);
   const [showPwdModal, setShowPwdModal] = useState(false); // Peut être utilisé dans le futur
@@ -43,6 +47,7 @@ export default function SettingsTabs({
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{ phone?: string }>({});
+  const [settingsSidebarOpen, setSettingsSidebarOpen] = useState(false);
 
   // --- Synchronise le state local avec toutes les props du profil parent à chaque changement ---
   useEffect(() => {
@@ -98,36 +103,105 @@ export default function SettingsTabs({
     });
   }, []);
 
+  // Scroll automatique quand la sidebar paramètres s'ouvre
+  useEffect(() => {
+    if (settingsSidebarOpen) {
+      // Décale le scroll pour laisser le temps au DOM de se mettre à jour
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100); // 100ms suffit généralement, ajuste si besoin
+    }
+  }, [settingsSidebarOpen]);
+
+  useEffect(() => {
+    if (activeTab !== "calendar") {
+      setTimeout(() => {
+        window.scrollTo({ top: 0 });
+      }, 100);
+    }
+  }, [activeTab]);
+
   return (
-    <div className="flex h-full bg-[#f6f8f2]">
-      {/* Sidebar onglets */}
-      <div className="flex flex-col py-10 px-6 min-w-[220px] bg-[#f6f8f2] border-r border-[#efe9db]">
-        <h2 className="text-2xl font-bold text-[#29381a] mb-8">Paramètres</h2>
-        <div className="flex flex-col gap-2 mb-8">
-          {/* Bloc photo de profil */}
-          <div className="flex flex-col items-center mb-6">
-            <ProfileImageUpload
-              proId={String(proProfile.id)}
-              imageUrl={proProfile.photoUrl ?? ""}
-              onUpload={(url) => onProfileChange("photoUrl", url)}
-              width={150}
-              height={150}
-            />
-          </div>
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              className={`text-left px-4 py-2 rounded-lg font-semibold transition border-l-4 ${activeTab === tab.key ? "border-[#29381a] bg-white text-[#29381a]" : "border-transparent text-[#888] bg-transparent hover:bg-[#ede9e0]"}`}
-              onClick={() => handleTabSwitch(tab)}
-            >
-              {tab.label}
-            </button>
-          ))}
+    <div className="flex flex-col md:flex-row h-full bg-[#f6f8f2] relative">
+      {/* Bouton paramètres mobile */}
+      {!sidebarOpen && !settingsSidebarOpen && (
+        <div className="md:hidden fixed top-4 left-16 z-50 flex flex-row gap-2">
+          <button
+            className="flex items-center gap-2 p-2 rounded-lg bg-white shadow"
+            aria-label="Ouvrir les paramètres"
+            onClick={() => setSettingsSidebarOpen(true)}
+          >
+            <span className="text-lg">&#8594;</span>
+            <span className="font-semibold underline">Paramètres</span>
+          </button>
         </div>
-      </div>
+      )}
+      {/* Overlay mobile */}
+      {settingsSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden"
+          onClick={() => setSettingsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar onglets */}
+      <nav
+        className={`
+          fixed top-0 left-0 h-full w-64 bg-[#f6f8f2] border-r border-[#efe9db] z-50 transform transition-transform duration-300
+          ${settingsSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:relative md:translate-x-0 md:w-[220px] md:min-w-[220px] md:border-b-0 md:border-r
+        `}
+        aria-label="Menu des paramètres"
+        tabIndex={0}
+      >
+        <div className="flex flex-col py-6 px-4 h-full">
+          <h2 className="text-xl md:text-2xl font-bold text-[#29381a] mb-6 md:mb-8">
+            Paramètres
+          </h2>
+          <div className="flex flex-col gap-2 mb-6 md:mb-8">
+            <div className="flex flex-col items-center mb-4 md:mb-6">
+              <ProfileImageUpload
+                proId={String(proProfile.id)}
+                imageUrl={proProfile.photoUrl ?? ""}
+                onUpload={(url) => onProfileChange("photoUrl", url)}
+                width={100}
+                height={100}
+              />
+            </div>
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                className={`text-left px-3 py-2 rounded-lg font-semibold transition border-l-4 focus:outline-none focus:ring-2 focus:ring-[#29381a] ${
+                  activeTab === tab.key
+                    ? "border-[#29381a] bg-white text-[#29381a]"
+                    : "border-transparent text-[#888] bg-transparent hover:bg-[#ede9e0]"
+                }`}
+                onClick={() => {
+                  handleTabSwitch(tab);
+                  setSettingsSidebarOpen(false);
+                }}
+                tabIndex={0}
+                aria-current={activeTab === tab.key ? "page" : undefined}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
       {/* Main content */}
-      <div className="flex-1 overflow-hidden p-10 flex flex-col items-center">
-        <div className="w-full">
+      <main
+        className={`
+          flex-1 flex flex-col items-center transition-all duration-300
+          ${settingsSidebarOpen ? "pointer-events-none blur-sm select-none" : ""}
+          p-4 pt-20 md:pt-10 md:p-10
+        `}
+        tabIndex={0}
+        aria-label="Contenu principal"
+      >
+        <div className="w-full max-w-2xl">
           {activeTab === "profile" && (
             <SettingsPanel
               proProfile={proProfile}
@@ -137,8 +211,8 @@ export default function SettingsTabs({
             />
           )}
           {activeTab === "account" && (
-            <div className="w-full bg-white rounded-xl shadow-xl p-8 border border-[#ded9cb] grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-              <h1 className="text-3xl font-extrabold text-[#29381a] col-span-1 md:col-span-2 mb-6">
+            <div className="w-full bg-white rounded-lg shadow-md p-4 md:p-8 border border-[#ded9cb] grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[#29381a] col-span-1 md:col-span-2 mb-4 md:mb-6">
                 Informations de connexion
               </h1>
               <div className="mb-4">
@@ -147,7 +221,7 @@ export default function SettingsTabs({
                 </label>
                 <input
                   type="email"
-                  className="dashboard-profile-input text-lg py-3 px-4 bg-gray-100"
+                  className="dashboard-profile-input text-base md:text-lg py-2 px-3 md:py-3 md:px-4 bg-gray-100"
                   value={userEmail}
                   disabled
                 />
@@ -158,7 +232,7 @@ export default function SettingsTabs({
                 </label>
                 <input
                   type="text"
-                  className="dashboard-profile-input text-lg py-3 px-4"
+                  className="dashboard-profile-input text-base md:text-lg py-2 px-3 md:py-3 md:px-4"
                   value={localProfile.nom}
                   disabled={!editMode}
                   onChange={(e) =>
@@ -173,7 +247,9 @@ export default function SettingsTabs({
                 </label>
                 <input
                   type="tel"
-                  className={`dashboard-profile-input text-lg py-3 px-4 ${fieldErrors.phone ? "border-red-500" : ""}`}
+                  className={`dashboard-profile-input text-base md:text-lg py-2 px-3 md:py-3 md:px-4 ${
+                    fieldErrors.phone ? "border-red-500" : ""
+                  }`}
                   value={localProfile.phone}
                   disabled={!editMode}
                   onChange={(e) =>
@@ -187,10 +263,10 @@ export default function SettingsTabs({
                   </div>
                 )}
               </div>
-              <div className="col-span-1 md:col-span-2 flex flex-col md:flex-row gap-2 mt-8 md:justify-start justify-center">
+              <div className="col-span-1 md:col-span-2 flex flex-col md:flex-row gap-2 mt-6 md:mt-8">
                 {!editMode ? (
                   <button
-                    className="dashboard-profile-btn bg-[#29381a] text-white font-semibold rounded-lg px-6 py-2 hover:brightness-105 transition w-full md:w-auto"
+                    className="dashboard-profile-btn bg-[#29381a] text-white font-semibold rounded-lg px-4 py-2 md:px-6 md:py-2 hover:brightness-105 transition w-full md:w-auto"
                     onClick={() => setEditMode(true)}
                   >
                     Modifier les informations
@@ -198,7 +274,7 @@ export default function SettingsTabs({
                 ) : (
                   <>
                     <button
-                      className="dashboard-profile-btn bg-gray-200 text-gray-700 font-semibold rounded-lg px-6 py-2 w-full md:w-auto"
+                      className="dashboard-profile-btn bg-gray-200 text-gray-700 font-semibold rounded-lg px-4 py-2 md:px-6 md:py-2 w-full md:w-auto"
                       onClick={() => {
                         setEditMode(false);
                         setFieldErrors({});
@@ -219,7 +295,7 @@ export default function SettingsTabs({
                   </>
                 )}
                 <button
-                  className="bg-blue-600 text-white font-semibold rounded-lg px-6 py-2 w-full md:w-auto hover:brightness-105 transition"
+                  className="bg-blue-600 text-white font-semibold rounded-lg px-4 py-2 md:px-6 md:py-2 w-full md:w-auto hover:brightness-105 transition"
                   onClick={() => setShowPwdModal(true)}
                 >
                   Modifier le mot de passe
@@ -243,7 +319,7 @@ export default function SettingsTabs({
             </div>
           )}
           {activeTab === "hours" && (
-            <div className="flex flex-col items-center justify-center gap-6 w-full">
+            <div className="flex flex-col items-center justify-center gap-4 md:gap-6 w-full">
               <OpenHoursModal
                 profileForm={proProfile}
                 setProfileForm={(val) =>
@@ -261,7 +337,7 @@ export default function SettingsTabs({
             </div>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
