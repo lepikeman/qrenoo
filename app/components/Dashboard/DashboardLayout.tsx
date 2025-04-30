@@ -31,7 +31,6 @@ interface DashboardLayoutProps {
 }
 
 const Sidebar = lazy(() => import("./Sidebar/Sidebar"));
-const CalendarGrid = lazy(() => import("./CalendarGrid"));
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   activeTab,
