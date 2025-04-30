@@ -35,8 +35,13 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error("Erreur lors de l'envoi d'email Resend:", error, {
+      RESEND_API_KEY: !!process.env.RESEND_API_KEY,
+      FROM_EMAIL,
+      TO_EMAIL,
+    });
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: (error as Error).message, details: error },
       { status: 500 }
     );
   }
