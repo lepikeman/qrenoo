@@ -1,22 +1,24 @@
 // Simple file-based storage for beta emails (for demo/dev only)
-import { promises as fs } from 'fs';
-import path from 'path';
+import { createClient } from "@supabase/supabase-js";
 
-const EMAILS_FILE = path.join(process.cwd(), 'beta-emails.txt');
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+);
 
 export async function storeBetaEmail(email: string) {
-  await fs.appendFile(EMAILS_FILE, email + '\n', 'utf-8');
+  await supabase.from("beta_emails").insert({ email });
 }
 
-export async function readAllBetaEmails(): Promise<string[]> {
-  try {
-    const content = await fs.readFile(EMAILS_FILE, 'utf-8');
-    return content.split('\n').filter(Boolean);
-  } catch {
-    return [];
-  }
+interface BetaEmailRow {
+  email: string;
+}
+
+export async function readAllBetaEmails() {
+  const { data } = await supabase.from("beta_emails").select("email");
+  return data?.map((row: BetaEmailRow) => row.email) || [];
 }
 
 export async function clearBetaEmails() {
-  await fs.writeFile(EMAILS_FILE, '', 'utf-8');
+  await supabase.from("beta_emails").delete().neq("id", 0);
 }
