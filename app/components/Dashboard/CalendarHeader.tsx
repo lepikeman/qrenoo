@@ -292,17 +292,23 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
 
   return (
     <header
-      className="calendar-header sticky top-0 z-30 flex flex-row items-center justify-between w-full bg-[#FDF3DF] border-b border-[#ded9cb] px-1 py-1 md:px-6 md:py-3 min-h-[40px] h-auto md:h-[56px] shadow-sm gap-1"
-      style={{ minHeight: 40 }}
+      className="calendar-header sticky top-0 z-30 flex flex-row items-center justify-between w-full bg-[#FDF3DF] border-b border-[#ded9cb] px-2 py-0 min-h-[30px] h-[30px] shadow-sm gap-1"
+      style={{ minHeight: 30, height: 30 }}
     >
-      {/* Bloc gauche : date picker */}
+      {/* Bloc gauche : menu + date picker */}
+      <div className="flex flex-row items-center gap-1 flex-shrink-0 w-[120px]">
+        {/* Ici tu peux laisser le bouton menu si besoin */}
+      </div>
+      {/* Bloc central vide pour pousser les boutons à droite */}
+      <div className="flex-1" />
+      {/* Bloc droit : tous les boutons */}
       <div className="flex flex-row items-center gap-1 flex-shrink-0">
         <button
-          className="bg-white border border-[#ded9cb] rounded-full px-2 py-1 text-[14px] font-medium shadow flex items-center gap-1 min-w-[80px] h-[30px] focus:outline-none focus:ring-2 focus:ring-[#ded9cb] w-auto"
+          className="bg-white border border-[#ded9cb] rounded-full px-2 py-0 text-[13px] font-medium shadow flex items-center gap-1 min-w-[70px] h-[35px] focus:outline-none focus:ring-2 focus:ring-[#ded9cb] w-auto"
           onClick={() => setCalendarOpen((v) => !v)}
         >
           {format(selectedDate, "dd MMM yy", { locale: fr })}
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
             <path
               d="M6 9l6 6 6-6"
               stroke="#444"
@@ -319,13 +325,12 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             onClose={() => setCalendarOpen(false)}
           />
         )}
-        {/* Bouton de rafraîchissement du calendrier */}
         <button
-          className="flex items-center gap-1 border border-[#ded9cb] bg-white text-[#1c3917] rounded-full px-2 py-1 shadow hover:bg-[#e9f4e3] transition h-[30px] focus:outline-none"
+          className="flex items-center gap-1 border border-[#ded9cb] bg-white text-[#1c3917] rounded-full px-2 py-0 shadow hover:bg-[#e9f4e3] transition h-[35px] focus:outline-none"
           title="Rafraîchir le calendrier"
           onClick={onReloadCalendar}
         >
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
             <path
               d="M4 4v5h.582M20 20v-5h-.581"
               stroke="#1c3917"
@@ -343,14 +348,11 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
           </svg>
           <span className="hidden sm:inline text-xs">Rafraîchir</span>
         </button>
-      </div>
-      {/* Bloc droit : filter + add event */}
-      <div className="flex flex-row items-center gap-1 flex-shrink-0">
         <button
-          className="flex items-center gap-1 border border-[#ded9cb] bg-white text-[#222] rounded-full px-2 py-1 shadow hover:bg-[#f3f3f3] transition h-[30px] focus:outline-none"
+          className="flex items-center gap-1 border border-[#ded9cb] bg-white text-[#222] rounded-full px-2 py-0 shadow hover:bg-[#f3f3f3] transition h-[35px] focus:outline-none"
           onClick={() => setFilterOpen((v) => !v)}
         >
-          <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
             <path
               d="M4 6h16M6 12h12M10 18h4"
               stroke="#222"
@@ -373,10 +375,10 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
           />
         )}
         <button
-          className="flex items-center gap-1 bg-[#1c3917] text-white rounded-full px-2 py-1 shadow hover:bg-[#20491a] transition h-[30px] focus:outline-none"
+          className="flex items-center gap-1 bg-[#1c3917] text-white rounded-full px-2 py-0 shadow hover:bg-[#20491a] transition h-[35px] focus:outline-none"
           onClick={() => setAddEventOpen(true)}
         >
-          <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2" />
             <path
               d="M12 8v8M8 12h8"
