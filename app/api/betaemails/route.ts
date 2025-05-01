@@ -73,7 +73,7 @@ export async function POST(request: Request) {
           Utilisez ce code pour vous inscrire sur notre site et découvrir toutes les fonctionnalités de Qrenoo.
         </p>
         <p style="margin-top:24px;font-size:0.95rem;color:#555;">
-        <a href="http://localhost:3001/register?code=${code}" target="_blank" style="display:inline-block;margin-top:24px;padding:12px 24px;background:#2b6cb0;color:white;border-radius:8px;text-decoration:none;font-weight:bold;">
+        <a href="https://qrenoo.com/register?code=${code}" target="_blank" style="display:inline-block;margin-top:24px;padding:12px 24px;background:#2b6cb0;color:white;border-radius:8px;text-decoration:none;font-weight:bold;">
           Cliquez sur le bouton ci-dessous pour vous inscrire :
         </p>
         <p style="margin-top:24px;font-size:0.95rem;color:#555;">
