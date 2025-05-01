@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+
 import crypto from "crypto";
 
 const supabase = createClient(
@@ -68,6 +69,18 @@ export async function POST(request: Request) {
         <div style="font-size:2rem;font-weight:bold;letter-spacing:2px;background:#e2e8f0;padding:12px 0;border-radius:8px;text-align:center;color:#2b6cb0;">
           ${code}
         </div>
+        <p style="margin-top:24px;font-size:0.95rem;color:#555;">
+          Utilisez ce code pour vous inscrire sur notre site et découvrir toutes les fonctionnalités de Qrenoo.
+        </p>
+        <p style="margin-top:24px;font-size:0.95rem;color:#555;">
+        <a href="http://localhost:3001/register?code=${code}" target="_blank" style="display:inline-block;margin-top:24px;padding:12px 24px;background:#2b6cb0;color:white;border-radius:8px;text-decoration:none;font-weight:bold;">
+          Cliquez sur le bouton ci-dessous pour vous inscrire :
+        </p>
+        <p style="margin-top:24px;font-size:0.95rem;color:#555;">
+          Ce code est valable jusqu'au <b>${new Date(
+            expiresAt
+          ).toLocaleDateString("fr-FR")}</b>.
+        </p>
         <p style="margin-top:24px;font-size:0.95rem;color:#555;">
           Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
         </p>

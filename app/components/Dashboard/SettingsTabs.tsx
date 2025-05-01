@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import SettingsPanel from "./SettingsPanel";
-import ChangePasswordModal from "./ChangePasswordModal";
 import OpenHoursModal from "./OpenHoursModal";
 import ProfileImageUpload from "@/app/components/ProfileImageUpload";
 import type { Profile } from "@/app/types/Profile";
@@ -41,7 +40,6 @@ export default function SettingsTabs({
 }) {
   const [activeTab, setActiveTab] = useState("profile");
   const [editMode, setEditMode] = useState(false);
-  const [showPwdModal, setShowPwdModal] = useState(false); // Peut être utilisé dans le futur
   const [localProfile, setLocalProfile] = useState<Profile>({ ...proProfile });
 
   const [successMsg, setSuccessMsg] = useState("");
@@ -127,8 +125,8 @@ export default function SettingsTabs({
             <span className="font-semibold underline">Paramètres</span>
           </button>
         </div>
-            )}
-            {/* Overlay mobile */}
+      )}
+      {/* Overlay mobile */}
       {settingsSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden"
@@ -152,13 +150,14 @@ export default function SettingsTabs({
             Paramètres
           </h2>
           <div className="flex flex-col gap-2 mb-6 md:mb-8">
-            <div className="flex flex-col items-center mb-4 md:mb-6">
+            <div className="flex flex-col items-center mb-4 md:mb-6 ">
               <ProfileImageUpload
                 proId={String(proProfile.id)}
                 imageUrl={proProfile.photoUrl ?? ""}
                 onUpload={(url) => onProfileChange("photoUrl", url)}
                 width={100}
                 height={100}
+                className="rounded-full border-2 border-[#29381a] shadow-md w-[100px] h-[100px]"
               />
             </div>
             {tabs.map((tab) => (
@@ -288,9 +287,31 @@ export default function SettingsTabs({
                 )}
                 <button
                   className="bg-blue-600 text-white font-semibold rounded-lg px-4 py-2 md:px-6 md:py-2 w-full md:w-auto hover:brightness-105 transition"
-                  onClick={() => setShowPwdModal(true)}
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    setErrorMsg("");
+                    setSuccessMsg("");
+                    if (!userEmail) {
+                      setErrorMsg("Impossible de récupérer votre email.");
+                      return;
+                    }
+                    // Debug: log email and redirect URL
+                    console.log("Reset password for:", userEmail, "redirectTo:", `${window.location.origin}/reset-password`);
+                    const { error, data } = await supabase.auth.resetPasswordForEmail(userEmail, {
+                      redirectTo: `${window.location.origin}/reset-password`,
+                    });
+                    if (error) {
+                      setErrorMsg("Erreur lors de l'envoi du mail : " + error.message);
+                    } else {
+                      setSuccessMsg(
+                        "Un email de réinitialisation de mot de passe a été envoyé à votre adresse. Vérifiez aussi vos spams. (data: " +
+                        JSON.stringify(data) +
+                        ")"
+                      );
+                    }
+                  }}
                 >
-                  Modifier le mot de passe
+                  Réinitialiser le mot de passe
                 </button>
               </div>
               {successMsg && (
@@ -303,11 +324,6 @@ export default function SettingsTabs({
                   {errorMsg}
                 </div>
               )}
-              <ChangePasswordModal
-                open={showPwdModal}
-                onClose={() => setShowPwdModal(false)}
-                email={userEmail}
-              />
             </div>
           )}
           {activeTab === "hours" && (

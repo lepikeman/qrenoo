@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
 
 interface ProfileImageUploadProps {
+  className?: string;
   proId: string;
   imageUrl?: string;
   onUpload?: (url: string) => void;
@@ -10,6 +11,7 @@ interface ProfileImageUploadProps {
 }
 
 const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
+  className,
   proId,
   imageUrl,
   onUpload,
@@ -72,7 +74,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
   };
 
   return (
-    <div>
+    <div className={`flex flex-col items-center justify-center ${className}`}>
       {warning && <div>{warning}</div>}
       <div
         className="relative group cursor-pointer"
@@ -90,6 +92,10 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                 objectFit: "cover",
                 borderRadius: "50%",
                 alignItems: "center",
+                aspectRatio: "1 / 1", // Ajout pour forcer le ratio carré
+                width: `${width}px`,
+                height: `${height}px`,
+                display: "block",
               }}
             />
             {/* Overlay visible uniquement au hover */}
