@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
+import { Price } from "../price/page";
+
 
 export default function NavBar() {
   const router = useRouter();
@@ -57,6 +59,9 @@ export default function NavBar() {
         <div
           className={`flex-col md:flex-row md:flex items-center gap-6 md:gap-8 font-semibold text-[#29381a] text-base absolute md:static right-0 top-16 bg-[#f6f8f2] md:bg-transparent shadow-md md:shadow-none rounded-b-xl md:rounded-none transition-all duration-200 w-full md:w-auto ${menuOpen ? "flex" : "hidden md:flex"}`}
         >
+          <Link href="/price" className="hover:text-[#405c26] transition-colors">
+            Tarifs
+          </Link>
           {user ? (
             <>
               <Link
