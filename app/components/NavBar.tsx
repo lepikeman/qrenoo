@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { Price } from "../price/page";
 
 
 export default function NavBar() {
