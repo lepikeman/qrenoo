@@ -5,6 +5,7 @@ import { supabase } from "@/utils/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import type { Profile } from "@/app/types/Profile";
 import DashboardPage from "@/app/components/Dashboard/DashboardPage";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -40,6 +41,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [creatingProfile, setCreatingProfile] = useState(false);
   const [errorProfile, setErrorProfile] = useState<string | null>(null);
+  const router = useRouter();
 
   const createProfileIfMissing = useCallback(async (userId: string) => {
     setCreatingProfile(true);
@@ -216,6 +218,12 @@ export default function Dashboard() {
       });
     }
   }, [session, profile, creatingProfile, createProfileIfMissing]);
+
+  useEffect(() => {
+    if (!loading && !session) {
+      router.replace("/login?redirectTo=/pro/dashboard");
+    }
+  }, [loading, session, router]);
 
   const handleUpdateProfile = async (profileFormToSave = profileForm) => {
     setProfileLoading(true);

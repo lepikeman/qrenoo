@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-04
 // Mappe tes planId à tes priceId Stripe ici
 const PLAN_TO_PRICE: Record<string, string> = {
     "00000000-0000-0000-0000-000000000002": "price_1RKgtP2cxaGZNwgt4uaEPH0l",
-    "00000000-0000-0000-0000-000000000001": "price_1RKgtt2cxaGZNwgtesctfbp0",
+    "00000000-0000-0000-0000-000000000003": "price_1RKgtt2cxaGZNwgtesctfbp0",
 };
 
 export async function POST(req: NextRequest) {

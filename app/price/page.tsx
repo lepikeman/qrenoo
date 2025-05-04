@@ -1,8 +1,8 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { supabase } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 type Plan = {
   id: string;
@@ -28,8 +28,10 @@ export default function Price() {
   const [features, setFeatures] = useState<Feature[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAllFeatures, setShowAllFeatures] = useState<{ [planId: string]: boolean }>({});
-  const router = useRouter();
   const [loadingCheckout, setLoadingCheckout] = useState<string | null>(null);
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     async function fetchData() {
@@ -65,10 +67,33 @@ export default function Price() {
       setLoading(false);
     }
     fetchData();
-  }, []);
+  }, [supabase]);
+
+  useEffect(() => {
+    const subscribePlanId = searchParams.get("subscribe");
+    if (!subscribePlanId) return;
+
+    // Vérifie si l'utilisateur est connecté avant de lancer handleSubscribe
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        handleSubscribe(subscribePlanId);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   async function handleSubscribe(planId: string) {
     setLoadingCheckout(planId);
+
+    // Vérifie si l'utilisateur est connecté
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      // Redirige vers /login avec redirectTo vers cette page + planId
+      router.push(`/login?redirectTo=/price?subscribe=${planId}`);
+      setLoadingCheckout(null);
+      return;
+    }
+
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
@@ -82,7 +107,7 @@ export default function Price() {
         alert("Erreur lors de la création de la session de paiement.");
       }
     } catch (e) {
-      alert("Erreur lors de la redirection vers Stripe.");
+      alert("Erreur lors de la redirection vers Stripe: " + e);
     } finally {
       setLoadingCheckout(null);
     }
