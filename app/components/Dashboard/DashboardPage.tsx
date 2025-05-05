@@ -12,7 +12,7 @@
  *
  * Affiche le calendrier, les rendez-vous, les modales et le layout global du dashboard.
  */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import type { Profile } from "@/app/types/Profile";
 import { useMediaQuery } from "react-responsive";
 import CalendarHeader from "./CalendarHeader";
@@ -25,6 +25,7 @@ import Overview from "./Overview";
 
 // Types
 export interface Appointment {
+  duree: string;
   id: string;
   client_nom: string;
   client_email?: string;
@@ -45,16 +46,42 @@ interface DashboardPageProps {
   proId: string;
 }
 
+// Hook personnalisé pour la gestion des rendez-vous
+function useAppointments(profileForm: Profile, days: string[]) {
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchAppointments() {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          days: days.join(","),
+          pro_id: profileForm.id || "",
+        });
+        const res = await fetch(`/api/rendezvous?${params.toString()}`);
+        const fetched: Appointment[] = res.ok ? await res.json() : [];
+        if (isMounted) setAppointments(fetched);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    fetchAppointments();
+    return () => {
+      isMounted = false;
+    };
+  }, [profileForm.id, days]);
+
+  return { appointments, loading };
+}
+
 const DashboardPage: React.FC<DashboardPageProps> = ({
   profileForm,
   setProfileForm,
   profileLoading: initialProfileLoading,
 }) => {
-  // ... état existant ...
   const [selectedRdv, setSelectedRdv] = useState<Appointment | null>(null);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(false);
-  const appointmentsCache = useRef<Record<string, Appointment[]>>({}); // cache par jour clé
 
   const [selectedDate, setSelectedDate] = useState(new Date()); // <<--- AJOUT
 
@@ -93,13 +120,20 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
   }
 
   // Correction : calculer les jours de la semaine à partir de la date sélectionnée
-  const days = getNextDays(selectedDate, 7); // 7 jours à partir de la date sélectionnée
-  const todayStr = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, "0")}-${currentDate.getDate().toString().padStart(2, "0")}`;
+  const days = React.useMemo(
+    () => getNextDays(selectedDate, 7),
+    [selectedDate]
+  ); // 7 jours à partir de la date sélectionnée
+  const todayStr = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}-${currentDate.getDate().toString().padStart(2, "0")}`;
 
-  useEffect(() => {
-    fetchAppointments(days);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [days.join(",")]);
+  const [calendarReloadKey, setCalendarReloadKey] = useState(0);
+  const { appointments, loading } = useAppointments(profileForm, days);
+
+  function handleReloadCalendar() {
+    setCalendarReloadKey((k) => k + 1);
+  }
 
   // Liste des heures à afficher
   const [interval, setInterval] = useState(() => {
@@ -124,44 +158,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
     profileForm.ouverture,
     profileForm.fermeture,
   ]);
-
-  const fetchAppointments = async (days: string[]) => {
-    setLoading(true);
-    // Filtrage côté API : on ajoute le pro_id dans la requête (toujours string, jamais undefined)
-    const params = new URLSearchParams({
-      days: days.join(","),
-      pro_id: profileForm.id || "",
-    });
-    const res = await fetch(`/api/rendezvous?${params.toString()}`);
-    let fetched: Appointment[] = [];
-    if (res.ok) {
-      fetched = await res.json();
-    } else {
-      fetched = [];
-    }
-    // Remplacement direct pour chaque jour (pas d'accumulation)
-    for (const day of days) {
-      appointmentsCache.current[day] = fetched.filter(
-        (rdv) => rdv.date_jour === day
-      );
-    }
-    // Compose la liste finale à afficher (cache unique, pas de doublons)
-    const allAppointments = days.flatMap(
-      (d) => appointmentsCache.current[d] || []
-    );
-    setAppointments(allAppointments);
-    setLoading(false);
-  };
-
-  // Ajout pour rafraîchir le calendrier sans reload page
-  const [calendarReloadKey, setCalendarReloadKey] = useState(0);
-  function handleReloadCalendar() {
-    // Vide le cache et relance le fetch
-    appointmentsCache.current = {};
-    setCalendarReloadKey((k) => k + 1);
-    // On relance le fetch sur le même range de jours
-    fetchAppointments(days);
-  }
 
   // Filtrage des rendez-vous selon la vue (jour/semaine) et la date sélectionnée
   const filteredAppointments: Appointment[] = appointments.filter((rdv) => {

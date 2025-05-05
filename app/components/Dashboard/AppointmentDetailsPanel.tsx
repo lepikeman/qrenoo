@@ -32,25 +32,16 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
   useEffect(() => {
     async function fetchPro() {
       if (!rdv || !rdv.pro_id) {
-        console.log(
-          "[AppointmentDetailsPanel] Pas de rdv ou de pro_id pour charger le profil pro",
-          rdv
-        );
         return;
       }
       setLoadingPro(true);
       setErrorPro(null);
       try {
-        console.log(
-          `[AppointmentDetailsPanel] Fetching /api/proinfo?pro_id=${rdv.pro_id}`
-        );
         const res = await fetch(`/api/proinfo?pro_id=${rdv.pro_id}`);
         if (!res.ok) throw new Error("Erreur lors du chargement du profil pro");
         const data = await res.json();
-        console.log("[AppointmentDetailsPanel] Profil pro reçu:", data);
         setProProfile(data);
       } catch (e: unknown) {
-        console.error("[AppointmentDetailsPanel] Erreur fetch profil pro:", e);
         setErrorPro((e as Error).message || "Erreur inconnue");
       } finally {
         setLoadingPro(false);
@@ -80,7 +71,6 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
   const proAdresse: string = proProfile?.adresse_postale
     ? `${proProfile.adresse_postale}, ${proProfile.code_postal || ""} ${proProfile.ville || ""}`
     : "[Adresse non renseignée]";
-  // Remplace l'accès à proProfile.adresse_mail par l'email du user (à récupérer via une API ou à passer en prop si besoin)
   const proEmail: string = userEmail; // Utilisation de la prop userEmail
 
   const rdvDate: string = d.toLocaleDateString();
@@ -132,19 +122,11 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
           className="flex-1 bg-[#1c3917] text-white rounded-full py-2 text-[15px] font-semibold shadow-sm hover:brightness-110 transition"
           onClick={async () => {
             if (!proProfile) {
-              console.warn(
-                "[AppointmentDetailsPanel] Tentative d'envoi mail sans profil pro chargé",
-                proProfile
-              );
               alert(
                 "Informations du professionnel non chargées. Veuillez réessayer."
               );
               return;
             }
-            console.log(
-              "[AppointmentDetailsPanel] Envoi mail avec proProfile:",
-              proProfile
-            );
             const email = clientEmail;
             if (email) {
               const subject = "Confirmation de votre rendez-vous";
@@ -194,11 +176,6 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
     </td>
   </tr>
 </table>`;
-              console.log("[AppointmentDetailsPanel] Appel API /api/sendmail", {
-                to: email,
-                subject,
-                body,
-              });
               try {
                 const res = await fetch("/api/sendmail", {
                   method: "POST",
@@ -206,10 +183,6 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
                   body: JSON.stringify({ to: email, subject, body }),
                 });
                 const result = await res.json();
-                console.log(
-                  "[AppointmentDetailsPanel] Résultat API /api/sendmail:",
-                  result
-                );
                 if (res.ok) {
                   alert("Email de confirmation envoyé avec succès !");
                 } else {
@@ -218,11 +191,7 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
                   );
                 }
               } catch (e) {
-                console.error(
-                  "[AppointmentDetailsPanel] Erreur réseau lors de l'envoi:",
-                  e
-                );
-                alert("Erreur réseau lors de l'envoi");
+                alert("Erreur réseau lors de l'envoi" + e);
               }
             }
           }}
@@ -257,8 +226,7 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
                 return;
               }
             } catch (e) {
-              alert("Erreur réseau lors de la suppression du rendez-vous");
-              console.error(e);
+              alert("Erreur réseau lors de la suppression du rendez-vous" + e);
               return;
             }
             // 2. Envoi de l’email d’annulation (existant)
@@ -314,11 +282,6 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
     </td>
   </tr>
 </table>`;
-              console.log("[AppointmentDetailsPanel] Appel API /api/sendmail", {
-                to: email,
-                subject,
-                body,
-              });
               try {
                 const res = await fetch("/api/sendmail", {
                   method: "POST",
@@ -338,9 +301,9 @@ const AppointmentDetailsPanel: React.FC<AppointmentDetailsPanelProps> = ({
                 }
               } catch (e) {
                 alert(
-                  "Rendez-vous annulé, mais erreur réseau lors de l'envoi du mail"
+                  "Rendez-vous annulé, mais erreur réseau lors de l'envoi du mail" +
+                    e
                 );
-                console.error(e);
               }
             } else {
               alert("Rendez-vous annulé (pas d'email client renseigné)");

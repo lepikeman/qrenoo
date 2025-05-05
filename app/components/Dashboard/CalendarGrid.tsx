@@ -43,12 +43,14 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   proId,
 }) => {
   // Définir la hauteur des cellules AVANT tout usage
-  const CELL_HEIGHT = interval === 60 ? 160 : 96;
+  // Correction : calcul dynamique pour supporter tout intervalle
+  const CELL_HEIGHT = 160 * (interval / 60);
 
   // Filtrage des rendez-vous par professionnel si proId fourni
+  // Correction : si proId non fourni, on affiche tous les rendez-vous
   const filteredAppointments = useMemo(() => {
     if (!appointments || appointments.length === 0) return [];
-    if (!proId) return [];
+    if (!proId) return appointments;
     return appointments.filter((rdv) => rdv.pro_id === proId);
   }, [appointments, proId]);
 
@@ -267,8 +269,13 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
                     .map((rdv) => {
                       const rdvMin = parseHourToMinutes(rdv.heure.slice(0, 5));
                       const cellMin = parseHourToMinutes(h);
-                      const ratio = (rdvMin - cellMin) / interval;
-                      const duration = 30;
+                      // Correction : calcul de ratio et hauteur robustes
+                      const ratio = Math.max(
+                        0,
+                        Math.min(1, (rdvMin - cellMin) / interval)
+                      );
+                      // Utiliser la vraie durée si dispo, sinon 30min par défaut
+                      const duration = rdv.duree ? Number(rdv.duree) : 30;
                       const height = Math.max((duration / interval) * 100, 40);
                       return (
                         <div

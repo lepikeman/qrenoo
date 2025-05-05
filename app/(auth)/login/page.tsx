@@ -2,7 +2,10 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { createClientComponentClient, Session } from "@supabase/auth-helpers-nextjs";
+import {
+  createClientComponentClient,
+  Session,
+} from "@supabase/auth-helpers-nextjs";
 
 export default function Login() {
   const router = useRouter();
@@ -15,26 +18,36 @@ export default function Login() {
   const [session, setSession] = useState<Session | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
 
-  // Vérifie la session au chargement
   useEffect(() => {
+    let isMounted = true;
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setCheckingSession(false);
-    });
-  }, [supabase]);
-
-  // Redirige seulement après une connexion réussie
-  useEffect(() => {
-    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) {
-        const redirectTo = searchParams.get("redirectTo") || "/";
-        router.replace(redirectTo);
+      if (isMounted) {
+        setSession(session);
+        setCheckingSession(false);
       }
     });
+    // Ajoute un listener pour la session (connexion immédiate)
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, newSession) => {
+        if (isMounted) {
+          setSession(newSession);
+          setCheckingSession(false);
+        }
+      }
+    );
     return () => {
-      listener.subscription.unsubscribe();
+      isMounted = false;
+      listener?.subscription.unsubscribe();
     };
-  }, [router, searchParams, supabase]);
+  }, [supabase]);
+
+  useEffect(() => {
+    if (session) {
+      const redirectTo = searchParams.get("redirectTo") || "/pro/dashboard";
+      router.push(redirectTo);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   if (checkingSession) {
     return <div>Chargement...</div>;
@@ -48,7 +61,7 @@ export default function Login() {
           className="bg-red-500 text-white px-4 py-2 rounded"
           onClick={async () => {
             await supabase.auth.signOut();
-            window.location.reload();
+            setSession(null);
           }}
         >
           Se déconnecter
@@ -61,11 +74,13 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setErrorMsg("");
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     setLoading(false);
-    console.log("SignIn data:", data);
-    console.log("SignIn error:", error);
     if (error) setErrorMsg(error.message);
+    // La redirection est gérée par le useEffect ci-dessus
   }
 
   return (
