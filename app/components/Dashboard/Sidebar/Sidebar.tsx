@@ -20,6 +20,7 @@ import type { Appointment } from "../DashboardPage";
 import Image from "next/image";
 import type { Profile } from "@/app/types/Profile";
 import QRCodeModal from "./QRCodeModal";
+import { useServerLog } from '@/app/hooks/useServerLog';
 
 interface SidebarProps {
   active?: "overview" | "calendar" | "settings";
@@ -88,6 +89,8 @@ const Sidebar: React.FC<
   proProfile,
   onReloadCalendar,
 }) => {
+  const { error } = useServerLog();
+
   // --- Plus de fetch local, on utilise les RDV passés en prop ---
   const now = new Date();
 
@@ -298,15 +301,19 @@ const Sidebar: React.FC<
                 });
                 if (!resCancel.ok) {
                   const result = await resCancel.json();
-                  alert(
-                    "Erreur lors de la suppression du rendez-vous : " +
-                      (result.error || resCancel.status)
-                  );
+                  error("Échec de l'annulation du RDV", {
+                    component: 'Sidebar',
+                    details: result.error || resCancel.status,
+                    appointmentId: nextAppointment.id
+                  });
                   return;
                 }
               } catch (e) {
-                alert("Erreur réseau lors de la suppression du rendez-vous");
-                console.error(e);
+                error("Erreur réseau - annulation RDV", {
+                  component: 'Sidebar',
+                  details: e instanceof Error ? e.message : 'Erreur inconnue',
+                  appointmentId: nextAppointment.id
+                });
                 return;
               }
               // 2. Envoi de l’email d’annulation (même logique que AppointmentDetailsPanel)
@@ -359,7 +366,7 @@ const Sidebar: React.FC<
                 <td style="text-align: center; color: #666; font-size: 14px; line-height: 1.5;">
                   <p>Besoin d'aide ? Contactez votre professionnel :</p>
                   <p>📞 <a href="tel:${proPhone}" style="color: #2F3E2E; text-decoration: none;">${proPhone}</a> | ✉️ <a href="mailto:contact.qrenoo@gmail.com" style="color: #2F3E2E; text-decoration: none;">contact.qrenoo@gmail.com</a></p>
-                  <p>Contacter le support : <a href="mailto:contact.qrenoo@gmail.com" style="color: #2F3E2E; text-decoration: none;">contact.qrenoo@gmail.com</a></p>
+                  <p>Contacter le support : <a href="mailto:contact.qrenoo@gmail.com" style="color: #666;">contact.qrenoo@gmail.com</a></p>
                   <p style="font-size: 12px; margin-top: 15px;">Cet email a été envoyé via Qrenoo • <a href="www.qrenoo.com" style="color: #666;">www.qrenoo.com</a></p>
                 </td>
               </tr>
@@ -389,10 +396,11 @@ const Sidebar: React.FC<
                     );
                   }
                 } catch (e) {
-                  alert(
-                    "Rendez-vous annulé, mais erreur réseau lors de l'envoi du mail"
-                  );
-                  console.error(e);
+                  error("Erreur réseau - annulation RDV", {
+                    component: 'Sidebar',
+                    details: e instanceof Error ? e.message : 'Erreur inconnue',
+                    appointmentId: nextAppointment.id
+                  });
                 }
               } else {
                 alert("Rendez-vous annulé (pas d'email client renseigné)");

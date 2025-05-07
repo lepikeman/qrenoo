@@ -8,13 +8,13 @@ import { useProfile } from "@/app/hooks/useProfile";
 import { supabase } from "@/utils/supabase/client";
 
 export default function Dashboard() {
-  const { session, loading } = useAuth();
+  const { user, loading } = useAuth();
   const [creatingProfile, setCreatingProfile] = useState(false);
   const [errorProfile, setErrorProfile] = useState<string | null>(null);
   const [reloadProfile, setReloadProfile] = useState(0);
 
   // Ne tente pas de charger le profil tant que la session n'est pas prête
-  const userId = session?.user.id || "";
+  const userId = user?.id || "";
   const {
     profile,
     loading: profileLoading,
@@ -81,19 +81,19 @@ export default function Dashboard() {
   }, [userId]);
 
   useEffect(() => {
-    if (session && !profile && !creatingProfile && !loading) {
+    if (user && !profile && !creatingProfile && !loading) {
       createProfileIfMissing();
     }
-  }, [session, profile, creatingProfile, loading, createProfileIfMissing]);
+  }, [user, profile, creatingProfile, loading, createProfileIfMissing]);
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[40vh] text-lg text-blue-700">
+      <div className="flex items-center justify-center min-h-[90vh] text-lg text-blue-700">
         Chargement du dashboard...
       </div>
     );
   }
-  if (!session) {
+  if (!user) {
     return <div className="text-red-600 font-bold p-8">Non autorisé</div>;
   }
   if (errorProfile || error) {
@@ -111,7 +111,7 @@ export default function Dashboard() {
 
   // Fonction de sauvegarde du profil
   const handleUpdateProfile = async (profileFormToSave: Profile) => {
-    if (!session) return;
+    if (!user) return;
     const payload: Record<string, unknown> = {};
     [
       "profession",
@@ -148,7 +148,7 @@ export default function Dashboard() {
     const { error } = await supabase
       .from("profiles")
       .update(payload)
-      .eq("user_id", session.user.id);
+      .eq("user_id", user.id);
     if (error) {
       setErrorProfile(
         "Erreur lors de la sauvegarde du profil: " + error.message

@@ -42,9 +42,7 @@ export default function Overview({ proId }: { proId: string }) {
           throw new Error("Erreur lors du chargement des statistiques.");
         const data = await res.json();
         setAppointments(data || []);
-        if (Array.isArray(data) && data.length > 0) {
-          console.log("appointments exemple:", data[0]);
-        }
+       
       } catch (e: unknown) {
         setError(
           (e as Error).message || "Erreur lors du chargement des statistiques."

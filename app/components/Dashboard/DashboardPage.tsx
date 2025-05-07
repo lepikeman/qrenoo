@@ -12,9 +12,8 @@
  *
  * Affiche le calendrier, les rendez-vous, les modales et le layout global du dashboard.
  */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import type { Profile } from "@/app/types/Profile";
-import { useMediaQuery } from "react-responsive";
 import CalendarHeader from "./CalendarHeader";
 import DashboardLayout from "./DashboardLayout"; // Import de DashboardLayout
 import CalendarGrid from "./CalendarGrid";
@@ -40,38 +39,67 @@ export interface Appointment {
 
 interface DashboardPageProps {
   profileForm: Profile;
-  setProfileForm: (form: Profile) => void;
+  setProfileForm: (form: Profile | ((prev: Profile) => Profile)) => void;
   handleUpdateProfile: (profile: Profile) => void;
   profileLoading?: boolean;
   proId: string;
 }
 
 // Hook personnalisé pour la gestion des rendez-vous
-function useAppointments(profileForm: Profile, days: string[]) {
+function useAppointments(
+  profileForm: Profile,
+  days: string[],
+  reloadKey: number
+) {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Mémorise l'ID du profil pour éviter des re-renders inutiles
+  const profileId = useMemo(() => profileForm?.id || "", [profileForm?.id]);
+
   useEffect(() => {
     let isMounted = true;
+
     async function fetchAppointments() {
+      // Ne fait pas de fetch si pas d'ID
+      if (!profileId) {
+        setAppointments([]);
+        return;
+      }
+
       setLoading(true);
       try {
         const params = new URLSearchParams({
           days: days.join(","),
-          pro_id: profileForm.id || "",
+          pro_id: profileId,
         });
+
         const res = await fetch(`/api/rendezvous?${params.toString()}`);
-        const fetched: Appointment[] = res.ok ? await res.json() : [];
-        if (isMounted) setAppointments(fetched);
+        if (!res.ok)
+          throw new Error("Erreur lors du chargement des rendez-vous");
+
+        const fetched: Appointment[] = await res.json();
+        if (isMounted) {
+          setAppointments(fetched);
+        }
+      } catch (error) {
+        console.error("Erreur fetch appointments:", error);
+        if (isMounted) {
+          setAppointments([]);
+        }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
+
     fetchAppointments();
+
     return () => {
       isMounted = false;
     };
-  }, [profileForm.id, days]);
+  }, [profileId, days, reloadKey]); // Utilise profileId au lieu de profileForm.id
 
   return { appointments, loading };
 }
@@ -81,138 +109,179 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
   setProfileForm,
   profileLoading: initialProfileLoading,
 }) => {
+  // États
   const [selectedRdv, setSelectedRdv] = useState<Appointment | null>(null);
-
-  const [selectedDate, setSelectedDate] = useState(new Date()); // <<--- AJOUT
-
-  const currentDate = new Date();
-  const view: "week" | "day" = "week";
-
-  // Sidebar navigation state
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [userEmail, setUserEmail] = useState<string>("");
   const [activeTab, setActiveTab] = useState<
     "overview" | "calendar" | "settings"
   >("calendar");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  // Responsive : collapse auto sur mobile
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-  useEffect(() => {
-    setSidebarCollapsed(isMobile);
-  }, [isMobile]);
-
-  // --- Helpers pour la comparaison de dates (format AAAA-MM-JJ) ---
-  function isSameDay(dateStr1: string, dateStr2: string) {
-    return dateStr1 === dateStr2;
-  }
-
-  // Génère une liste de 7 jours consécutifs à partir de la date sélectionnée (pour la semaine affichée)
-  function getNextDays(startDate: Date, n: number): string[] {
-    const days: string[] = [];
-    const d = new Date(startDate);
-    for (let i = 0; i < n; i++) {
-      const y = d.getFullYear();
-      const m = (d.getMonth() + 1).toString().padStart(2, "0");
-      const da = d.getDate().toString().padStart(2, "0");
-      days.push(`${y}-${m}-${da}`);
-      d.setDate(d.getDate() + 1);
-    }
-    return days;
-  }
-
-  // Correction : calculer les jours de la semaine à partir de la date sélectionnée
-  const days = React.useMemo(
-    () => getNextDays(selectedDate, 7),
-    [selectedDate]
-  ); // 7 jours à partir de la date sélectionnée
-  const todayStr = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}-${currentDate.getDate().toString().padStart(2, "0")}`;
-
   const [calendarReloadKey, setCalendarReloadKey] = useState(0);
-  const { appointments, loading } = useAppointments(profileForm, days);
 
-  function handleReloadCalendar() {
-    setCalendarReloadKey((k) => k + 1);
-  }
-
-  // Liste des heures à afficher
+  // Gestion des heures et intervals
   const [interval, setInterval] = useState(() => {
-    if (profileForm.intervalle_creneau)
-      return Number(profileForm.intervalle_creneau);
+    if (profileForm?.intervalle_creneau) {
+      const parsedInterval = Number(profileForm.intervalle_creneau);
+      return isNaN(parsedInterval) ? 30 : parsedInterval;
+    }
     return 30;
   });
+
   const [startHour, setStartHour] = useState(
-    () => profileForm.ouverture || "06:00"
+    () => profileForm?.ouverture || "06:00"
   );
   const [endHour, setEndHour] = useState(
-    () => profileForm.fermeture || "20:00"
+    () => profileForm?.fermeture || "20:00"
   );
 
-  useEffect(() => {
-    if (profileForm.intervalle_creneau)
-      setInterval(Number(profileForm.intervalle_creneau));
-    if (profileForm.ouverture) setStartHour(profileForm.ouverture);
-    if (profileForm.fermeture) setEndHour(profileForm.fermeture);
-  }, [
-    profileForm.intervalle_creneau,
-    profileForm.ouverture,
-    profileForm.fermeture,
-  ]);
+  // Callbacks mémorisés (AVANT les conditions)
+  const handleReloadCalendar = useCallback(() => {
+    setCalendarReloadKey((k) => k + 1);
+  }, []);
 
-  // Filtrage des rendez-vous selon la vue (jour/semaine) et la date sélectionnée
-  const filteredAppointments: Appointment[] = appointments.filter((rdv) => {
-    if (!rdv.date_jour) return false;
-    if (view === "week") {
-      // Affiche tous les RDV de la semaine affichée
-      return days.includes(rdv.date_jour);
-    } else {
-      // Affiche les RDV du jour sélectionné
-      return isSameDay(rdv.date_jour, todayStr);
-    }
-  });
-
-  // Ajoute le state profileLoading pour gérer l'état de chargement du profil
-  const [profileLoading, setProfileLoading] = useState(initialProfileLoading);
-
-  // Synchronise l'email du profil avec celui du user connecté (Supabase)
-  useEffect(() => {
-    async function syncProfileEmail() {
-      if (!profileForm || !profileForm.user_id) return;
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user && user.email && profileForm.user_id === user.id) {
-        // adresse_mail supprimé du PATCH (plus de colonne dans la table)
-        // await supabase
-        //   .from("profiles")
-        //   .update({ adresse_mail: user.email })
-        //   .eq("user_id", user.id);
+  const handleProfileChange = useCallback(
+    (
+      field: keyof Profile | "full",
+      value: Profile[keyof Profile] | Partial<Profile>
+    ) => {
+      if (field === "full" && typeof value === "object") {
+        setProfileForm((prev: Profile) => ({ ...prev, ...(value as Profile) }));
+      } else {
+        setProfileForm(
+          (prev: Profile) => ({ ...prev, [field]: value }) as Profile
+        );
       }
-    }
-    syncProfileEmail();
-  }, [profileForm]);
+    },
+    [setProfileForm]
+  );
 
-  // Ajoute la récupération de l'email du user pour le passer à AppointmentDetailsPanel
-  const [userEmail, setUserEmail] = useState<string>("");
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user && user.email) setUserEmail(user.email);
+  const handleAppointmentSelect = useCallback((rdv: Appointment) => {
+    setSelectedRdv((prev) => {
+      // Ne met à jour que si c'est un rdv différent
+      if (prev?.id === rdv.id) return prev;
+      return rdv;
     });
   }, []);
 
-  // Correction du scope : déclare isLoading AVANT le return pour qu'il soit visible partout
-  const isLoading = Boolean(profileLoading);
-
-  // Correction de setProfileForm pour respecter le type attendu (Profile)
-  function handleProfileChange(
-    field: keyof Profile | "full",
-    value: Profile[keyof Profile] | Partial<Profile>
-  ) {
-    if (field === "full" && typeof value === "object") {
-      setProfileForm({ ...(value as Profile) });
-    } else {
-      setProfileForm({ ...profileForm, [field]: value });
+  const getNextDays = (date: Date, days: number) => {
+    const nextDays = [];
+    for (let i = 0; i < days; i++) {
+      const nextDate = new Date(date);
+      nextDate.setDate(date.getDate() + i);
+      nextDays.push(nextDate.toISOString().split("T")[0]);
     }
+    return nextDays;
+  };
+
+  const handleSaveProfile = useCallback(
+    async (profileFormToSave: Profile) => {
+      try {
+        const { error } = await supabase
+          .from("profiles")
+          .update(profileFormToSave)
+          .eq("user_id", profileFormToSave.user_id);
+
+        if (error) throw error;
+        setProfileForm(profileFormToSave);
+        return true;
+      } catch (error) {
+        console.error("Erreur lors de la sauvegarde du profil:", error);
+        return false;
+      }
+    },
+    [setProfileForm]
+  );
+
+  // Valeurs mémorisées
+  const days = useMemo(() => getNextDays(selectedDate, 7), [selectedDate]);
+  const { appointments, loading } = useAppointments(
+    profileForm,
+    days,
+    calendarReloadKey
+  );
+
+  // Mémorise aussi les appointments filtrés
+  const filteredAppointments = useMemo(() => {
+    if (!appointments?.length) return [];
+    return appointments.filter((rdv) => rdv.pro_id === profileForm?.id);
+  }, [appointments, profileForm?.id]);
+
+  const memoizedCalendarHeader = useMemo(
+    () => (
+      <CalendarHeader
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        interval={interval}
+        setInterval={setInterval}
+        startHour={startHour}
+        setStartHour={setStartHour}
+        endHour={endHour}
+        setEndHour={setEndHour}
+        profileForm={profileForm}
+        onReloadCalendar={handleReloadCalendar}
+      />
+    ),
+    [
+      selectedDate,
+      interval,
+      startHour,
+      endHour,
+      profileForm,
+      handleReloadCalendar,
+    ]
+  );
+
+  // Effets
+  useEffect(() => {
+    if (profileForm?.intervalle_creneau)
+      setInterval(Number(profileForm.intervalle_creneau));
+    if (profileForm?.ouverture) setStartHour(profileForm.ouverture);
+    if (profileForm?.fermeture) setEndHour(profileForm.fermeture);
+  }, [
+    profileForm?.intervalle_creneau,
+    profileForm?.ouverture,
+    profileForm?.fermeture,
+  ]);
+
+  useEffect(() => {
+    if (!profileForm?.user_id) return;
+
+    let isMounted = true;
+
+    async function initProfileData() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!isMounted) return;
+
+      if (user?.email) {
+        setUserEmail(user.email);
+      }
+    }
+
+    initProfileData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [profileForm?.user_id]);
+
+  // Vérifications après les hooks
+  if (initialProfileLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[90vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-700" />
+      </div>
+    );
+  }
+
+  if (!profileForm?.id && !profileForm?.user_id) {
+    return (
+      <div className="flex items-center justify-center min-h-[90vh] text-red-600">
+        Erreur de chargement du profil
+      </div>
+    );
   }
 
   // --- Nouvelle logique d'affichage central selon la sidebar ---
@@ -224,18 +293,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
   } else if (activeTab === "calendar") {
     mainContent = (
       <>
-        <CalendarHeader
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          interval={interval}
-          setInterval={setInterval}
-          startHour={startHour}
-          setStartHour={setStartHour}
-          endHour={endHour}
-          setEndHour={setEndHour}
-          profileForm={profileForm}
-          onReloadCalendar={handleReloadCalendar}
-        />
+        {memoizedCalendarHeader}
         <CalendarGrid
           key={calendarReloadKey}
           appointments={filteredAppointments}
@@ -243,7 +301,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
           interval={interval}
           startHour={startHour}
           endHour={endHour}
-          onSelectAppointment={setSelectedRdv}
+          onSelectAppointment={handleAppointmentSelect}
           loading={loading}
           proId={profileForm.id}
         />
@@ -269,22 +327,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
           );
         }}
         onSave={async (profileFormToSave: Profile) => {
-          setProfileLoading(true);
-          const { error } = await supabase
-            .from("profiles")
-            .update(profileFormToSave)
-            .eq("user_id", profileFormToSave.user_id);
-          if (!error) {
-            console.log(
-              "[DashboardPage] setProfileForm (after save)",
-              profileFormToSave
-            );
-            setProfileForm({ ...profileFormToSave }); // force une nouvelle référence pour déclencher le rerender
-          }
-          setProfileLoading(false);
-          return !error;
+          const success = await handleSaveProfile(profileFormToSave);
+          return success;
         }}
-        saving={isLoading}
+        saving={initialProfileLoading ?? false}
       />
     );
   }
@@ -301,7 +347,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
       proProfile={profileForm}
       onReloadCalendar={handleReloadCalendar}
     >
-      {isLoading && (
+      {initialProfileLoading && (
         <div className="flex justify-center items-center h-full">
           <span>Chargement du profil...</span>
         </div>

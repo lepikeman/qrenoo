@@ -1,16 +1,14 @@
 "use client";
 
 import { AuthProvider } from "./context/AuthContext";
-import type { Session } from "@supabase/auth-helpers-nextjs";
+import type { User } from "@supabase/auth-helpers-nextjs";
 
 export default function ClientProviders({
   children,
-  initialSession,
+  initialUser,
 }: {
   children: React.ReactNode;
-  initialSession: Session | null;
+  initialUser: User | null;
 }) {
-  return (
-    <AuthProvider initialSession={initialSession}>{children}</AuthProvider>
-  );
+  return <AuthProvider initialUser={initialUser}>{children}</AuthProvider>;
 }

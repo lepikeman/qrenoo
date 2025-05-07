@@ -4,7 +4,7 @@ import "./globals.css";
 import RequireProfileComplete from "./components/RequireProfileComplete";
 import NavigationShell from "./components/NavigationShell";
 import { ReactNode } from "react";
-import Footer from "./components/Footer";
+import dynamic from "next/dynamic";
 import CookieConsent from "./components/CookieConsent";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -21,15 +21,22 @@ export const metadata: Metadata = {
   title: "Qrenoo",
   description: "La gestion simplifiée des rendez-vous",
 };
+const Footer = dynamic(() => import("./components/Footer"), { ssr: false });
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const supabase = createServerComponentClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
       <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
-        <ClientProviders initialSession={session}>
+        <ClientProviders initialUser={user}>
           <NavigationShell>
             <RequireProfileComplete>{children}</RequireProfileComplete>
             <Footer
