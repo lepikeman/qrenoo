@@ -155,6 +155,7 @@ const AddEventModal: React.FC<AddEventModalProps> = ({
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [date, setDate] = useState<Date>(selectedDate);
+  const [duree] = useState(intervalle_creneau); // Default duration matches the slot interval
 
   // Correction bug date_jour : toujours en timezone locale (évite le décalage d'un jour)
   function formatDateLocal(date: Date) {
@@ -220,12 +221,14 @@ const AddEventModal: React.FC<AddEventModalProps> = ({
         date_jour: formatDateLocal(date), // Utilise la date locale !
         heure,
         client_nom,
-        client_email: client_email ?? "",
-        client_phone: client_phone ?? "",
-        message: message ?? "",
+        client_email,
+        client_phone,
+        message,
         pro_id: proId,
+        duree: duree.toString(), // Convert number to string
         is_validated: true, // Validation directe
       };
+
       const res = await fetch("/api/rendezvous", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
