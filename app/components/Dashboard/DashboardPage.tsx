@@ -132,7 +132,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
     () => profileForm?.ouverture || "06:00"
   );
   const [endHour, setEndHour] = useState(
-    () => profileForm?.fermeture || "20:00"
+    () => profileForm?.fermeture || "22:00"
   );
 
   // Callbacks mémorisés (AVANT les conditions)
@@ -250,9 +250,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
     let isMounted = true;
 
     async function initProfileData() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      // APRÈS: Utilisation de getUser()
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+
       if (!isMounted) return;
 
       if (user?.email) {

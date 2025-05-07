@@ -50,13 +50,16 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     if (data && data.session) {
       await supabase.auth.setSession(data.session);
     }
-    // 2. Vérifie que la session est bien active
-    const sessionCheck = await supabase.auth.getSession();
-    if (!sessionCheck.data.session) {
+    
+    // 2. Vérifie que l'utilisateur est bien authentifié avec getUser() (sécurisé)
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !userData.user) {
       setError("Session invalide. Veuillez vous reconnecter.");
       setLoading(false);
       return;
     }
+    
     // 3. Change le mot de passe (l'utilisateur est connecté)
     const { error: updateError } = await supabase.auth.updateUser({
       password: newPassword,

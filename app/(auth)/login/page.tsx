@@ -7,6 +7,7 @@ import {
   Session,
 } from "@supabase/auth-helpers-nextjs";
 import { useServerLog } from "@/app/hooks/useServerLog";
+import { User } from "@supabase/auth-helpers-nextjs";
 
 export default function Login() {
   const router = useRouter();
@@ -18,30 +19,41 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
+  const [, setUser] = useState<User | null>(null);
   const { error } = useServerLog();
 
   useEffect(() => {
     let isMounted = true;
 
+    // Vérification de la session avec un timeout pour éviter les problèmes de chargement infini
+    const sessionTimeout = setTimeout(() => {
+      if (isMounted && checkingSession) {
+        setCheckingSession(false);
+      }
+    }, 5000); // 5 secondes maximum pour la vérification
+
     async function checkUser() {
       try {
-        const {
-          data: { user },
-          error: authError,
-        } = await supabase.auth.getUser();
+        // APRÈS: Utilisation de getUser() pour la vérification sécurisée
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        
+        if (userError) throw userError;
 
-        if (authError) throw authError;
+        // Tout de même récupérer la session pour d'autres besoins
+        const { data: sessionData } = await supabase.auth.getSession();
 
         if (isMounted) {
-          setSession(user ? ({ user } as Session) : null);
+          setUser(userData.user);
+          setSession(sessionData.session);
           setCheckingSession(false);
         }
       } catch (e) {
         error("Erreur lors de la vérification de l'utilisateur", {
-          component: "Login",
-          details: e instanceof Error ? e.message : "Erreur inconnue",
+          component: 'Login',
+          details: e instanceof Error ? e.message : 'Erreur inconnue',
         });
         if (isMounted) {
+          setUser(null);
           setSession(null);
           setCheckingSession(false);
         }
@@ -50,7 +62,7 @@ export default function Login() {
 
     checkUser();
 
-    // Ajoute un listener pour la session
+    // Listener pour les changements d'état d'authentification
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (_event, newSession) => {
         if (isMounted) {
@@ -62,9 +74,10 @@ export default function Login() {
 
     return () => {
       isMounted = false;
+      clearTimeout(sessionTimeout);
       listener?.subscription.unsubscribe();
     };
-  }, [supabase, error]);
+  }, [supabase, error, checkingSession]);
 
   useEffect(() => {
     if (session) {

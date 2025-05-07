@@ -36,6 +36,10 @@ export default function Dashboard() {
 
   // Création du profil si inexistant
   const createProfileIfMissing = useCallback(async () => {
+    // APRÈS: Utilisation de getUser()
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+
     if (!userId) return;
     setCreatingProfile(true);
     setErrorProfile(null);
@@ -78,7 +82,7 @@ export default function Dashboard() {
     } finally {
       setCreatingProfile(false);
     }
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     if (user && !profile && !creatingProfile && !loading) {

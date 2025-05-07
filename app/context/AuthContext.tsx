@@ -3,7 +3,6 @@ import {
   useContext,
   useEffect,
   useState,
-  useMemo,
   ReactNode,
 } from "react";
 import {
@@ -29,41 +28,34 @@ export const AuthContext = createContext<AuthContextType>({
 
 interface AuthProviderProps {
   children: ReactNode;
-  initialUser: User | null; // Changé de initialSession à initialUser
+  initialUser: User | null;
+  initialSession?: Session | null;
 }
 
-export function AuthProvider({ children, initialUser }: AuthProviderProps) {
+export function AuthProvider({ children, initialUser, initialSession }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(initialUser);
-  const [session, setSession] = useState<Session | null>(
-    initialUser ? ({ user: initialUser } as Session) : null
-  );
+  const [session, setSession] = useState<Session | null>(initialSession || null);
   const [loading, setLoading] = useState(!initialUser);
   const { error } = useServerLog();
 
   useEffect(() => {
     let isMounted = true;
 
-    // Fonction d'initialisation sécurisée
     async function initAuth() {
       try {
-        // Récupère l'utilisateur authentifié de manière sécurisée
-        const {
-          data: { user },
-          error: authError,
-        } = await supabase.auth.getUser();
-
-        if (authError) throw authError;
-
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        
+        if (userError) throw userError;
+        
         if (isMounted) {
-          setUser(user);
-          // Ne définit la session que si l'utilisateur est authentifié
-          setSession(user ? ({ user } as Session) : null);
+          setUser(userData.user);
+          setSession(initialSession || null);
           setLoading(false);
         }
       } catch (e) {
         error("Erreur d'authentification", {
-          component: "AuthProvider",
-          details: e instanceof Error ? e.message : "Erreur inconnue",
+          component: 'AuthProvider',
+          details: e instanceof Error ? e.message : 'Erreur inconnue',
           userId: initialUser?.id,
         });
 
@@ -77,38 +69,27 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
 
     initAuth();
 
-    // Écoute les changements d'état d'authentification
-    const { data: listener } = supabase.auth.onAuthStateChange(
+    const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, newSession) => {
         if (isMounted) {
-          // Vérifie toujours l'utilisateur après un changement d'état
-          const {
-            data: { user },
-          } = await supabase.auth.getUser();
-          setUser(user);
-          setSession(user ? newSession : null);
-          setLoading(false);
+          const { data: userData } = await supabase.auth.getUser();
+          setUser(userData.user);
+          setSession(newSession);
         }
       }
     );
 
     return () => {
       isMounted = false;
-      listener?.subscription.unsubscribe();
+      authListener?.subscription.unsubscribe();
     };
-  }, [error, initialUser]);
+  }, [error, initialUser?.id, initialSession]);
 
-  // Mémorise la valeur du context pour éviter les rerenders inutiles
-  const value = useMemo(
-    () => ({
-      session,
-      user,
-      loading,
-    }),
-    [session, user, loading]
+  return (
+    <AuthContext.Provider value={{ user, session, loading }}>
+      {children}
+    </AuthContext.Provider>
   );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

@@ -47,9 +47,11 @@ export default function ProfileSetup() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    
+    // APRÈS: Utilisation de getUser()
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
+    
     if (!user) {
       setError("Utilisateur non connecté");
       setLoading(false);

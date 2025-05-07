@@ -13,12 +13,31 @@ export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    // Récupération initiale de l'utilisateur authentifié
+    async function getInitialUser() {
+      const { data, error } = await supabase.auth.getUser();
+      if (!error) {
+        setUser(data.user);
+      }
+    }
+    
+    getInitialUser();
+    
+    // Configuration du listener pour les changements d'état d'authentification
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
+      async (_event, session) => {
+        // Au lieu d'utiliser directement session?.user qui n'est pas sécurisé
+        // On fait un appel à getUser() pour obtenir des données authentifiées
+        if (session) {
+          // Utiliser cette approche pour obtenir l'utilisateur de façon sécurisée
+          const { data } = await supabase.auth.getUser();
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
       }
     );
+    
     return () => {
       listener?.subscription.unsubscribe();
     };

@@ -8,10 +8,9 @@ export async function POST(request: Request) {
   try {
     const { message, level, context } = await request.json();
 
-    // Récupère l'utilisateur actuel
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    // APRÈS: Récupération de l'utilisateur avec getUser()
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
 
     // Insère le log dans une table Supabase
     await supabase.from("logs").insert({

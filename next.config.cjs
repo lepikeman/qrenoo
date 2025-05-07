@@ -23,6 +23,10 @@ const nextConfig = {
     ],
     domains: ["cdn.pixabay.com"],
   },
+  i18n: {
+    locales: ["fr"],
+    defaultLocale: "fr",
+  },
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,

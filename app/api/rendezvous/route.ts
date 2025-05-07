@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { cookies } from "next/headers";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 
 // Remplace ces valeurs par tes variables d'environnement ou ta config locale
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -11,33 +13,76 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(request: Request) {
   const data = await request.json();
   console.log("Données reçues dans l'API:", data);
-  const { client_nom, client_email, client_phone, date_jour, heure, message, pro_id, is_validated } = data;
+  const {
+    client_nom,
+    client_email,
+    client_phone,
+    date_jour,
+    heure,
+    message,
+    pro_id,
+    is_validated,
+  } = data;
   if (!client_nom || !date_jour || !heure || !pro_id) {
-    return NextResponse.json({ error: "Champs manquants", debug: { client_nom, client_email, client_phone, date_jour, heure, pro_id } }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: "Champs manquants",
+        debug: {
+          client_nom,
+          client_email,
+          client_phone,
+          date_jour,
+          heure,
+          pro_id,
+        },
+      },
+      { status: 400 }
+    );
   }
-  
+
   // Génère un code de validation à 6 chiffres UNIQUEMENT si non validé
-  const validation_code = is_validated ? null : Math.floor(100000 + Math.random() * 900000);
+  const validation_code = is_validated
+    ? null
+    : Math.floor(100000 + Math.random() * 900000);
   // Insère le RDV avec validation immédiate ou non
-  const { data: insertData, error } = await supabase.from("rendezvous").insert([
-    { client_nom, client_email, client_phone, date_jour, heure, message, pro_id, validation_code, is_validated: is_validated === true },
-  ]).select();
+  const { data: insertData, error } = await supabase
+    .from("rendezvous")
+    .insert([
+      {
+        client_nom,
+        client_email,
+        client_phone,
+        date_jour,
+        heure,
+        message,
+        pro_id,
+        validation_code,
+        is_validated: is_validated === true,
+      },
+    ])
+    .select();
 
   if (error) {
     console.error("Erreur Supabase (insert rendez-vous):", error);
-    return NextResponse.json({ error: error.message, details: error }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message, details: error },
+      { status: 500 }
+    );
   }
-  
+
   const { data: proData, error: proError } = await supabase
-  .from("profiles")
-  .select("*")
-  .eq("id", pro_id)
-  .single();
+    .from("profiles")
+    .select("*")
+    .eq("id", pro_id)
+    .single();
   if (proError) {
     console.error("Erreur fetch profil pro:", proError);
-    return NextResponse.json({ error: proError.message, details: proError }, { status: 500 });
+    return NextResponse.json(
+      { error: proError.message, details: proError },
+      { status: 500 }
+    );
   }
-  
+
   // Envoie l'email de validation si email fourni ET si non validé
   if (client_email && !is_validated) {
     console.log("[DEBUG proData]", JSON.stringify(proData));
@@ -108,7 +153,7 @@ export async function POST(request: Request) {
       </table>
     </td>
   </tr>
-</table>`
+</table>`,
     });
   }
   // Retourne l'id du RDV pour la vérification côté front
@@ -116,26 +161,52 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  // Récupère le pro_id et days éventuel (filtrage côté API)
   const { searchParams } = new URL(request.url);
-  const pro_id = searchParams.get("pro_id");
+  const proId = searchParams.get("pro_id");
   const days = searchParams.get("days");
 
-  let query = supabase
-    .from("rendezvous")
-    .select("id, client_nom, client_email, client_phone, date_jour, heure, message, is_validated, pro_id");
+  const cookieStore = cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
-  if (pro_id) query = query.eq("pro_id", pro_id);
-  if (days) {
-    const daysArr = days.split(",");
-    query = query.in("date_jour", daysArr);
+  try {
+    // APRÈS: Utiliser getUser() au lieu de getSession()
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    if (userError) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+
+    // Vérifier que l'utilisateur est bien connecté
+    if (!userData.user) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+
+    // Reste du code pour récupérer les rendez-vous
+    let query = supabase
+      .from("rendezvous")
+      .select(
+        "id, client_nom, client_email, client_phone, date_jour, heure, message, is_validated, pro_id"
+      );
+
+    if (proId) query = query.eq("pro_id", proId);
+    if (days) {
+      const daysArr = days.split(",");
+      query = query.in("date_jour", daysArr);
+    }
+
+    query = query
+      .order("date_jour", { ascending: true })
+      .order("heure", { ascending: true });
+
+    const { data, error } = await query;
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json(data ?? []);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Erreur serveur :" + error },
+      { status: 500 }
+    );
   }
-
-  query = query.order("date_jour", { ascending: true }).order("heure", { ascending: true });
-
-  const { data, error } = await query;
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-  return NextResponse.json(data ?? []);
 }
