@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import JobsList from "./components/JobsList";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -109,6 +110,11 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <section>
+        <JobsList />
+      </section>
+
       <section className="flex flex-col items-center w-full pb-10">
         <div className="bg-white rounded-xl shadow-lg px-8 py-10 flex flex-col items-center border border-[#efe9db] w-full max-w-xl">
           <h2 className="text-2xl md:text-3xl font-bold text-[#29381a] mb-4 text-center">

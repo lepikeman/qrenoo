@@ -40,11 +40,11 @@ export default function Login() {
         if (userError) throw userError;
 
         // Tout de même récupérer la session pour d'autres besoins
-        const { data: sessionData } = await supabase.auth.getSession();
+        // const { data: sessionData } = await supabase.auth.getSession();
 
         if (isMounted) {
           setUser(userData.user);
-          setSession(sessionData.session);
+          // setSession(sessionData.session);
           setCheckingSession(false);
         }
       } catch (e) {

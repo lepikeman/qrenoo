@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { toast } from "react-hot-toast"; // Assurez-vous d'installer react-hot-toast
 
 type Plan = {
   id: string;
@@ -29,9 +30,12 @@ export default function Price() {
   const [loading, setLoading] = useState(true);
   const [showAllFeatures, setShowAllFeatures] = useState<{ [planId: string]: boolean }>({});
   const [loadingCheckout, setLoadingCheckout] = useState<string | null>(null);
+  const [currentUserPlan, setCurrentUserPlan] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClientComponentClient();
   const searchParams = useSearchParams();
+  const highlightFeatureRef = useRef<HTMLDivElement | null>(null);
+  const featureSlug = searchParams.get("feature");
 
   useEffect(() => {
     async function fetchData() {
@@ -48,6 +52,20 @@ export default function Price() {
         .from("features")
         .select("id,label,order,plan_features(plan_id,enabled)")
         .order("order", { ascending: true });
+
+      // Récupérer le plan actuel de l'utilisateur
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: userData } = await supabase
+          .from("users")
+          .select("plan_id")
+          .eq("id", user.id)
+          .single();
+        
+        if (userData?.plan_id) {
+          setCurrentUserPlan(userData.plan_id);
+        }
+      }
 
       const featuresWithPlans: Feature[] = (featuresData || []).map((f: { id: string; label: string; order: number; plan_features: PlanFeature[] }) => {
         const plansObj: { [planId: string]: boolean } = {};
@@ -70,6 +88,11 @@ export default function Price() {
   }, [supabase]);
 
   useEffect(() => {
+    // Vérifier les paramètres d'URL pour les messages de statut
+    if (searchParams.get("cancelled") === "true") {
+      toast.error("Paiement annulé. Vous n'avez pas été débité.");
+    }
+    
     const subscribePlanId = searchParams.get("subscribe");
     if (!subscribePlanId) return;
 
@@ -81,6 +104,47 @@ export default function Price() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
+
+  useEffect(() => {
+    // Si un feature_slug est présent dans les paramètres d'URL
+    if (featureSlug && features.length > 0) {
+      // Trouver la fonctionnalité correspondante
+      const feature = features.find(f => f.label.toLowerCase().includes(featureSlug.replace('_', ' ')));
+      
+      if (feature) {
+        // Mettre en évidence la fonctionnalité
+        setTimeout(() => {
+          const featureRow = document.getElementById(`feature-${feature.id}`);
+          if (featureRow) {
+            featureRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            featureRow.classList.add('bg-yellow-100');
+            setTimeout(() => {
+              featureRow.classList.remove('bg-yellow-100');
+              featureRow.classList.add('bg-yellow-50');
+            }, 1000);
+          }
+        }, 500);
+        
+        // Afficher une notification
+        toast.custom((t) => (
+          <div className={`bg-yellow-50 border-l-4 border-yellow-500 p-4 shadow-md rounded ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+            <div className="flex items-center">
+              <div className="text-yellow-500">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-yellow-700">
+                  Cette fonctionnalité nécessite un abonnement. Consultez nos offres ci-dessous.
+                </p>
+              </div>
+            </div>
+          </div>
+        ), { duration: 5000 });
+      }
+    }
+  }, [searchParams, features, featureSlug]);
 
   async function handleSubscribe(planId: string) {
     setLoadingCheckout(planId);
@@ -100,14 +164,20 @@ export default function Price() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planId }),
       });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Erreur lors de la création de la session de paiement");
+      }
+      
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert("Erreur lors de la création de la session de paiement.");
+        toast.error("Erreur lors de la création de la session de paiement.");
       }
     } catch (e) {
-      alert("Erreur lors de la redirection vers Stripe: " + e);
+      toast.error(`Erreur: ${e instanceof Error ? e.message : "Problème de connexion"}`);
     } finally {
       setLoadingCheckout(null);
     }
@@ -127,13 +197,15 @@ export default function Price() {
         Tarifs
       </h1>
       <p className="text-base text-[#29381a] mb-6">
-        Choisissez l’offre qui correspond à vos besoins.
+        Choisissez l&apos;offre qui correspond à vos besoins.
       </p>
       <div className="flex flex-col gap-6 w-full max-w-4xl md:flex-row md:gap-8 md:justify-center">
         {plans.map((plan, idx) => {
           const planFeatures = features.filter(f => f.plans[plan.id]);
           const showAll = showAllFeatures[plan.id];
           const displayedFeatures = showAll ? planFeatures : planFeatures.slice(0, 5);
+          const isCurrentPlan = currentUserPlan === plan.id;
+          
           return (
             <div
               key={plan.id}
@@ -175,16 +247,16 @@ export default function Price() {
               )}
               <button
                 className={`w-full py-2 px-4 rounded-lg font-semibold text-white ${
-                  idx === 0
+                  isCurrentPlan
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-[#405c26] hover:bg-[#29381a] transition"
                 }`}
-                disabled={idx === 0 || loadingCheckout === plan.id}
-                onClick={idx === 0 ? undefined : () => handleSubscribe(plan.id)}
+                disabled={isCurrentPlan || loadingCheckout === plan.id}
+                onClick={() => handleSubscribe(plan.id)}
               >
                 {loadingCheckout === plan.id
                   ? "Redirection..."
-                  : idx === 0
+                  : isCurrentPlan
                   ? "Offre actuelle"
                   : `Choisir ${plan.name}`}
               </button>
@@ -210,25 +282,53 @@ export default function Price() {
             </tr>
           </thead>
           <tbody className="text-[#29381a]">
-            {features.map((feature, idx) => (
-              <tr key={feature.id} className={idx % 2 === 0 ? "bg-gray-50" : ""}>
-                <td className="py-2 px-2 border-b">{feature.label}</td>
-                {plans.map(plan => (
-                  <td
-                    key={plan.id}
-                    className={`py-2 px-2 border-b text-center ${
-                      feature.plans[plan.id]
-                        ? "text-green-600 font-bold"
-                        : "text-gray-300 font-bold"
-                    }`}
-                  >
-                    {feature.plans[plan.id] ? "✔️" : "—"}
+            {features.map((feature, idx) => {
+              const isHighlighted = featureSlug && feature.label.toLowerCase().includes(featureSlug.replace('_', ' '));
+              
+              return (
+                <tr 
+                  key={feature.id} 
+                  id={`feature-${feature.id}`}
+                  className={`${isHighlighted ? 'bg-yellow-100 transition-colors duration-700' : 
+                    idx % 2 === 0 ? 'bg-gray-50' : ''}`}
+                  ref={isHighlighted ? highlightFeatureRef : undefined}
+                >
+                  <td className="py-2 px-2 border-b">
+                    {feature.label}
+                    {isHighlighted && (
+                      <span className="ml-2 inline-block px-2 py-0.5 bg-yellow-500 text-white text-xs rounded-full">
+                        Fonctionnalité demandée
+                      </span>
+                    )}
                   </td>
-                ))}
-              </tr>
-            ))}
+                  {plans.map(plan => (
+                    <td
+                      key={plan.id}
+                      className={`py-2 px-2 border-b text-center ${
+                        feature.plans[plan.id]
+                          ? "text-green-600 font-bold"
+                          : "text-gray-300 font-bold"
+                      }`}
+                    >
+                      {feature.plans[plan.id] ? "✔️" : "—"}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+      </div>
+      
+      {/* Informations de souscription */}
+      <div className="w-full max-w-4xl mt-10 bg-white rounded-xl shadow p-6">
+        <h2 className="text-lg font-semibold text-[#29381a] mb-4">Informations sur les abonnements</h2>
+        <ul className="space-y-2 text-sm text-[#405c26]">
+          <li>✓ Paiement sécurisé par carte bancaire via Stripe</li>
+          <li>✓ Facturation mensuelle sans engagement</li>
+          <li>✓ Changement ou annulation de l&apos;abonnement à tout moment</li>
+          <li>✓ Accès immédiat aux fonctionnalités premium après souscription</li>
+        </ul>
       </div>
     </div>
   );

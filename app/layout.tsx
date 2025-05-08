@@ -12,6 +12,7 @@ import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import ClientProviders from "./ClientProviders";
 import GoogleAnalytics from "./components/GoogleAnanlytics";
+import { PlanFeaturesProvider } from "./context/PlanFeaturesContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,6 +20,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://qrenoo.com'),
   title:
     "Qrenoo | Logiciel de prise de rendez-vous en ligne pour professionnels indépendants",
   description:
@@ -30,7 +32,6 @@ export const metadata: Metadata = {
       "Qrenoo | Logiciel de prise de rendez-vous en ligne pour professionnels",
     description:
       "Solution complète de prise de rendez-vous en ligne pour professionnels indépendants. Gérez votre agenda, réduisez les annulations et fidélisez vos clients.",
-    url: "https://www.qrenoo.fr/",
     siteName: "Qrenoo",
     images: [
       {
@@ -74,35 +75,37 @@ export default async function RootLayout({
 
   // 2. Récupérer la session ensuite (si nécessaire pour d'autres données de session)
   // mais nous n'utiliserons pas session.user qui n'est pas sécurisé
-  const { data: sessionData } = await supabase.auth.getSession();
+  // const { data: sessionData } = await supabase.auth.getSession();
 
   // 3. Utiliser userData.user qui est authentifié (sécurisé)
   const authenticatedUser = userData.user;
-  const session = sessionData.session;
+  // const session = sessionData.session;
 
   return (
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
       <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
-        <ClientProviders
-          initialUser={authenticatedUser}
-          initialSession={session}
-        >
-          <NavigationShell>
-            <RequireProfileComplete>{children}</RequireProfileComplete>
-            <Footer
-              links={[
-                { label: "Mentions légales", href: "/mentions" },
-                { label: "CGU et CGV", href: "/cgu" },
-                { label: "RGPD", href: "/rgpd" },
-                { label: "Contact", href: "/contact" },
-              ]}
-            />
-          </NavigationShell>
-          <SpeedInsights />
-          <GoogleAnalytics />
-          <Analytics />
-          <CookieConsent />
-        </ClientProviders>
+        <PlanFeaturesProvider>
+          <ClientProviders
+            initialUser={authenticatedUser}
+            // initialSession={session}
+          >
+            <NavigationShell>
+              <RequireProfileComplete>{children}</RequireProfileComplete>
+              <Footer
+                links={[
+                  { label: "Mentions légales", href: "/mentions" },
+                  { label: "CGU et CGV", href: "/cgu" },
+                  { label: "RGPD", href: "/rgpd" },
+                  { label: "Contact", href: "/contact" },
+                ]}
+              />
+            </NavigationShell>
+            <SpeedInsights />
+            <GoogleAnalytics />
+            <Analytics />
+            <CookieConsent />
+          </ClientProviders>
+        </PlanFeaturesProvider>
       </body>
     </html>
   );

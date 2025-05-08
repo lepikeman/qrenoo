@@ -10,11 +10,23 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Veille à récupérer la session aussi pour rafraîchir les tokens si nécessaire
-  await supabase.auth.getSession()
+  // await supabase.auth.getSession()
 
-  // Vérification d'auth en utilisant user au lieu de session
-  if (!user && request.nextUrl.pathname.startsWith('/pro')) {
-    return NextResponse.redirect(new URL('/login', request.url))
+  const protectedRoute = request.nextUrl.pathname.startsWith('/pro')
+  const currentPath = request.nextUrl.pathname
+
+  // Ajoutez cette condition dans votre middleware si nécessaire
+  if (protectedRoute) {
+    // Ne pas appliquer la protection aux routes admin
+    if (currentPath.startsWith('/admin')) {
+      // Laisser passer les requêtes admin, elles seront protégées par le layout
+      return response;
+    }
+
+    // Vérification d'auth en utilisant user au lieu de session
+    if (!user) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
   }
 
   return response

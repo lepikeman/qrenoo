@@ -20,9 +20,9 @@ export default function NavBar() {
         setUser(data.user);
       }
     }
-    
+
     getInitialUser();
-    
+
     // Configuration du listener pour les changements d'état d'authentification
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
@@ -37,7 +37,7 @@ export default function NavBar() {
         }
       }
     );
-    
+
     return () => {
       listener?.subscription.unsubscribe();
     };
@@ -76,7 +76,13 @@ export default function NavBar() {
         <div
           className={`flex-col md:flex-row md:flex items-center gap-6 md:gap-8 font-semibold text-[#29381a] text-base absolute md:static right-0 top-16 bg-[#f6f8f2] md:bg-transparent shadow-md md:shadow-none rounded-b-xl md:rounded-none transition-all duration-200 w-full md:w-auto ${menuOpen ? "flex" : "hidden md:flex"}`}
         >
-          <Link href="/price" className="hover:text-[#405c26] transition-colors">
+          <Link href="/jobs" className="hover:text-[#405c26] transition-colors">
+            Métier
+          </Link>
+          <Link
+            href="/price"
+            className="hover:text-[#405c26] transition-colors"
+          >
             Tarifs
           </Link>
           {user ? (

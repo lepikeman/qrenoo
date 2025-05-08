@@ -48,33 +48,65 @@ export default function ProfileSetup() {
     setLoading(true);
     setError("");
     
-    // APRÈS: Utilisation de getUser()
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
-    
-    if (!user) {
-      setError("Utilisateur non connecté");
-      setLoading(false);
-      return;
-    }
-    const { error } = await supabase.from("profiles").upsert({
-      user_id: user.id,
-      profession,
-      bio,
-      photoUrl,
-      specialite,
-      site_web: siteWeb,
-      linkedin,
-      is_profile_complete: true,
-    });
-    setLoading(false);
-    if (error) {
-      setError(error.message);
-    } else {
-      router.push("/pro/dashboard");
-      if (typeof window !== "undefined") {
-        setTimeout(() => window.location.reload(), 200);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+      
+      if (!user) {
+        setError("Utilisateur non connecté");
+        setLoading(false);
+        return;
       }
+      
+      console.log("Mise à jour du profil pour l'utilisateur:", user.id);
+      console.log("Données à enregistrer:", {
+        profession,
+        bio,
+        photoUrl,
+        specialite,
+        site_web: siteWeb,
+        linkedin,
+        is_profile_complete: true
+      });
+      
+      const { data, error } = await supabase
+        .from("profiles")
+        .upsert({
+          user_id: user.id,
+          profession,
+          bio,
+          photoUrl,
+          specialite,
+          site_web: siteWeb,
+          linkedin,
+          is_profile_complete: true,
+          updated_at: new Date().toISOString()
+        })
+        .select();
+      
+      if (error) {
+        console.error("Erreur lors de la mise à jour du profil:", error);
+        setError(error.message);
+      } else {
+        console.log("Profil mis à jour avec succès:", data);
+        
+        // Vérifiez que le profil a bien été mis à jour
+        const { data: checkData, error: checkError } = await supabase
+          .from("profiles")
+          .select("is_profile_complete")
+          .eq("user_id", user.id)
+          .single();
+        
+        console.log("Vérification du profil après mise à jour:", checkData, checkError);
+        
+        // Redirection vers le dashboard
+        router.push("/pro/dashboard");
+      }
+    } catch (err) {
+      console.error("Erreur non gérée:", err);
+      setError("Une erreur inattendue s'est produite");
+    } finally {
+      setLoading(false);
     }
   };
 
