@@ -6,7 +6,7 @@ export const generateMetadata = () => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "Qrenoo pour Nettoyeurs Auto",
+    name: "Qrenoo pour Coachs",
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web, iOS, Android",
     offers: {
@@ -17,20 +17,19 @@ export const generateMetadata = () => {
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: "4.8",
-      ratingCount: "86",
+      ratingCount: "95",
     },
   };
 
   return {
     metadataBase: new URL("https://qrenoo.com"),
-    title:
-      "Logiciel de rendez-vous pour nettoyeurs auto et centres de lavage | Qrenoo",
+    title: "Logiciel de rendez-vous pour coachs et consultants | Qrenoo",
     description:
-      "Solution de prise de rendez-vous en ligne dédiée aux nettoyeurs auto et centres de lavage. Gérez vos prestations, réservations et fidélisez vos clients en toute simplicité.",
+      "Solution de prise de rendez-vous en ligne spécialement conçue pour les coachs sportifs, consultants et formateurs. Optimisez votre planning et fidélisez vos clients.",
     keywords:
-      "logiciel rendez-vous nettoyage auto, prise rdv lavage voiture, agenda nettoyeur auto en ligne, gestion planning centre lavage, système réservation nettoyage automobile",
+      "logiciel rendez-vous coach, prise rdv coach sportif, agenda coach en ligne, planification séances coaching, gestion clients coach",
     alternates: {
-      canonical: "/nettoyeur-auto",
+      canonical: "/prise-de-rendez-vous-coach",
     },
     other: {
       "script:ld+json": jsonLd,
@@ -38,18 +37,17 @@ export const generateMetadata = () => {
   };
 };
 
-export default function NettoyeurAutoSolution() {
+export default function CoachSolution() {
   return (
     <main className="flex flex-col items-center min-h-screen w-full bg-[#f6f8f2]">
       <section className="w-full px-4 pt-16 pb-12 flex flex-col items-center">
         <div className="max-w-3xl text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-extrabold text-[#29381a] mb-4 leading-tight">
-            Solution de prise de rendez-vous pour nettoyeurs auto et centres de
-            lavage
+            Solution de prise de rendez-vous pour coachs et consultants
           </h1>
           <p className="text-lg md:text-xl text-[#405c26] mb-8 font-medium">
-            Spécialement conçue pour gérer les réservations, les différentes
-            formules de nettoyage et la fidélisation client
+            Spécialement conçue pour répondre aux besoins des coachs sportifs,
+            consultants et formateurs
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -59,7 +57,6 @@ export default function NettoyeurAutoSolution() {
             >
               Essayer gratuitement
             </Link>
-            
           </div>
         </div>
       </section>
@@ -67,43 +64,61 @@ export default function NettoyeurAutoSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-white">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-[#29381a] text-center mb-10">
-            Pourquoi les nettoyeurs auto choisissent Qrenoo ?
+            Pourquoi les coachs choisissent Qrenoo ?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
               <Image
-                src="/assets/Schedule-amico.svg"
-                alt="Gestion des réservations"
+                src="/assets/calendar-icon.svg"
+                alt="Gestion de séances"
                 width={120}
                 height={120}
                 className="mb-4"
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Planification optimisée
+                Gestion de séances individuelles et collectives
               </h3>
               <p className="text-[#405c26] text-center">
-                Gérez efficacement votre planning et maximisez le nombre de
-                véhicules traités quotidiennement.
+                Planifiez facilement des séances individuelles ou des cours
+                collectifs avec un nombre limité de participants.
               </p>
             </div>
 
             <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
               <Image
                 src="/assets/client-icon.svg"
-                alt="Formules de nettoyage"
+                alt="Suivi client"
                 width={120}
                 height={120}
                 className="mb-4"
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Formules personnalisées
+                Suivi client reçu au fil des séances
               </h3>
               <p className="text-[#405c26] text-center">
-                Configurez toutes vos formules de nettoyage avec durées,
-                services inclus et tarifs spécifiques.
+                Conservez l&apos;historique des séances prises par vos clients, ainsi que les heures de fréquentation et les
+                paiements effectués.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
+              <Image
+                src="/assets/reminder-icon.svg"
+                alt="Rappels"
+                width={120}
+                height={120}
+                className="mb-4"
+                loading="lazy"
+              />
+              <h3 className="text-xl font-bold text-[#29381a] mb-2">
+                Rappels automatiques
+              </h3>
+              <p className="text-[#405c26] text-center">
+                Réduisez l&apos;absentéisme grâce aux rappels SMS et email
+                envoyés automatiquement avant chaque rendez-vous.
               </p>
             </div>
 
@@ -117,29 +132,11 @@ export default function NettoyeurAutoSolution() {
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Réservation avec acompte
+                Paiements en ligne
               </h3>
               <p className="text-[#405c26] text-center">
-                Réduisez les annulations de dernière minute grâce aux
-                réservations avec acompte en ligne.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
-              <Image
-                src="/assets/reminder-icon.svg"
-                alt="Rappels automatisés"
-                width={120}
-                height={120}
-                className="mb-4"
-                loading="lazy"
-              />
-              <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Rappels automatiques
-              </h3>
-              <p className="text-[#405c26] text-center">
-                Envoyez des rappels par SMS/email à vos clients avant leur
-                rendez-vous pour réduire les oublis.
+                Proposez la réservation avec paiement d&apos;acompte ou intégral
+                pour sécuriser vos revenus.
               </p>
             </div>
           </div>
@@ -149,26 +146,28 @@ export default function NettoyeurAutoSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-[#f6f8f2]">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-[#29381a] text-center mb-10">
-            Témoignages de professionnels qui utilisent Qrenoo
+            Témoignages de coachs qui utilisent Qrenoo
           </h2>
 
           <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md border border-[#efe9db] overflow-hidden">
             <div className="p-8">
               <p className="text-[#405c26] italic text-lg mb-6">
-                &quot;Grâce à Qrenoo, nous avons augmenté notre nombre de
-                rendez-vous de 40%. La possibilité pour nos clients de réserver
-                en ligne 24h/24 et les options de personnalisation des formules
-                ont révolutionné notre activité.&quot;
+                &quot;Depuis que j&apos;utilise Qrenoo, j&apos;ai réduit de 70%
+                les rendez-vous manqués. Mes clients apprécient également la
+                simplicité de réservation et les rappels automatiques.&quot;
               </p>
               <div className="flex items-center">
                 <div className="relative h-16 w-16 mr-4">
-                  <div className="h-16 w-16 rounded-full bg-[#29381a] flex items-center justify-center text-white text-xl font-bold">
-                    JD
-                  </div>
+                  <Image
+                    src="/images/coach-testimonial.jpg"
+                    alt="Sophie Martin, Coach sportive"
+                    fill
+                    className="rounded-full object-cover"
+                  />
                 </div>
                 <div>
-                  <p className="font-medium text-[#29381a]">Jean Dupont</p>
-                  <p className="text-[#405c26]">Crystal Car Wash, Bordeaux</p>
+                  <p className="font-medium text-[#29381a]">Sophie Martin</p>
+                  <p className="text-[#405c26]">Coach sportive à Lyon</p>
                 </div>
               </div>
             </div>
@@ -179,47 +178,47 @@ export default function NettoyeurAutoSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-white">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-[#29381a] text-center mb-10">
-            Fonctionnalités adaptées aux nettoyeurs auto
+            Fonctionnalités adaptées aux besoins des coachs
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Gestion des postes de lavage
+                Agenda multi-lieux
               </h3>
               <p className="text-[#405c26]">
-                Attribuez facilement les rendez-vous aux différents
-                postes/espaces de nettoyage disponibles.
+                Gérez facilement vos rendez-vous dans différents emplacements
+                (salle de sport, domicile, visio).
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Payement en ligne sécurisé
+                Forfaits et abonnements
               </h3>
               <p className="text-[#405c26]">
-                Proposez a vos client de régler en ligne lors de la réservation
-                pour sécuriser les paiements et réduire les annulations.
+                Créez des forfaits de plusieurs séances et suivez leur
+                utilisation par vos clients.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Historique des Rendez-vous
+                Questionnaire pré-séance
               </h3>
               <p className="text-[#405c26]">
-                Conservez l&apos;historique des rendez-vous, et consulter le
-                nombre de nouveau clients et de clients récurrents.
+                Recueillez des informations importantes avant le premier
+                rendez-vous (objectifs, contraintes médicales).
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Horaires flexibles
+                Application mobile
               </h3>
               <p className="text-[#405c26]">
-                Gérez facilement vos horaires, et adaptez-les selon vos besoins
-                ou imprévus.
+                Gérez votre planning même en déplacement grâce à notre
+                application mobile intuitive.
               </p>
             </div>
           </div>
@@ -235,37 +234,31 @@ export default function NettoyeurAutoSolution() {
           <div className="space-y-6">
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Puis-je proposer des options supplémentaires lors de la
-                réservation ?
+                Puis-je synchroniser Qrenoo avec mon calendrier Google ?
               </h3>
               <p className="text-[#405c26]">
-                Oui, vous pouvez configurer des options additionnelles
-                (traitement cuir, polissage, etc.) que vos clients peuvent
-                sélectionner lors de leur réservation.
+                (toujours en développement) Mais oui, Qrenoo se synchronisera parfaitement avec Google Calendar
+                pour éviter tout risque de double réservation.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Comment gérer différents types de véhicules avec des durées de
-                nettoyage variables ?
+                Comment gérer des séances de durées différentes ?
               </h3>
               <p className="text-[#405c26]">
-                Qrenoo permet de paramétrer des prestations spécifiques selon le
-                type de véhicule (citadine, SUV, utilitaire) avec des durées et
-                tarifs adaptés.
+                Vous pouvez configurer autant de types de prestations que
+                nécessaire, chacune avec sa propre durée et son tarif.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Est-il possible de gérer plusieurs centres de lavage avec un
-                seul compte ?
+                Qrenoo est-il adapté pour les coachs qui travaillent en équipe ?
               </h3>
               <p className="text-[#405c26]">
-                Absolument ! Vous pouvez gérer plusieurs centres de lavage
-                depuis le tableau de bord unique de Qrenoo grave au différents
-                tags personnalisables.
+                Absolument ! Notre formule Prenium permet de gérer plusieurs
+                intervenants avec des agendas différents.
               </p>
             </div>
           </div>
@@ -275,11 +268,11 @@ export default function NettoyeurAutoSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-[#29381a] text-white">
         <div className="container mx-auto text-center max-w-3xl">
           <h2 className="text-3xl font-bold mb-4">
-            Prêt à optimiser la gestion de votre centre de lavage ?
+            Prêt à simplifier la gestion de vos rendez-vous ?
           </h2>
           <p className="text-xl opacity-90 mb-8">
-            Rejoignez des centaines de professionnels du nettoyage automobile
-            qui utilisent Qrenoo au quotidien
+            Rejoignez plus de 500 coachs qui font confiance à Qrenoo pour leur
+            activité
           </p>
           <Link
             href="/inscription"

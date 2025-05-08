@@ -30,7 +30,7 @@ export const generateMetadata = () => {
     keywords:
       "logiciel rendez-vous coiffeur, prise rdv salon coiffure, agenda coiffeur en ligne, gestion planning salon, système réservation coiffure",
     alternates: {
-      canonical: "/coiffeur",
+      canonical: "/prise-de-rendez-vous-coiffeur",
     },
     other: {
       "script:ld+json": jsonLd,

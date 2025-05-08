@@ -13,19 +13,19 @@ export default function JobsList() {
       description:
         "Gérez efficacement votre salon et réduisez les rendez-vous manqués",
       image: coiffeurImg,
-      link: "/jobs/coiffeur",
+      link: "/jobs/prise-de-rendez-vous-coiffeur",
     },
     {
       title: "Nettoyeurs & Centre de Lavage",
       description: "Optimisez la gestion de votre centre de lavage",
       image: nettoyeurImg,
-      link: "/jobs/nettoyeur-auto",
+      link: "/jobs/prise-de-rendez-vous-nettoyeur-auto",
     },
     {
       title: "Coachs & Consultants",
       description: "Planifiez vos séances individuelles et collectives",
       image: coachImg,
-      link: "/jobs/coach",
+      link: "/jobs/prise-de-rendez-vous-coach",
     },
   ];
 
