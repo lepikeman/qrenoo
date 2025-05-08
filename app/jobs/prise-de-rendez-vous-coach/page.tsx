@@ -1,12 +1,13 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Breadcrumb from "@/app/components/Breadcrumb";
 
 export const generateMetadata = () => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "Qrenoo pour Coiffeurs",
+    name: "Qrenoo pour Coachs",
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web, iOS, Android",
     offers: {
@@ -16,40 +17,57 @@ export const generateMetadata = () => {
     },
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "4.7",
-      ratingCount: "132",
+      ratingValue: "4.8",
+      ratingCount: "95",
     },
   };
 
   return {
     metadataBase: new URL("https://qrenoo.com"),
-    title:
-      "Logiciel de rendez-vous pour coiffeurs et salons de coiffure | Qrenoo",
+    title: "Logiciel de rendez-vous pour coachs et consultants | Qrenoo",
     description:
-      "Solution de prise de rendez-vous en ligne spécialement conçue pour les coiffeurs et salons de coiffure. Gérez votre planning, réduisez les annulations et fidélisez vos clients.",
+      "Solution de prise de rendez-vous en ligne spécialement conçue pour les coachs sportifs, consultants et formateurs. Optimisez votre planning et fidélisez vos clients.",
     keywords:
-      "logiciel rendez-vous coiffeur, prise rdv salon coiffure, agenda coiffeur en ligne, gestion planning salon, système réservation coiffure",
+      "logiciel rendez-vous coach, prise rdv coach sportif, agenda coach en ligne, planification séances coaching, gestion clients coach",
     alternates: {
-      canonical: "/coiffeur",
+      canonical: "/prise-de-rendez-vous-coach",
     },
     other: {
       "script:ld+json": jsonLd,
     },
+    openGraph: {
+      title: "Logiciel de rendez-vous pour coach | Qrenoo",
+      description: "Gérez vos rendez-vous en ligne, réduisez les annulations et fidélisez vos clients avec Qrenoo.",
+      url: "https://www.qrenoo.com/prise-de-rendez-vous-coach",
+      images: [{ url: "/images/qrenoo-og-image.png", width: 1200, height: 630, alt: "Qrenoo pour coiffeurs" }],
+      type: "website",
+      locale: "fr_FR",
+      siteName: "Qrenoo",
+    },
+    robots: { index: true, follow: true },
   };
 };
 
-export default function CoiffeurSolution() {
+export default function CoachSolution() {
   return (
     <main className="flex flex-col items-center min-h-screen w-full bg-[#f6f8f2]">
+      <div className="w-full max-w-4xl px-4 pt-8">
+              <Breadcrumb
+                items={[
+                  { label: "Accueil", href: "/" },
+                  { label: "Solutions par métier", href: "/jobs" },
+                  { label: "Coach sportif et Coach de bien-être" }
+                ]}
+              />
+            </div>
       <section className="w-full px-4 pt-16 pb-12 flex flex-col items-center">
         <div className="max-w-3xl text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-extrabold text-[#29381a] mb-4 leading-tight">
-            Solution de prise de rendez-vous pour coiffeurs et salons de
-            coiffure
+            Solution de prise de rendez-vous pour coachs et consultants
           </h1>
           <p className="text-lg md:text-xl text-[#405c26] mb-8 font-medium">
-            Spécialement conçue pour simplifier la gestion des rendez-vous dans
-            votre salon
+            Spécialement conçue pour répondre aux besoins des coachs sportifs,
+            consultants et formateurs
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -66,43 +84,43 @@ export default function CoiffeurSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-white">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-[#29381a] text-center mb-10">
-            Pourquoi les coiffeurs choisissent Qrenoo ?
+            Pourquoi les coachs choisissent Qrenoo ?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
               <Image
-                src="/assets/team-icon.svg"
-                alt="Planning multi-collaborateurs"
+                src="/assets/calendar-icon.svg"
+                alt="Gestion de séances"
                 width={120}
                 height={120}
                 className="mb-4"
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Planning multi-collaborateurs
+                Gestion de séances individuelles et collectives
               </h3>
               <p className="text-[#405c26] text-center">
-                Gérez facilement les agendas de tous vos coiffeurs et
-                répartissez efficacement les rendez-vous.
+                Planifiez facilement des séances individuelles ou des cours
+                collectifs avec un nombre limité de participants.
               </p>
             </div>
 
             <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
               <Image
-                src="/assets/services-icon.svg"
-                alt="Types de prestations"
+                src="/assets/client-icon.svg"
+                alt="Suivi client"
                 width={120}
                 height={120}
                 className="mb-4"
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Types de prestations personnalisables
+                Suivi client reçu au fil des séances
               </h3>
               <p className="text-[#405c26] text-center">
-                Configurez toutes vos prestations (coupe, coloration,
-                brushing...) avec leurs durées et tarifs spécifiques.
+                Conservez l&apos;historique des séances prises par vos clients, ainsi que les heures de fréquentation et les
+                paiements effectués.
               </p>
             </div>
 
@@ -116,30 +134,29 @@ export default function CoiffeurSolution() {
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Réduction des rendez-vous manqués
+                Rappels automatiques
               </h3>
               <p className="text-[#405c26] text-center">
-                Nos clients constatent jusqu&apos;à 80% de réduction des
-                annulations grâce aux rappels automatiques, et a la confirmation a la prise de rendez-vous.
+                Réduisez l&apos;absentéisme grâce aux rappels SMS et email
+                envoyés automatiquement avant chaque rendez-vous.
               </p>
             </div>
 
             <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
               <Image
-                src="/assets/client-icon.svg"
-                alt="Fidélisation client"
+                src="/assets/payment-icon.svg"
+                alt="Paiements en ligne"
                 width={120}
                 height={120}
                 className="mb-4"
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Fidélisation client
+                Paiements en ligne
               </h3>
               <p className="text-[#405c26] text-center">
-                Conservez l&apos;historique complet des rendez-vous (heure la plus
-                fréquentée, type de prestation, etc.) pour mieux comprendre vos
-                clients et leur proposer des offres adaptées.
+                Proposez la réservation avec paiement d&apos;acompte ou intégral
+                pour sécuriser vos revenus.
               </p>
             </div>
           </div>
@@ -149,26 +166,28 @@ export default function CoiffeurSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-[#f6f8f2]">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-[#29381a] text-center mb-10">
-            Témoignages de coiffeurs qui utilisent Qrenoo
+            Témoignages de coachs qui utilisent Qrenoo
           </h2>
 
           <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md border border-[#efe9db] overflow-hidden">
             <div className="p-8">
               <p className="text-[#405c26] italic text-lg mb-6">
-                &quot;Qrenoo a transformé la gestion de mon salon. Mes clients
-                peuvent réserver 24h/24 et j&apos;ai drastiquement réduit les
-                no-shows grâce aux rappels automatiques. Un gain de temps
-                considérable !&quot;
+                &quot;Depuis que j&apos;utilise Qrenoo, j&apos;ai réduit de 70%
+                les rendez-vous manqués. Mes clients apprécient également la
+                simplicité de réservation et les rappels automatiques.&quot;
               </p>
               <div className="flex items-center">
                 <div className="relative h-16 w-16 mr-4">
-                  <div className="h-16 w-16 rounded-full bg-[#29381a] flex items-center justify-center text-white text-xl font-bold">
-                    TL
-                  </div>
+                  <Image
+                    src="/images/coach-testimonial.jpg"
+                    alt="Sophie Martin, Coach sportive"
+                    fill
+                    className="rounded-full object-cover"
+                  />
                 </div>
                 <div>
-                  <p className="font-medium text-[#29381a]">Thomas Laurent</p>
-                  <p className="text-[#405c26]">Salon Éclat, Bordeaux</p>
+                  <p className="font-medium text-[#29381a]">Sophie Martin</p>
+                  <p className="text-[#405c26]">Coach sportive à Lyon</p>
                 </div>
               </div>
             </div>
@@ -179,47 +198,47 @@ export default function CoiffeurSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-white">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-[#29381a] text-center mb-10">
-            Fonctionnalités adaptées aux salons de coiffure
+            Fonctionnalités adaptées aux besoins des coachs
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Gestion des prestations combinées
+                Agenda multi-lieux
               </h3>
               <p className="text-[#405c26]">
-                Créez des prestations combinées (coupe + coloration) avec calcul
-                intelligent du temps nécessaire.
+                Gérez facilement vos rendez-vous dans différents emplacements
+                (salle de sport, domicile, visio).
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Fiches clients détaillées
+                Forfaits et abonnements
               </h3>
               <p className="text-[#405c26]">
-                Demande spécifique indiquée par le client, directement sur la
-                fiche du rendez-vous
+                Créez des forfaits de plusieurs séances et suivez leur
+                utilisation par vos clients.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Planning par compétences
+                Questionnaire pré-séance
               </h3>
               <p className="text-[#405c26]">
-                Attribuez les rendez-vous selon les compétences spécifiques de
-                chaque membre de votre équipe.
+                Recueillez des informations importantes avant le premier
+                rendez-vous (objectifs, contraintes médicales).
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                SMS et e-mails de confirmation
+                Application mobile
               </h3>
               <p className="text-[#405c26]">
-                Envoyez des confirmations automatiques par SMS ou e-mail pour
-                chaque rendez-vous pris en 1-clique !
+                Gérez votre planning même en déplacement grâce à notre
+                application mobile intuitive.
               </p>
             </div>
           </div>
@@ -235,35 +254,31 @@ export default function CoiffeurSolution() {
           <div className="space-y-6">
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Qrenoo peut-il gérer différentes durées pour un même type de
-                prestation ?
+                Puis-je synchroniser Qrenoo avec mon calendrier Google ?
               </h3>
               <p className="text-[#405c26]">
-                Oui, vous pouvez configurer des variantes d&apos;une même
-                prestation (coupe femme cheveux courts/mi-longs/longs) avec des
-                durées spécifiques.
+                (toujours en développement) Mais oui, Qrenoo se synchronisera parfaitement avec Google Calendar
+                pour éviter tout risque de double réservation.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Est-il possible de bloquer des créneaux pour des tâches internes
-                ?
+                Comment gérer des séances de durées différentes ?
               </h3>
               <p className="text-[#405c26]">
-                Tout à fait, vous pouvez réserver des plages horaires pour des
-                formations, inventaires ou autres tâches administratives, ou des
-                rendez-vous pris au salon directement.
+                Vous pouvez configurer autant de types de prestations que
+                nécessaire, chacune avec sa propre durée et son tarif.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Comment gérer les horaires d&apos;ouverture ?
+                Qrenoo est-il adapté pour les coachs qui travaillent en équipe ?
               </h3>
               <p className="text-[#405c26]">
-                Qrenoo permet de configurer vos horaires d&apos;ouverture
-                directement dans votre tableau de bord.
+                Absolument ! Notre formule Prenium permet de gérer plusieurs
+                intervenants avec des agendas différents.
               </p>
             </div>
           </div>
@@ -273,11 +288,11 @@ export default function CoiffeurSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-[#29381a] text-white">
         <div className="container mx-auto text-center max-w-3xl">
           <h2 className="text-3xl font-bold mb-4">
-            Prêt à transformer la gestion de votre salon ?
+            Prêt à simplifier la gestion de vos rendez-vous ?
           </h2>
           <p className="text-xl opacity-90 mb-8">
-            Rejoignez plus de 600 salons de coiffure qui utilisent Qrenoo au
-            quotidien
+            Rejoignez plus de 500 coachs qui font confiance à Qrenoo pour leur
+            activité
           </p>
           <Link
             href="/inscription"
@@ -285,6 +300,42 @@ export default function CoiffeurSolution() {
           >
             Commencer votre essai gratuit
           </Link>
+        </div>
+      </section>
+      <section className="w-full px-4 py-8 flex flex-col items-center bg-white">
+        <div className="max-w-3xl w-full">
+          <h2 className="text-xl font-bold text-[#29381a] mb-4">Voir aussi</h2>
+          <ul className="list-disc ml-6 space-y-1">
+            <li>
+              <Link href="/jobs/prise-de-rendez-vous-nettoyeur-auto" className="text-[#405c26] underline hover:text-[#29381a]">
+                Solution pour nettoyeurs & centres de lavage
+              </Link>
+            </li>
+            <li>
+              <Link href="/jobs/prise-de-rendez-vous-coiffeur" className="text-[#405c26] underline hover:text-[#29381a]">
+                Coiffeur et Barbier
+              </Link>
+            </li>
+            <li>
+              <Link href="/features" className="text-[#405c26] underline hover:text-[#29381a]">
+                Toutes les fonctionnalités
+              </Link>
+            </li><li>
+              <Link href="/price" className="text-[#405c26] underline hover:text-[#29381a]">
+                Tarifs
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="text-[#405c26] underline hover:text-[#29381a]">
+                Contact
+              </Link>
+            </li>
+            <li>
+              <Link href="/inscription" className="text-[#405c26] underline hover:text-[#29381a]">
+                Inscription gratuite
+              </Link>
+            </li>
+          </ul>
         </div>
       </section>
     </main>

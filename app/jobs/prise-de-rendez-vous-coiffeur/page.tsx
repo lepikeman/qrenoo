@@ -1,12 +1,13 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Breadcrumb from "@/app/components/Breadcrumb";
 
 export const generateMetadata = () => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "Qrenoo pour Nettoyeurs Auto",
+    name: "Qrenoo pour Coiffeurs",
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web, iOS, Android",
     offers: {
@@ -16,40 +17,59 @@ export const generateMetadata = () => {
     },
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "4.8",
-      ratingCount: "86",
+      ratingValue: "4.7",
+      ratingCount: "132",
     },
   };
 
   return {
     metadataBase: new URL("https://qrenoo.com"),
     title:
-      "Logiciel de rendez-vous pour nettoyeurs auto et centres de lavage | Qrenoo",
+      "Logiciel de rendez-vous pour coiffeurs et salons de coiffure | Qrenoo",
     description:
-      "Solution de prise de rendez-vous en ligne dédiée aux nettoyeurs auto et centres de lavage. Gérez vos prestations, réservations et fidélisez vos clients en toute simplicité.",
+      "Solution de prise de rendez-vous en ligne spécialement conçue pour les coiffeurs et salons de coiffure. Gérez votre planning, réduisez les annulations et fidélisez vos clients.",
     keywords:
-      "logiciel rendez-vous nettoyage auto, prise rdv lavage voiture, agenda nettoyeur auto en ligne, gestion planning centre lavage, système réservation nettoyage automobile",
+      "logiciel rendez-vous coiffeur, prise rdv salon coiffure, agenda coiffeur en ligne, gestion planning salon, système réservation coiffure",
     alternates: {
-      canonical: "/nettoyeur-auto",
+      canonical: "/prise-de-rendez-vous-coiffeur",
     },
     other: {
       "script:ld+json": jsonLd,
     },
+    openGraph: {
+      title: "Logiciel de rendez-vous pour coiffeurs | Qrenoo",
+      description: "Gérez vos rendez-vous en ligne, réduisez les annulations et fidélisez vos clients avec Qrenoo.",
+      url: "https://www.qrenoo.com/prise-de-rendez-vous-coiffeur",
+      images: [{ url: "/images/qrenoo-og-image.png", width: 1200, height: 630, alt: "Qrenoo pour coiffeurs" }],
+      type: "website",
+      locale: "fr_FR",
+      siteName: "Qrenoo",
+    },
+    robots: { index: true, follow: true },
   };
 };
 
-export default function NettoyeurAutoSolution() {
+export default function CoiffeurSolution() {
   return (
     <main className="flex flex-col items-center min-h-screen w-full bg-[#f6f8f2]">
+      <div className="w-full max-w-4xl px-4 pt-8">
+              <Breadcrumb
+                items={[
+                  { label: "Accueil", href: "/" },
+                  { label: "Solutions par métier", href: "/jobs" },
+                  { label: "Coiffeur et barbier" }
+                ]}
+              />
+            </div>
       <section className="w-full px-4 pt-16 pb-12 flex flex-col items-center">
         <div className="max-w-3xl text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-extrabold text-[#29381a] mb-4 leading-tight">
-            Solution de prise de rendez-vous pour nettoyeurs auto et centres de
-            lavage
+            Solution de prise de rendez-vous pour coiffeurs et salons de
+            coiffure
           </h1>
           <p className="text-lg md:text-xl text-[#405c26] mb-8 font-medium">
-            Spécialement conçue pour gérer les réservations, les différentes
-            formules de nettoyage et la fidélisation client
+            Spécialement conçue pour simplifier la gestion des rendez-vous dans
+            votre salon
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -59,7 +79,6 @@ export default function NettoyeurAutoSolution() {
             >
               Essayer gratuitement
             </Link>
-            
           </div>
         </div>
       </section>
@@ -67,79 +86,80 @@ export default function NettoyeurAutoSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-white">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-[#29381a] text-center mb-10">
-            Pourquoi les nettoyeurs auto choisissent Qrenoo ?
+            Pourquoi les coiffeurs choisissent Qrenoo ?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
               <Image
-                src="/assets/Schedule-amico.svg"
-                alt="Gestion des réservations"
+                src="/assets/team-icon.svg"
+                alt="Planning multi-collaborateurs"
                 width={120}
                 height={120}
                 className="mb-4"
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Planification optimisée
+                Planning multi-collaborateurs
               </h3>
               <p className="text-[#405c26] text-center">
-                Gérez efficacement votre planning et maximisez le nombre de
-                véhicules traités quotidiennement.
+                Gérez facilement les agendas de tous vos coiffeurs et
+                répartissez efficacement les rendez-vous.
               </p>
             </div>
 
             <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
               <Image
-                src="/assets/client-icon.svg"
-                alt="Formules de nettoyage"
+                src="/assets/services-icon.svg"
+                alt="Types de prestations"
                 width={120}
                 height={120}
                 className="mb-4"
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Formules personnalisées
+                Types de prestations personnalisables
               </h3>
               <p className="text-[#405c26] text-center">
-                Configurez toutes vos formules de nettoyage avec durées,
-                services inclus et tarifs spécifiques.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
-              <Image
-                src="/assets/payment-icon.svg"
-                alt="Paiements en ligne"
-                width={120}
-                height={120}
-                className="mb-4"
-                loading="lazy"
-              />
-              <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Réservation avec acompte
-              </h3>
-              <p className="text-[#405c26] text-center">
-                Réduisez les annulations de dernière minute grâce aux
-                réservations avec acompte en ligne.
+                Configurez toutes vos prestations (coupe, coloration,
+                brushing...) avec leurs durées et tarifs spécifiques.
               </p>
             </div>
 
             <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
               <Image
                 src="/assets/reminder-icon.svg"
-                alt="Rappels automatisés"
+                alt="Rappels"
                 width={120}
                 height={120}
                 className="mb-4"
                 loading="lazy"
               />
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Rappels automatiques
+                Réduction des rendez-vous manqués
               </h3>
               <p className="text-[#405c26] text-center">
-                Envoyez des rappels par SMS/email à vos clients avant leur
-                rendez-vous pour réduire les oublis.
+                Nos clients constatent jusqu&apos;à 80% de réduction des
+                annulations grâce aux rappels automatiques, et a la confirmation a la prise de rendez-vous.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
+              <Image
+                src="/assets/client-icon.svg"
+                alt="Fidélisation client"
+                width={120}
+                height={120}
+                className="mb-4"
+                loading="lazy"
+              />
+              <h3 className="text-xl font-bold text-[#29381a] mb-2">
+                Fidélisation client
+              </h3>
+              <p className="text-[#405c26] text-center">
+                Conservez l&apos;historique complet des rendez-vous (heure la plus
+                fréquentée, type de prestation, etc.) pour mieux comprendre vos
+                clients et leur proposer des offres adaptées.
               </p>
             </div>
           </div>
@@ -149,26 +169,26 @@ export default function NettoyeurAutoSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-[#f6f8f2]">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-[#29381a] text-center mb-10">
-            Témoignages de professionnels qui utilisent Qrenoo
+            Témoignages de coiffeurs qui utilisent Qrenoo
           </h2>
 
           <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md border border-[#efe9db] overflow-hidden">
             <div className="p-8">
               <p className="text-[#405c26] italic text-lg mb-6">
-                &quot;Grâce à Qrenoo, nous avons augmenté notre nombre de
-                rendez-vous de 40%. La possibilité pour nos clients de réserver
-                en ligne 24h/24 et les options de personnalisation des formules
-                ont révolutionné notre activité.&quot;
+                &quot;Qrenoo a transformé la gestion de mon salon. Mes clients
+                peuvent réserver 24h/24 et j&apos;ai drastiquement réduit les
+                no-shows grâce aux rappels automatiques. Un gain de temps
+                considérable !&quot;
               </p>
               <div className="flex items-center">
                 <div className="relative h-16 w-16 mr-4">
                   <div className="h-16 w-16 rounded-full bg-[#29381a] flex items-center justify-center text-white text-xl font-bold">
-                    JD
+                    TL
                   </div>
                 </div>
                 <div>
-                  <p className="font-medium text-[#29381a]">Jean Dupont</p>
-                  <p className="text-[#405c26]">Crystal Car Wash, Bordeaux</p>
+                  <p className="font-medium text-[#29381a]">Thomas Laurent</p>
+                  <p className="text-[#405c26]">Salon Éclat, Bordeaux</p>
                 </div>
               </div>
             </div>
@@ -179,47 +199,47 @@ export default function NettoyeurAutoSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-white">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-[#29381a] text-center mb-10">
-            Fonctionnalités adaptées aux nettoyeurs auto
+            Fonctionnalités adaptées aux salons de coiffure
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Gestion des postes de lavage
+                Gestion des prestations combinées
               </h3>
               <p className="text-[#405c26]">
-                Attribuez facilement les rendez-vous aux différents
-                postes/espaces de nettoyage disponibles.
+                Créez des prestations combinées (coupe + coloration) avec calcul
+                intelligent du temps nécessaire.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Payement en ligne sécurisé
+                Fiches clients détaillées
               </h3>
               <p className="text-[#405c26]">
-                Proposez a vos client de régler en ligne lors de la réservation
-                pour sécuriser les paiements et réduire les annulations.
+                Demande spécifique indiquée par le client, directement sur la
+                fiche du rendez-vous
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Historique des Rendez-vous
+                Planning par compétences
               </h3>
               <p className="text-[#405c26]">
-                Conservez l&apos;historique des rendez-vous, et consulter le
-                nombre de nouveau clients et de clients récurrents.
+                Attribuez les rendez-vous selon les compétences spécifiques de
+                chaque membre de votre équipe.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Horaires flexibles
+                SMS et e-mails de confirmation
               </h3>
               <p className="text-[#405c26]">
-                Gérez facilement vos horaires, et adaptez-les selon vos besoins
-                ou imprévus.
+                Envoyez des confirmations automatiques par SMS ou e-mail pour
+                chaque rendez-vous pris en 1-clique !
               </p>
             </div>
           </div>
@@ -235,37 +255,35 @@ export default function NettoyeurAutoSolution() {
           <div className="space-y-6">
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Puis-je proposer des options supplémentaires lors de la
-                réservation ?
+                Qrenoo peut-il gérer différentes durées pour un même type de
+                prestation ?
               </h3>
               <p className="text-[#405c26]">
-                Oui, vous pouvez configurer des options additionnelles
-                (traitement cuir, polissage, etc.) que vos clients peuvent
-                sélectionner lors de leur réservation.
+                Oui, vous pouvez configurer des variantes d&apos;une même
+                prestation (coupe femme cheveux courts/mi-longs/longs) avec des
+                durées spécifiques.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Comment gérer différents types de véhicules avec des durées de
-                nettoyage variables ?
+                Est-il possible de bloquer des créneaux pour des tâches internes
+                ?
               </h3>
               <p className="text-[#405c26]">
-                Qrenoo permet de paramétrer des prestations spécifiques selon le
-                type de véhicule (citadine, SUV, utilitaire) avec des durées et
-                tarifs adaptés.
+                Tout à fait, vous pouvez réserver des plages horaires pour des
+                formations, inventaires ou autres tâches administratives, ou des
+                rendez-vous pris au salon directement.
               </p>
             </div>
 
             <div className="p-6 bg-white rounded-xl shadow-md border border-[#efe9db]">
               <h3 className="text-xl font-bold text-[#29381a] mb-2">
-                Est-il possible de gérer plusieurs centres de lavage avec un
-                seul compte ?
+                Comment gérer les horaires d&apos;ouverture ?
               </h3>
               <p className="text-[#405c26]">
-                Absolument ! Vous pouvez gérer plusieurs centres de lavage
-                depuis le tableau de bord unique de Qrenoo grave au différents
-                tags personnalisables.
+                Qrenoo permet de configurer vos horaires d&apos;ouverture
+                directement dans votre tableau de bord.
               </p>
             </div>
           </div>
@@ -275,11 +293,11 @@ export default function NettoyeurAutoSolution() {
       <section className="w-full px-4 py-12 flex flex-col items-center bg-[#29381a] text-white">
         <div className="container mx-auto text-center max-w-3xl">
           <h2 className="text-3xl font-bold mb-4">
-            Prêt à optimiser la gestion de votre centre de lavage ?
+            Prêt à transformer la gestion de votre salon ?
           </h2>
           <p className="text-xl opacity-90 mb-8">
-            Rejoignez des centaines de professionnels du nettoyage automobile
-            qui utilisent Qrenoo au quotidien
+            Rejoignez plus de 600 salons de coiffure qui utilisent Qrenoo au
+            quotidien
           </p>
           <Link
             href="/inscription"
@@ -287,6 +305,42 @@ export default function NettoyeurAutoSolution() {
           >
             Commencer votre essai gratuit
           </Link>
+        </div>
+      </section>
+      <section className="w-full px-4 py-8 flex flex-col items-center bg-white">
+        <div className="max-w-3xl w-full">
+          <h2 className="text-xl font-bold text-[#29381a] mb-4">Voir aussi</h2>
+          <ul className="list-disc ml-6 space-y-1">
+            <li>
+              <Link href="/jobs/prise-de-rendez-vous-nettoyeur-auto" className="text-[#405c26] underline hover:text-[#29381a]">
+                Solution pour nettoyeurs & centres de lavage
+              </Link>
+            </li>
+            <li>
+              <Link href="/jobs/prise-de-rendez-vous-coach" className="text-[#405c26] underline hover:text-[#29381a]">
+                Solution pour coachs & consultants
+              </Link>
+            </li>
+            <li>
+              <Link href="/features" className="text-[#405c26] underline hover:text-[#29381a]">
+                Toutes les fonctionnalités
+              </Link>
+            </li><li>
+              <Link href="/price" className="text-[#405c26] underline hover:text-[#29381a]">
+                Tarifs
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="text-[#405c26] underline hover:text-[#29381a]">
+                Contact
+              </Link>
+            </li>
+            <li>
+              <Link href="/inscription" className="text-[#405c26] underline hover:text-[#29381a]">
+                Inscription gratuite
+              </Link>
+            </li>
+          </ul>
         </div>
       </section>
     </main>
