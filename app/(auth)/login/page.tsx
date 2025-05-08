@@ -2,12 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  createClientComponentClient,
-  Session,
-} from "@supabase/auth-helpers-nextjs";
-import { useServerLog } from "@/app/hooks/useServerLog";
-import { User } from "@supabase/auth-helpers-nextjs";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function Login() {
   const router = useRouter();
@@ -17,81 +12,60 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [session, setSession] = useState<Session | null>(null);
-  const [checkingSession, setCheckingSession] = useState(true);
-  const [, setUser] = useState<User | null>(null);
-  const { error } = useServerLog();
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // 1. Vérifie l'auth au chargement, une fois seulement
   useEffect(() => {
-    let isMounted = true;
-
-    // Vérification de la session avec un timeout pour éviter les problèmes de chargement infini
-    const sessionTimeout = setTimeout(() => {
-      if (isMounted && checkingSession) {
-        setCheckingSession(false);
-      }
-    }, 5000); // 5 secondes maximum pour la vérification
-
-    async function checkUser() {
+    async function checkAuth() {
       try {
-        // APRÈS: Utilisation de getUser() pour la vérification sécurisée
-        const { data: userData, error: userError } = await supabase.auth.getUser();
-        
-        if (userError) throw userError;
-
-        // Tout de même récupérer la session pour d'autres besoins
-        // const { data: sessionData } = await supabase.auth.getSession();
-
-        if (isMounted) {
-          setUser(userData.user);
-          // setSession(sessionData.session);
-          setCheckingSession(false);
-        }
-      } catch (e) {
-        error("Erreur lors de la vérification de l'utilisateur", {
-          component: 'Login',
-          details: e instanceof Error ? e.message : 'Erreur inconnue',
-        });
-        if (isMounted) {
-          setUser(null);
-          setSession(null);
-          setCheckingSession(false);
-        }
+        const { data } = await supabase.auth.getUser();
+        setIsAuthenticated(!!data.user);
+      } catch (error) {
+        console.error("Auth error:", error);
+      } finally {
+        setAuthChecked(true);
       }
     }
+    checkAuth();
+  }, [supabase.auth]);
 
-    checkUser();
-
-    // Listener pour les changements d'état d'authentification
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      async (_event, newSession) => {
-        if (isMounted) {
-          setSession(newSession);
-          setCheckingSession(false);
-        }
-      }
-    );
-
-    return () => {
-      isMounted = false;
-      clearTimeout(sessionTimeout);
-      listener?.subscription.unsubscribe();
-    };
-  }, [supabase, error, checkingSession]);
-
+  // 2. Écoute les changements d'état (connexion/déconnexion)
   useEffect(() => {
-    if (session) {
-      const redirectTo = searchParams.get("redirectTo") || "/pro/dashboard";
-      router.push(redirectTo);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        setIsAuthenticated(true);
+        const redirectTo = searchParams.get("redirectTo") || "/pro/dashboard";
+        router.push(redirectTo);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
+    });
+    return () => data.subscription.unsubscribe();
+  }, [router, searchParams, supabase.auth]);
 
-  if (checkingSession) {
+  async function signIn(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) setErrorMsg(error.message);
+    } catch (err) {
+      setErrorMsg(err + "Erreur de connexion");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (!authChecked) {
     return <div>Chargement...</div>;
   }
 
-  if (!checkingSession && session) {
+  if (isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center flex-col gap-4">
         <h2>Vous êtes déjà connecté.</h2>
@@ -99,26 +73,13 @@ export default function Login() {
           className="bg-red-500 text-white px-4 py-2 rounded"
           onClick={async () => {
             await supabase.auth.signOut();
-            setSession(null);
+            window.location.reload(); // Force le reload pour nettoyer l'état
           }}
         >
           Se déconnecter
         </button>
       </div>
     );
-  }
-
-  async function signIn(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMsg("");
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    setLoading(false);
-    if (error) setErrorMsg(error.message);
-    // La redirection est gérée par le useEffect ci-dessus
   }
 
   return (

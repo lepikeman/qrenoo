@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { toast } from "react-hot-toast"; // Assurez-vous d'installer react-hot-toast
@@ -31,10 +31,11 @@ export default function Price() {
   const [showAllFeatures, setShowAllFeatures] = useState<{ [planId: string]: boolean }>({});
   const [loadingCheckout, setLoadingCheckout] = useState<string | null>(null);
   const [currentUserPlan, setCurrentUserPlan] = useState<string | null>(null);
-  const router = useRouter();
+  const [showTestModal, setShowTestModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const supabase = createClientComponentClient();
   const searchParams = useSearchParams();
-  const highlightFeatureRef = useRef<HTMLDivElement | null>(null);
+  const highlightFeatureRef = useRef<HTMLTableRowElement | null>(null);
   const featureSlug = searchParams.get("feature");
 
   useEffect(() => {
@@ -148,39 +149,15 @@ export default function Price() {
 
   async function handleSubscribe(planId: string) {
     setLoadingCheckout(planId);
-
-    // Vérifie si l'utilisateur est connecté
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      // Redirige vers /login avec redirectTo vers cette page + planId
-      router.push(`/login?redirectTo=/price?subscribe=${planId}`);
-      setLoadingCheckout(null);
-      return;
+    
+    // Trouver le plan sélectionné
+    const plan = plans.find(p => p.id === planId);
+    if (plan) {
+      setSelectedPlan(plan);
+      setShowTestModal(true);
     }
-
-    try {
-      const res = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
-      });
-      
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Erreur lors de la création de la session de paiement");
-      }
-      
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        toast.error("Erreur lors de la création de la session de paiement.");
-      }
-    } catch (e) {
-      toast.error(`Erreur: ${e instanceof Error ? e.message : "Problème de connexion"}`);
-    } finally {
-      setLoadingCheckout(null);
-    }
+    
+    setLoadingCheckout(null);
   }
 
   if (loading) {
@@ -330,6 +307,29 @@ export default function Price() {
           <li>✓ Accès immédiat aux fonctionnalités premium après souscription</li>
         </ul>
       </div>
+
+      {/* Modal de test */}
+      {showTestModal && selectedPlan && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+            <div className="text-center">
+              <h3 className="text-xl font-bold text-[#29381a] mb-2">🚧 En phase de test 🚧</h3>
+              <p className="mb-4">
+                Les abonnements ne sont pas encore disponibles. Vous avez sélectionné le plan <span className="font-semibold">{selectedPlan.name}</span>.
+              </p>
+              <p className="text-sm text-gray-600 mb-6">
+                Vous pouvez utiliser toutes les fonctionnalités gratuitement pour le moment.
+              </p>
+              <button
+                onClick={() => setShowTestModal(false)}
+                className="bg-[#405c26] hover:bg-[#29381a] text-white py-2 px-6 rounded-lg transition-colors"
+              >
+                J&apos;ai compris
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -57,12 +57,6 @@ export default function CoachSolution() {
             >
               Essayer gratuitement
             </Link>
-            <Link
-              href="/demo"
-              className="px-6 py-3 border border-[#29381a] text-[#29381a] font-medium rounded-lg hover:bg-[#efe9db] transition-colors"
-            >
-              Demander une démo
-            </Link>
           </div>
         </div>
       </section>

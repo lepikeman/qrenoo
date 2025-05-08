@@ -19,7 +19,7 @@ export default function JobsList() {
       title: "Nettoyeurs & Centre de Lavage",
       description: "Optimisez la gestion de votre centre de lavage",
       image: nettoyeurImg,
-      link: "/jobs/nettoyeur",
+      link: "/jobs/nettoyeur-auto",
     },
     {
       title: "Coachs & Consultants",

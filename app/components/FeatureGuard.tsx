@@ -18,7 +18,6 @@ export default function FeatureGuard({
   featureSlug,
   children,
   fallback,
-  redirectOnBlock = false,
   premiumMessage = "Cette fonctionnalité nécessite un abonnement supérieur.",
   ctaText = "Voir les abonnements"
 }: FeatureGuardProps) {
@@ -103,9 +102,13 @@ export default function FeatureGuard({
       <p className="text-sm text-yellow-700 mb-4">
         {premiumMessage}
       </p>
-      {currentPlan && (
+      {currentPlan ? (
         <p className="text-xs text-yellow-600 mb-4">
           Votre abonnement actuel: <span className="font-semibold">{currentPlan.name}</span>
+        </p>
+      ) : (
+        <p className="text-xs text-yellow-600 mb-4">
+          Votre abonnement actuel: <span className="font-semibold">Plan standard</span>
         </p>
       )}
       <Link
