@@ -458,7 +458,6 @@ export default function Reservation({
                     <input
                       type="text"
                       name="phone"
-                      required
                       inputMode="numeric"
                       maxLength={14}
                       value={phoneInput}

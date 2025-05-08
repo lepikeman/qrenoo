@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import Link from "next/link";
 
 const MONTHS_FR = [
   "janv",
@@ -25,7 +26,12 @@ const MONTHS_FR = [
   "déc",
 ];
 
-export default function Overview({ proId }: { proId: string }) {
+interface OverviewProps {
+  proId: string;
+  hasAdvancedAnalytics?: boolean;
+}
+
+export default function Overview({ proId, hasAdvancedAnalytics = false }: OverviewProps) {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
@@ -35,16 +41,12 @@ export default function Overview({ proId }: { proId: string }) {
       setLoading(true);
       setError("");
       try {
-        // Filtrage côté API : on ajoute le pro_id dans la requête
         const params = new URLSearchParams({ pro_id: proId });
         const res = await fetch(`/api/rendezvous?${params.toString()}`);
         if (!res.ok)
           throw new Error("Erreur lors du chargement des statistiques.");
         const data = await res.json();
         setAppointments(data || []);
-        if (Array.isArray(data) && data.length > 0) {
-          console.log("appointments exemple:", data[0]);
-        }
       } catch (e: unknown) {
         setError(
           (e as Error).message || "Erreur lors du chargement des statistiques."
@@ -56,7 +58,6 @@ export default function Overview({ proId }: { proId: string }) {
     if (proId) fetchAppointments();
   }, [proId]);
 
-  // Helpers pour stats
   const now = new Date();
   const startOfWeek = new Date(now);
   startOfWeek.setDate(now.getDate() - now.getDay());
@@ -77,12 +78,10 @@ export default function Overview({ proId }: { proId: string }) {
   const timeSavedH = Math.floor(timeSavedMin / 60);
   const timeSavedR = timeSavedMin % 60;
 
-  // 1. Taux de validation des rendez-vous
   const validatedCount = appointments.filter((rdv) => rdv.is_validated).length;
   const validationRate =
     total > 0 ? Math.round((validatedCount / total) * 100) : 0;
 
-  // 2. Nombre de nouveaux clients ce mois-ci (clients uniques par email ou téléphone)
   const clientsThisMonth = appointments.filter((rdv) => {
     if (!rdv.date_jour) return false;
     try {
@@ -95,7 +94,6 @@ export default function Overview({ proId }: { proId: string }) {
     new Set(clientsThisMonth.map((rdv) => rdv.client_email || rdv.client_phone))
   ).length;
 
-  // 3. Nombre de clients récurrents (ayant pris >1 RDV)
   const clientCounts: Record<string, number> = {};
   appointments.forEach((rdv) => {
     const key = rdv.client_email || rdv.client_phone;
@@ -105,7 +103,6 @@ export default function Overview({ proId }: { proId: string }) {
     (c) => c > 1
   ).length;
 
-  // 5. Heures de réservation les plus populaires (histogramme)
   const hourCounts: Record<string, number> = {};
   appointments.forEach((rdv) => {
     if (rdv.heure) {
@@ -117,7 +114,6 @@ export default function Overview({ proId }: { proId: string }) {
     .map(([hour, count]) => ({ hour, count }))
     .sort((a, b) => a.hour.localeCompare(b.hour));
 
-  // Génère les jours du mois courant
   const daysInMonth = endOfMonth.getDate();
   const monthNum = now.getMonth();
   const monthLabel = MONTHS_FR[monthNum];
@@ -126,7 +122,6 @@ export default function Overview({ proId }: { proId: string }) {
     return toDateStr(d);
   });
 
-  // Prépare les données pour le graphique
   const rdvByDay: { date: string; nbRdv: number }[] = days.map((dateStr) => {
     const day = parseInt(dateStr.slice(-2), 10);
     return {
@@ -180,58 +175,90 @@ export default function Overview({ proId }: { proId: string }) {
             </div>
           </div>
 
-          <div className="mb-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <div className="text-xl font-semibold text-[#29381a] mb-4">
-                Évolution des RDV ce mois-ci
-              </div>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={rdvByDay}
-                  margin={{ top: 20, right: 30, left: 0, bottom: 10 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" tick={{ fontSize: 13 }} />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 13 }} />
-                  <Tooltip
-                    formatter={(value) => `${value} Rdv`}
-                    labelFormatter={(label) => `Jour : ${label}`}
-                  />
-                  <Bar
-                    dataKey="nbRdv"
-                    fill="#29381a"
-                    radius={[6, 6, 0, 0]}
-                    name="Rendez-vous"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+          <div className="mb-12">
+            <div className="text-xl font-semibold text-[#29381a] mb-4">
+              Évolution des RDV ce mois-ci
             </div>
-            <div>
-              <div className="text-xl font-semibold text-[#29381a] mb-4">
-                Heures de réservation les plus populaires
-              </div>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={hourChart}
-                  margin={{ top: 20, right: 30, left: 0, bottom: 10 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="hour" tick={{ fontSize: 13 }} />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 13 }} />
-                  <Tooltip
-                    formatter={(value) => `${value} Rdv`}
-                    labelFormatter={(label) => `Heure : ${label}`}
-                  />
-                  <Bar
-                    dataKey="count"
-                    fill="#689f38"
-                    radius={[6, 6, 0, 0]}
-                    name="RDV"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={rdvByDay}
+                margin={{ top: 20, right: 30, left: 0, bottom: 10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" tick={{ fontSize: 13 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 13 }} />
+                <Tooltip
+                  formatter={(value) => `${value} Rdv`}
+                  labelFormatter={(label) => `Jour : ${label}`}
+                />
+                <Bar
+                  dataKey="nbRdv"
+                  fill="#29381a"
+                  radius={[6, 6, 0, 0]}
+                  name="Rendez-vous"
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
+
+          {hasAdvancedAnalytics ? (
+            <>
+              <div>
+                <div className="text-xl font-semibold text-[#29381a] mb-4">
+                  Heures de réservation les plus populaires
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    data={hourChart}
+                    margin={{ top: 20, right: 30, left: 0, bottom: 10 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="hour" tick={{ fontSize: 13 }} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 13 }} />
+                    <Tooltip
+                      formatter={(value) => `${value} Rdv`}
+                      labelFormatter={(label) => `Heure : ${label}`}
+                    />
+                    <Bar
+                      dataKey="count"
+                      fill="#689f38"
+                      radius={[6, 6, 0, 0]}
+                      name="RDV"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="mt-8">
+                <div className="text-xl font-semibold text-[#29381a] mb-4">
+                  Analyse des clients récurrents
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="p-6 border border-yellow-200 bg-yellow-50 rounded-lg text-center">
+              <div className="mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-yellow-800 text-lg mb-2">
+                Statistiques avancées
+              </h3>
+              <p className="text-sm text-yellow-700 mb-4">
+                Passez à un abonnement supérieur pour accéder aux statistiques avancées : analyse horaire, taux de conversion et plus encore.
+              </p>
+              <Link
+                href={`/price?feature=analytics_advanced`}
+                className="px-4 py-2 bg-[#405c26] text-white rounded-lg text-sm hover:bg-[#29381a] transition inline-flex items-center"
+              >
+                <span>Voir les abonnements</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </Link>
+            </div>
+          )}
 
           {!loading && !error && (
             <div className="mt-12 flex flex-col items-center">

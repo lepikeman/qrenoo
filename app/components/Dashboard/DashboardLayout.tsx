@@ -106,11 +106,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Main content */}
       <main className="flex-1 w-full min-w-0 h-screen flex flex-col">
         <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
-          <Suspense fallback={<div>Chargement...</div>}>
-            <div className="flex-1 min-h-0 overflow-y-auto px-0 md:pl-0">
-              {children}
-            </div>
-          </Suspense>
+            <div className="flex-1 min-h-0 px-0 md:pl-0">{children}</div>
         </div>
       </main>
     </div>

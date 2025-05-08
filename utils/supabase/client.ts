@@ -1,6 +1,10 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+export const supabase = createClientComponentClient();
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Ajoutez cette fonction d'aide pour centraliser les appels d'auth
+export async function getAuthenticatedUser() {
+  const { data, error } = await supabase.auth.getUser();
+  if (error) throw error;
+  return data.user;
+}

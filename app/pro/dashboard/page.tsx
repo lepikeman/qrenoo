@@ -5,8 +5,14 @@ import { supabase } from "@/utils/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import type { Profile } from "@/app/types/Profile";
 import DashboardPage from "@/app/components/Dashboard/DashboardPage";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
+  // Commentons la ligne qui utilise usePlanFeatures
+  // const { hasAccess } = usePlanFeatures();
+  
+  // Créons une fonction de remplacement temporaire
+
   const [profile, setProfile] = useState<Profile | null>(null);
   const [profileForm, setProfileForm] = useState<Profile>({
     id: "",
@@ -40,6 +46,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [creatingProfile, setCreatingProfile] = useState(false);
   const [errorProfile, setErrorProfile] = useState<string | null>(null);
+  const router = useRouter();
 
   const createProfileIfMissing = useCallback(async (userId: string) => {
     setCreatingProfile(true);
@@ -217,6 +224,12 @@ export default function Dashboard() {
     }
   }, [session, profile, creatingProfile, createProfileIfMissing]);
 
+  useEffect(() => {
+    if (!loading && !session) {
+      router.replace("/login?redirectTo=/pro/dashboard");
+    }
+  }, [loading, session, router]);
+
   const handleUpdateProfile = async (profileFormToSave = profileForm) => {
     setProfileLoading(true);
     if (!session) return;
@@ -318,9 +331,6 @@ export default function Dashboard() {
   if (errorProfile) {
     return <div className="text-red-600 font-bold p-8">{errorProfile}</div>;
   }
-  if (!session) {
-    return <div className="text-red-600 font-bold p-8">Non autorisé</div>;
-  }
   if (!profile) {
     return (
       <div className="text-gray-500 p-8">
@@ -338,7 +348,14 @@ export default function Dashboard() {
       >
         <DashboardPage
           profileForm={profileForm}
-          setProfileForm={handleProfileFormChange}
+          setProfileForm={(form) => {
+            if (typeof form === "function") {
+              setProfileForm((prev) => form(prev));
+            } else {
+              handleProfileFormChange("full", form);
+            }
+          }}
+          
           handleUpdateProfile={handleUpdateProfile}
           profileLoading={profileLoading}
           proId={profile?.id || ""}

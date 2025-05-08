@@ -55,7 +55,7 @@ const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState<string>("");
 
-  // Synchronisation à chaque ouverture de la modale
+  // Synchronisation unique à chaque ouverture OU changement de profil
   React.useEffect(() => {
     if (open) {
       setOuverture(profileForm.ouverture || "08:00");
@@ -73,33 +73,15 @@ const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
         }
       );
     }
-  }, [open, profileForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, profileForm.id]);
 
-  // --- Correction : synchroniser local state avec props quand profileForm change (évite stale state) ---
-  React.useEffect(() => {
-    console.log("[OpenHoursModal] profileForm changed", profileForm);
-    setOuverture(profileForm.ouverture || "08:00");
-    setFermeture(profileForm.fermeture || "18:00");
-    setIntervalleCreneau(Number(profileForm.intervalle_creneau) || 30);
-    setHorairesJours(
-      profileForm.horaires_jours || {
-        lundi: null,
-        mardi: null,
-        mercredi: null,
-        jeudi: null,
-        vendredi: null,
-        samedi: null,
-        dimanche: null,
-      }
-    );
-  }, [profileForm]);
-
+  // Chargement initial des horaires (une seule fois)
   React.useEffect(() => {
     async function fetchProfileHours() {
       setLoading(true);
       setError("");
       try {
-        // Utilise id prioritairement, puis user_id si pas d'id (aligné avec la logique update)
         const id = profileForm.id || profileForm.user_id;
         if (!id) throw new Error("ID du profil manquant");
         const { data, error: fetchError } = await supabase
@@ -131,7 +113,7 @@ const OpenHoursModal: React.FC<OpenHoursModalProps> = ({
       }
     }
     fetchProfileHours();
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Helper pour générer les horaires selon un intervalle donné

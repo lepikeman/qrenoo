@@ -13,12 +13,31 @@ export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    // Récupération initiale de l'utilisateur authentifié
+    async function getInitialUser() {
+      const { data, error } = await supabase.auth.getUser();
+      if (!error) {
+        setUser(data.user);
+      }
+    }
+
+    getInitialUser();
+
+    // Configuration du listener pour les changements d'état d'authentification
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
+      async (_event, session) => {
+        // Au lieu d'utiliser directement session?.user qui n'est pas sécurisé
+        // On fait un appel à getUser() pour obtenir des données authentifiées
+        if (session) {
+          // Utiliser cette approche pour obtenir l'utilisateur de façon sécurisée
+          const { data } = await supabase.auth.getUser();
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
       }
     );
+
     return () => {
       listener?.subscription.unsubscribe();
     };
@@ -57,6 +76,15 @@ export default function NavBar() {
         <div
           className={`flex-col md:flex-row md:flex items-center gap-6 md:gap-8 font-semibold text-[#29381a] text-base absolute md:static right-0 top-16 bg-[#f6f8f2] md:bg-transparent shadow-md md:shadow-none rounded-b-xl md:rounded-none transition-all duration-200 w-full md:w-auto ${menuOpen ? "flex" : "hidden md:flex"}`}
         >
+          <Link href="/jobs" className="hover:text-[#405c26] transition-colors">
+            Métier
+          </Link>
+          <Link
+            href="/price"
+            className="hover:text-[#405c26] transition-colors"
+          >
+            Tarifs
+          </Link>
           {user ? (
             <>
               <Link

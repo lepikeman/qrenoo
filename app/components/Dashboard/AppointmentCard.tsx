@@ -12,10 +12,10 @@
 import React from "react";
 import type { Appointment } from "./DashboardPage";
 
-const AppointmentCard: React.FC<{ rdv: Appointment; onSelect?: (rdv: Appointment) => void }> = ({
-  rdv,
-  onSelect,
-}) => {
+const AppointmentCard: React.FC<{
+  rdv: Appointment;
+  onSelect?: (rdv: Appointment) => void;
+}> = ({ rdv, onSelect }) => {
   // Détection des états
   const isNotConfirmed = rdv.is_validated === false;
   const isValidated = rdv.is_validated === true;
@@ -28,17 +28,33 @@ const AppointmentCard: React.FC<{ rdv: Appointment; onSelect?: (rdv: Appointment
 
   return (
     <div
-      className={`appointment-card bg-[#f6f8f2] border ${borderColor} rounded-lg px-2 py-1 mb-1 shadow-sm cursor-pointer flex flex-col items-start justify-between transition-all duration-200 h-full min-h-0`}
+      className={`
+      appointment-card 
+      bg-[#f6f8f2] 
+      border ${borderColor} 
+      rounded-lg 
+      px-2 
+      py-1 
+      shadow-sm 
+      cursor-pointer 
+      flex 
+      flex-col 
+      justify-between
+      absolute
+      inset-0
+      m-0.5
+      transition-all 
+      duration-200
+    `}
       onClick={() => onSelect && onSelect(rdv)}
     >
       <div className="font-semibold text-[15px] text-[#222] truncate w-full">
         {rdv.client_nom}
       </div>
-      <div className="text-xs text-[#888]">{rdv.heure.slice(0,5)}</div>
+      <div className="text-xs text-[#888]">{rdv.heure.slice(0, 5)}</div>
       {rdv.message && (
         <div className="text-xs text-[#666] truncate w-full">{rdv.message}</div>
       )}
-      {/* Boutons supprimés, tout est dans le panel latéral */}
     </div>
   );
 };

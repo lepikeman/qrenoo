@@ -1,5 +1,5 @@
 const nextConfig = {
-    compress: true,
+  compress: true,
   experimental: {
     optimizeCss: true,
     legacyBrowsers: false,
@@ -8,21 +8,28 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 86400,
   },
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'lgxcufxbvvedftlcxoqp.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/avatar/**',
-        search: '',
+        protocol: "https",
+        hostname: "lgxcufxbvvedftlcxoqp.supabase.co",
+        port: "",
+        pathname: "/storage/v1/object/public/avatar/**",
+        search: "",
       },
-      
     ],
-    domains: ['cdn.pixabay.com'],
+    domains: ["cdn.pixabay.com"],
+  },
+  i18n: {
+    locales: ["fr"],
+    defaultLocale: "fr",
+  },
+  experimental: {
+    optimizeCss: true,
+    scrollRestoration: true,
   },
 };
 module.exports = nextConfig;

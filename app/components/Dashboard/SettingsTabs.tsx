@@ -47,10 +47,23 @@ export default function SettingsTabs({
   const [fieldErrors, setFieldErrors] = useState<{ phone?: string }>({});
   const [settingsSidebarOpen, setSettingsSidebarOpen] = useState(false);
 
-  // --- Synchronise le state local avec toutes les props du profil parent à chaque changement ---
+  // Synchronise localProfile avec proProfile ET reset messages à chaque changement de tab ou de proProfile
   useEffect(() => {
     setLocalProfile({ ...proProfile });
-  }, [proProfile]);
+    setEditMode(false);
+    setSuccessMsg("");
+    setErrorMsg("");
+    setFieldErrors({});
+  }, [proProfile, activeTab]);
+
+  // Réinitialise les messages lors du passage en mode édition
+  useEffect(() => {
+    if (editMode) {
+      setSuccessMsg("");
+      setErrorMsg("");
+      setFieldErrors({});
+    }
+  }, [editMode]);
 
   // Déconnexion
   async function handleLogout() {
@@ -64,6 +77,11 @@ export default function SettingsTabs({
       handleLogout();
     } else {
       setActiveTab(tab.key);
+      setEditMode(false);
+      setSuccessMsg("");
+      setErrorMsg("");
+      setFieldErrors({});
+      setLocalProfile({ ...proProfile }); // resynchronise à chaque tab
     }
   }
 
@@ -74,6 +92,9 @@ export default function SettingsTabs({
     // Synchronise le state parent AVANT la sauvegarde
     onProfileChange("full" as const, fullProfile);
     setEditMode(false);
+    setSuccessMsg("");
+    setErrorMsg("");
+    setFieldErrors({});
     if (onSave) {
       try {
         // Sanitize and log before saving
@@ -258,7 +279,12 @@ export default function SettingsTabs({
                 {!editMode ? (
                   <button
                     className="dashboard-profile-btn bg-[#29381a] text-white font-semibold rounded-lg px-4 py-2 md:px-6 md:py-2 hover:brightness-105 transition w-full md:w-auto"
-                    onClick={() => setEditMode(true)}
+                    onClick={() => {
+                      setEditMode(true);
+                      setSuccessMsg("");
+                      setErrorMsg("");
+                      setFieldErrors({});
+                    }}
                   >
                     Modifier les informations
                   </button>
@@ -296,17 +322,25 @@ export default function SettingsTabs({
                       return;
                     }
                     // Debug: log email and redirect URL
-                    console.log("Reset password for:", userEmail, "redirectTo:", `${window.location.origin}/reset-password`);
-                    const { error, data } = await supabase.auth.resetPasswordForEmail(userEmail, {
-                      redirectTo: `${window.location.origin}/reset-password`,
-                    });
+                    console.log(
+                      "Reset password for:",
+                      userEmail,
+                      "redirectTo:",
+                      `${window.location.origin}/reset-password`
+                    );
+                    const { error, data } =
+                      await supabase.auth.resetPasswordForEmail(userEmail, {
+                        redirectTo: `${window.location.origin}/reset-password`,
+                      });
                     if (error) {
-                      setErrorMsg("Erreur lors de l'envoi du mail : " + error.message);
+                      setErrorMsg(
+                        "Erreur lors de l'envoi du mail : " + error.message
+                      );
                     } else {
                       setSuccessMsg(
                         "Un email de réinitialisation de mot de passe a été envoyé à votre adresse. Vérifiez aussi vos spams. (data: " +
-                        JSON.stringify(data) +
-                        ")"
+                          JSON.stringify(data) +
+                          ")"
                       );
                     }
                   }}
