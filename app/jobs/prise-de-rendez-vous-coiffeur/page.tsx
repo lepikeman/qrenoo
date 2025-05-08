@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Breadcrumb from "@/app/components/Breadcrumb";
 
 export const generateMetadata = () => {
   const jsonLd = {
@@ -51,6 +52,15 @@ export const generateMetadata = () => {
 export default function CoiffeurSolution() {
   return (
     <main className="flex flex-col items-center min-h-screen w-full bg-[#f6f8f2]">
+      <div className="w-full max-w-4xl px-4 pt-8">
+              <Breadcrumb
+                items={[
+                  { label: "Accueil", href: "/" },
+                  { label: "Solutions par métier", href: "/jobs" },
+                  { label: "Coiffeur et barbier" }
+                ]}
+              />
+            </div>
       <section className="w-full px-4 pt-16 pb-12 flex flex-col items-center">
         <div className="max-w-3xl text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-extrabold text-[#29381a] mb-4 leading-tight">
@@ -295,6 +305,42 @@ export default function CoiffeurSolution() {
           >
             Commencer votre essai gratuit
           </Link>
+        </div>
+      </section>
+      <section className="w-full px-4 py-8 flex flex-col items-center bg-white">
+        <div className="max-w-3xl w-full">
+          <h2 className="text-xl font-bold text-[#29381a] mb-4">Voir aussi</h2>
+          <ul className="list-disc ml-6 space-y-1">
+            <li>
+              <Link href="/jobs/prise-de-rendez-vous-nettoyeur-auto" className="text-[#405c26] underline hover:text-[#29381a]">
+                Solution pour nettoyeurs & centres de lavage
+              </Link>
+            </li>
+            <li>
+              <Link href="/jobs/prise-de-rendez-vous-coach" className="text-[#405c26] underline hover:text-[#29381a]">
+                Solution pour coachs & consultants
+              </Link>
+            </li>
+            <li>
+              <Link href="/features" className="text-[#405c26] underline hover:text-[#29381a]">
+                Toutes les fonctionnalités
+              </Link>
+            </li><li>
+              <Link href="/price" className="text-[#405c26] underline hover:text-[#29381a]">
+                Tarifs
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="text-[#405c26] underline hover:text-[#29381a]">
+                Contact
+              </Link>
+            </li>
+            <li>
+              <Link href="/inscription" className="text-[#405c26] underline hover:text-[#29381a]">
+                Inscription gratuite
+              </Link>
+            </li>
+          </ul>
         </div>
       </section>
     </main>
