@@ -34,6 +34,16 @@ export const generateMetadata = () => {
     other: {
       "script:ld+json": jsonLd,
     },
+    openGraph: {
+      title: "Logiciel de rendez-vous pour coach | Qrenoo",
+      description: "Gérez vos rendez-vous en ligne, réduisez les annulations et fidélisez vos clients avec Qrenoo.",
+      url: "https://www.qrenoo.com/prise-de-rendez-vous-coach",
+      images: [{ url: "/images/qrenoo-og-image.png", width: 1200, height: 630, alt: "Qrenoo pour coiffeurs" }],
+      type: "website",
+      locale: "fr_FR",
+      siteName: "Qrenoo",
+    },
+    robots: { index: true, follow: true },
   };
 };
 
