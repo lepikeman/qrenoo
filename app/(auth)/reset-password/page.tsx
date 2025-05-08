@@ -1,139 +1,129 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/supabase/client";
+import { User } from "@supabase/supabase-js";
 
-export default function ResetPasswordPage() {
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
+export default function ResetPassword() {
+  const supabase = createClientComponentClient();
   const router = useRouter();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [checkingSession, setCheckingSession] = useState(true);
 
+  // Vérifie si l'utilisateur a une session valide
   useEffect(() => {
-    // Cherche access_token et refresh_token dans l'URL
-    const params = new URLSearchParams(window.location.search);
-    const access_token = params.get("access_token");
-    const refresh_token = params.get("refresh_token");
-    if (access_token && refresh_token) {
-      supabase.auth.setSession({
-        access_token,
-        refresh_token,
-      });
+    async function checkSession() {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setCheckingSession(false);
     }
-  }, []);
+    
+    checkSession();
+  }, [supabase]);
 
-  const validatePassword = (pwd: string) => {
-    // Exemple de règle pro : min 8 caractères, 1 maj, 1 min, 1 chiffre
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(pwd);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleResetPassword(e: Parameters<React.FormEventHandler<HTMLFormElement>>[0]) {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    
+    if (password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas");
+      return;
+    }
 
-    if (!password || !confirm) {
-      setError("Veuillez remplir les deux champs.");
-      return;
-    }
-    if (password !== confirm) {
-      setError("Les mots de passe ne correspondent pas.");
-      return;
-    }
-    if (!validatePassword(password)) {
-      setError(
-        "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre."
-      );
-      return;
-    }
     setLoading(true);
-    const { error } = await supabase.auth.updateUser({ password });
-    setLoading(false);
-    if (error) {
-      setError(
-        error.message === "New password should be different from the old password."
-          ? "Le nouveau mot de passe doit être différent de l'ancien."
-          : error.message
-      );
-    } else {
-      setSuccess("Votre mot de passe a été modifié avec succès !");
-      // Déconnexion puis redirection
-      setTimeout(async () => {
-        await supabase.auth.signOut();
-        router.push("/");
-      }, 2000);
+    setError("");
+
+    try {
+      const { error } = await supabase.auth.updateUser({ 
+        password 
+      });
+
+      if (error) {
+        setError(error.message);
+      } else {
+        setSuccess(true);
+        // Redirection après 3 secondes
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
+      }
+    } catch (err) {
+      setError("Une erreur s'est produite lors de la réinitialisation du mot de passe" + err);
+    } finally {
+      setLoading(false);
     }
-  };
+  }
+
+  if (checkingSession) {
+    return <div className="min-h-screen flex items-center justify-center">Vérification de votre session...</div>;
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <h1 className="text-xl font-bold">Session invalide ou expirée</h1>
+        <p>Veuillez demander un nouveau lien de réinitialisation de mot de passe.</p>
+        <button
+          onClick={() => router.push('/login')}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Retour à la page de connexion
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-center mb-2 text-gray-800">
-          Réinitialisation du mot de passe
-        </h1>
-        <p className="text-gray-500 text-center mb-6">
-          Choisissez un nouveau mot de passe sécurisé pour votre compte.
-        </p>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nouveau mot de passe
-            </label>
-            <input
-              type="password"
-              className="border border-gray-300 rounded-lg w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              autoComplete="new-password"
-              minLength={8}
-              required
-              placeholder="Nouveau mot de passe"
-            />
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+        <h1 className="text-2xl font-bold mb-6">Réinitialisation de mot de passe</h1>
+        
+        {success ? (
+          <div className="text-green-600">
+            <p>Votre mot de passe a été réinitialisé avec succès!</p>
+            <p>Vous allez être redirigé vers la page de connexion...</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirmer le mot de passe
-            </label>
-            <input
-              type="password"
-              className="border border-gray-300 rounded-lg w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={confirm}
-              onChange={e => setConfirm(e.target.value)}
-              autoComplete="new-password"
-              minLength={8}
-              required
-              placeholder="Confirmez le mot de passe"
-            />
-          </div>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded text-sm">
-              {error}
+        ) : (
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Nouveau mot de passe</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border px-3 py-2 rounded"
+                required
+                minLength={8}
+              />
             </div>
-          )}
-          {success && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded text-sm">
-              {success}
-              
+            <div>
+              <label className="block text-sm font-medium mb-1">Confirmez le mot de passe</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full border px-3 py-2 rounded"
+                required
+                minLength={8}
+              />
             </div>
-          )}
-          <button
-            type="submit"
-            className={`w-full py-2 px-4 rounded-lg font-semibold text-white transition ${
-              loading
-                ? "bg-blue-300 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Changement en cours..." : "Valider"}
-          </button>
-        </form>
-        <div className="text-xs text-gray-400 mt-6 text-center">
-          Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.
-        </div>
+            
+            {error && <div className="text-red-500">{error}</div>}
+            
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
+              disabled={loading}
+            >
+              {loading ? "Traitement..." : "Réinitialiser le mot de passe"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
