@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.qrenoo.fr/sitemap.xml
+Sitemap: https://www.qrenoo.com/sitemap.xml
