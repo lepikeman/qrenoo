@@ -1,53 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { supabase } from "@/utils/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import { useState } from "react";
 import Image from "next/image";
 
 export default function NavBar() {
-  const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    // Récupération initiale de l'utilisateur authentifié
-    async function getInitialUser() {
-      const { data, error } = await supabase.auth.getUser();
-      if (!error) {
-        setUser(data.user);
-      }
-    }
+ 
 
-    getInitialUser();
-
-    // Configuration du listener pour les changements d'état d'authentification
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        // Au lieu d'utiliser directement session?.user qui n'est pas sécurisé
-        // On fait un appel à getUser() pour obtenir des données authentifiées
-        if (session) {
-          // Utiliser cette approche pour obtenir l'utilisateur de façon sécurisée
-          const { data } = await supabase.auth.getUser();
-          setUser(data.user);
-        } else {
-          setUser(null);
-        }
-      }
-    );
-
-    return () => {
-      listener?.subscription.unsubscribe();
-    };
-  }, []);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    router.push("/login");
-  };
 
   return (
     <nav className="bg-[#f6f8f2] border-b border-[#efe9db] shadow-sm sticky top-0 z-50">
@@ -85,37 +47,12 @@ export default function NavBar() {
           >
             Tarifs
           </Link>
-          {user ? (
-            <>
-              <Link
-                href="/pro/dashboard"
-                className="px-4 py-2 hover:bg-[#ede9e0] rounded-lg transition"
-              >
-                Espace professionnel
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-[#29381a] text-white rounded-lg hover:brightness-105 transition"
-              >
-                Déconnecter
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => router.push("/login")}
-                className="px-4 py-2 bg-[#29381a] text-white rounded-lg hover:brightness-105 transition"
-              >
-                Se connecter
-              </button>
-              <button
-                onClick={() => router.push("/register")}
-                className="px-4 py-2 bg-[#29381a] text-white rounded-lg hover:brightness-105 transition"
-              >
-                S&apos;inscrire
-              </button>
-            </>
-          )}
+          <Link
+            href="/contact"
+            className="hover:text-[#405c26] transition-colors"
+          >
+            Contact
+          </Link>
         </div>
       </div>
     </nav>

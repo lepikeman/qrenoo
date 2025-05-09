@@ -38,9 +38,17 @@ export const generateMetadata = () => {
     },
     openGraph: {
       title: "Logiciel de rendez-vous pour coiffeurs | Qrenoo",
-      description: "Gérez vos rendez-vous en ligne, réduisez les annulations et fidélisez vos clients avec Qrenoo.",
+      description:
+        "Gérez vos rendez-vous en ligne, réduisez les annulations et fidélisez vos clients avec Qrenoo.",
       url: "https://www.qrenoo.com/prise-de-rendez-vous-coiffeur",
-      images: [{ url: "/images/qrenoo-og-image.png", width: 1200, height: 630, alt: "Qrenoo pour coiffeurs" }],
+      images: [
+        {
+          url: "/images/qrenoo-og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "Qrenoo pour coiffeurs",
+        },
+      ],
       type: "website",
       locale: "fr_FR",
       siteName: "Qrenoo",
@@ -53,14 +61,14 @@ export default function CoiffeurSolution() {
   return (
     <main className="flex flex-col items-center min-h-screen w-full bg-[#f6f8f2]">
       <div className="w-full max-w-4xl px-4 pt-8">
-              <Breadcrumb
-                items={[
-                  { label: "Accueil", href: "/" },
-                  { label: "Solutions par métier", href: "/jobs" },
-                  { label: "Coiffeur et barbier" }
-                ]}
-              />
-            </div>
+        <Breadcrumb
+          items={[
+            { label: "Accueil", href: "/" },
+            { label: "Solutions par métier", href: "/jobs" },
+            { label: "Coiffeur et barbier" },
+          ]}
+        />
+      </div>
       <section className="w-full px-4 pt-16 pb-12 flex flex-col items-center">
         <div className="max-w-3xl text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-extrabold text-[#29381a] mb-4 leading-tight">
@@ -74,7 +82,7 @@ export default function CoiffeurSolution() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="/inscription"
+              href="/contact"
               className="bg-[#29381a] text-white font-semibold rounded-lg px-6 py-3 hover:brightness-105 transition"
             >
               Essayer gratuitement
@@ -140,7 +148,8 @@ export default function CoiffeurSolution() {
               </h3>
               <p className="text-[#405c26] text-center">
                 Nos clients constatent jusqu&apos;à 80% de réduction des
-                annulations grâce aux rappels automatiques, et a la confirmation a la prise de rendez-vous.
+                annulations grâce aux rappels automatiques, et a la confirmation
+                a la prise de rendez-vous.
               </p>
             </div>
 
@@ -157,9 +166,9 @@ export default function CoiffeurSolution() {
                 Fidélisation client
               </h3>
               <p className="text-[#405c26] text-center">
-                Conservez l&apos;historique complet des rendez-vous (heure la plus
-                fréquentée, type de prestation, etc.) pour mieux comprendre vos
-                clients et leur proposer des offres adaptées.
+                Conservez l&apos;historique complet des rendez-vous (heure la
+                plus fréquentée, type de prestation, etc.) pour mieux comprendre
+                vos clients et leur proposer des offres adaptées.
               </p>
             </div>
           </div>
@@ -300,10 +309,10 @@ export default function CoiffeurSolution() {
             quotidien
           </p>
           <Link
-            href="/inscription"
+            href="/contact"
             className="px-8 py-4 bg-white text-[#29381a] font-semibold rounded-lg hover:brightness-95 transition inline-block"
           >
-            Commencer votre essai gratuit
+            Demandez accès à la version Test
           </Link>
         </div>
       </section>
@@ -312,32 +321,43 @@ export default function CoiffeurSolution() {
           <h2 className="text-xl font-bold text-[#29381a] mb-4">Voir aussi</h2>
           <ul className="list-disc ml-6 space-y-1">
             <li>
-              <Link href="/jobs/prise-de-rendez-vous-nettoyeur-auto" className="text-[#405c26] underline hover:text-[#29381a]">
+              <Link
+                href="/jobs/prise-de-rendez-vous-nettoyeur-auto"
+                className="text-[#405c26] underline hover:text-[#29381a]"
+              >
                 Solution pour nettoyeurs & centres de lavage
               </Link>
             </li>
             <li>
-              <Link href="/jobs/prise-de-rendez-vous-coach" className="text-[#405c26] underline hover:text-[#29381a]">
+              <Link
+                href="/jobs/prise-de-rendez-vous-coach"
+                className="text-[#405c26] underline hover:text-[#29381a]"
+              >
                 Solution pour coachs & consultants
               </Link>
             </li>
             <li>
-              <Link href="/features" className="text-[#405c26] underline hover:text-[#29381a]">
+              <Link
+                href="/features"
+                className="text-[#405c26] underline hover:text-[#29381a]"
+              >
                 Toutes les fonctionnalités
               </Link>
-            </li><li>
-              <Link href="/price" className="text-[#405c26] underline hover:text-[#29381a]">
+            </li>
+            <li>
+              <Link
+                href="/price"
+                className="text-[#405c26] underline hover:text-[#29381a]"
+              >
                 Tarifs
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="text-[#405c26] underline hover:text-[#29381a]">
+              <Link
+                href="/contact"
+                className="text-[#405c26] underline hover:text-[#29381a]"
+              >
                 Contact
-              </Link>
-            </li>
-            <li>
-              <Link href="/inscription" className="text-[#405c26] underline hover:text-[#29381a]">
-                Inscription gratuite
               </Link>
             </li>
           </ul>

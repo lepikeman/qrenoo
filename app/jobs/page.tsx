@@ -128,12 +128,6 @@ export default function JobsPage() {
             >
               Contactez-nous
             </Link>
-            <Link
-              href="/inscription"
-              className="px-6 py-3 border border-white text-white font-semibold rounded-lg hover:bg-[#29381a] transition-colors"
-            >
-              Essayer gratuitement
-            </Link>
           </div>
         </div>
       </section>
