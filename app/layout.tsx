@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://qrenoo.com"),
+  metadataBase: new URL('https://qrenoo.com'),
   title:
     "Logiciel de prise de rendez-vous en ligne pour professionnels indépendants | Qrenoo",
   description:
@@ -61,7 +61,6 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  // 1. Récupérer l'utilisateur authentifié d'abord (méthode sécurisée)
 
   // 2. Récupérer la session ensuite (si nécessaire pour d'autres données de session)
   // mais nous n'utiliserons pas session.user qui n'est pas sécurisé
@@ -73,20 +72,19 @@ export default async function RootLayout({
   return (
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
       <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
-        <NavigationShell>
-          {children}
-          <Footer
-            links={[
-              { label: "Mentions légales", href: "/mentions" },
-              { label: "CGU et CGV", href: "/cgu" },
-              { label: "RGPD", href: "/rgpd" },
-              { label: "Contact", href: "/contact" },
-            ]}
-          />
-        </NavigationShell>
-        <SpeedInsights />
-        <GoogleAnalytics />
-        <Analytics />
+            <NavigationShell>
+            {children}              <Footer
+                links={[
+                  { label: "Mentions légales", href: "/mentions" },
+                  { label: "CGU et CGV", href: "/cgu" },
+                  { label: "RGPD", href: "/rgpd" },
+                  { label: "Contact", href: "/contact" },
+                ]}
+              />
+            </NavigationShell>
+            <SpeedInsights />
+            <GoogleAnalytics />
+            <Analytics />
       </body>
     </html>
   );
