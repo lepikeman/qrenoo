@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://qrenoo.com"),
+  metadataBase: new URL('https://qrenoo.com'),
   title:
     "Logiciel de prise de rendez-vous en ligne pour professionnels indépendants | Qrenoo",
   description:
@@ -61,7 +61,6 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  // 1. Récupérer l'utilisateur authentifié d'abord (méthode sécurisée)
 
   // 2. Récupérer la session ensuite (si nécessaire pour d'autres données de session)
   // mais nous n'utiliserons pas session.user qui n'est pas sécurisé
@@ -72,7 +71,7 @@ export default async function RootLayout({
 
   return (
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
-      <body className="text-gray-900 antialiased min-h-screen font-sans">
+      <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
         <NavigationShell>
           {children}
           <Footer
