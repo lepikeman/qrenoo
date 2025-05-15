@@ -1,0 +1,8 @@
+# Robots.txt for https://www.qrenoo.com
+# Dernière mise à jour : 16 mai 2025
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+Sitemap: https://www.qrenoo.com/sitemap.xml
