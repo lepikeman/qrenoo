@@ -45,6 +45,14 @@ body {
   height: 100dvh;
 }
 
+.button-primary {
+  @apply bg-[#B157FF] text-white font-medium py-4 rounded-full text-center;
+}
+
+.button-secondary {
+  @apply bg-[#793A8E] text-white font-medium py-4 rounded-full flex items-center justify-center gap-2;
+}
+
 /* Calendar header styles */
 .calendar-header {
   border-radius: var(--calendar-header-radius);

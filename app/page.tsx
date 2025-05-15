@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import JobsList from "./components/JobsList";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -43,117 +42,56 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center min-h-screen w-full">
-      <section className="w-full px-4 pt-10 pb-2 flex flex-col items-center">
-        <div className="max-w-3xl text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-[#29381a] mb-4 leading-tight">
-            Qrenoo : Simplifiez la gestion de vos rendez-vous
-          </h1>
-          <p className="text-lg md:text-xl text-[#405c26] mb-6 font-medium">
-            Qrenoo est une application tout-en-un conçue pour les professionnels
-            du bien-être (coiffeuses, plombier, coachs, etc.) et leurs clients.
-            Elle permet de gérer facilement les rendez-vous, les disponibilités,
-            la communication et la fidélisation, tout en offrant une expérience
-            moderne et intuitive.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl w-full mb-12">
-          <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
-            <Image
-              src="/assets/Schedule-amico.svg"
-              alt="Gestion des rendez-vous"
-              width={200}
-              height={200}
-              className="mb-3"
-              loading="lazy"
-            />
-            <h2 className="text-xl font-bold text-[#29381a] mb-2">
-              Gestion intelligente
-            </h2>
-            <p className="text-[#405c26] text-center">
-              Planifiez, modifiez et annulez vos rendez-vous en quelques clics.
-              Synchronisation facile avec vos calendriers.
-            </p>
-          </div>
-          <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
-            <Image
-              src="/assets/Emails-amico.svg"
-              alt="Communication"
-              width={200}
-              height={200}
-              className="mb-3"
-              loading="lazy"
-            />
-            <h2 className="text-xl font-bold text-[#29381a] mb-2">
-              Communication facilitée
-            </h2>
-            <p className="text-[#405c26] text-center">
-              Notifications automatiques, rappels par email/SMS, et chat
-              sécurisé pour rester connecté avec vos clients.
-            </p>
-          </div>
-          <div className="bg-white rounded-xl shadow-md border border-[#efe9db] p-6 flex flex-col items-center">
-            <Image
-              src="/assets/Customerfeedback-amico.svg"
-              alt="Fidélisation"
-              width={200}
-              height={200}
-              className="mb-3"
-              loading="lazy"
-            />
-            <h2 className="text-xl font-bold text-[#29381a] mb-2">
-              Fidélisation & suivi
-            </h2>
-            <p className="text-[#405c26] text-center">
-              Outils de suivi, statistiques, gestion de la satisfaction et
-              offres personnalisées pour fidéliser votre clientèle.
-            </p>
-          </div>
-        </div>
-      </section>
-
       <section>
-        <JobsList />
+        <div className="flex flex-col w-3/5 gap-7 ml-8 mt-10 mb-10">
+          <h1 className="text-3xl font-medium">
+            Laissez vos clients{" "}
+            <strong className="text-[#8F0FFF]">réserver</strong> pendant que
+            vous <strong className="text-[#8F0FFF]">travaillez</strong>.
+          </h1>
+          <p className="font-light text-white/75">
+            <strong className="text-[#8F0FFF] font-bold">Qrenoo</strong> est
+            l’app tout-en-un pour les{" "}
+            <strong className="text-[#8F0FFF] font-bold">pros</strong> : prise
+            de RDV automatisée, rappels clients, et bien plus.
+          </p>
+        </div>
+        <div className="flex  items-center w-full px-6 gap-4 mb-4">
+          {/* Bouton Essayer gratuitement */}
+          <a
+            href="#signup"
+            className="w-full bg-[#B157FF] text-white h-15 py-3.5 rounded-3xl text-center flex items-center justify-center"
+          >
+            Essayer gratuitement Qrenoo
+          </a>
+
+          {/* Bouton Google Play Store */}
+          <a
+            href="#download"
+            className="w-full bg-[#793A8E] text-white  h-15 rounded-3xl flex items-center justify-center gap-3"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M5.26 2.33l13.05 7.5c.75.44.75 1.53 0 1.97l-13.05 7.5c-.83.48-1.87-.11-1.87-1.06V3.38c0-.95 1.04-1.54 1.87-1.06z" />
+            </svg>
+            <div className="flex flex-col items-center text-sm leading-tight">
+              <span className="font-normal">Télécharger sur</span>
+              <span className="font-medium">Google Play Store</span>
+            </div>
+          </a>
+
+          {/* Texte en dessous */}
+        </div>
+        <p className="text-white/80 text-sm font-light italic mt-1 flex items-center gap-2 justify-center">
+          Déjà 200 pros utilisent Qrenoo
+        </p>
       </section>
 
-      <section className="flex flex-col items-center w-full pb-10">
-        <div className="bg-white rounded-xl shadow-lg px-8 py-10 flex flex-col items-center border border-[#efe9db] w-full max-w-xl">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#29381a] mb-4 text-center">
-            Participez à la Beta !
-          </h2>
-          <p className="text-[#405c26] mb-6 text-center max-w-md">
-            Inscrivez-vous pour recevoir un accès anticipé à Qrenoo. Nous vous
-            contacterons dès que la beta sera disponible.
-          </p>
-          {submitted ? (
-            <div className="text-green-700 font-semibold text-lg py-4">
-              Merci ! Votre email a bien été enregistré.
-            </div>
-          ) : (
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-4 w-full max-w-sm"
-            >
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Votre email"
-                className="border border-[#ded9cb] rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#b4c59b] bg-[#f6f8f2] text-[#29381a]"
-                required
-                disabled={loading}
-              />
-              {error && <div className="text-red-600 text-sm">{error}</div>}
-              <button
-                type="submit"
-                className="bg-[#29381a] text-white font-semibold rounded-lg px-6 py-3 hover:brightness-105 transition"
-                disabled={loading}
-              >
-                {loading ? "Envoi en cours..." : "M'inscrire à la beta"}
-              </button>
-            </form>
-          )}
-        </div>
-      </section>
     </main>
   );
 }

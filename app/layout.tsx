@@ -68,7 +68,7 @@ export default async function RootLayout({
 
   return (
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
-      <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
+      <body className="bg-[#f6f8fa] text-white antialiased min-h-screen font-sans">
         <NavigationShell>
           {children}
           <Footer
