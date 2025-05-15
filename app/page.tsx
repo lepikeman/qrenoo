@@ -42,7 +42,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center min-h-screen w-full bg-[#f6f8f2] ">
+    <main className="flex flex-col items-center min-h-screen w-full">
       <section className="w-full px-4 pt-10 pb-2 flex flex-col items-center">
         <div className="max-w-3xl text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-extrabold text-[#29381a] mb-4 leading-tight">
