@@ -4,8 +4,6 @@ import "./globals.css";
 import NavigationShell from "./components/NavigationShell";
 import { ReactNode } from "react";
 import dynamic from "next/dynamic";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import GoogleAnalytics from "./components/GoogleAnanlytics";
 
 const inter = Inter({
@@ -14,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://qrenoo.com'),
+  metadataBase: new URL("https://qrenoo.com"),
   title:
     "Logiciel de prise de rendez-vous en ligne pour professionnels indépendants | Qrenoo",
   description:
@@ -61,7 +59,6 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-
   // 2. Récupérer la session ensuite (si nécessaire pour d'autres données de session)
   // mais nous n'utiliserons pas session.user qui n'est pas sécurisé
   // const { data: sessionData } = await supabase.auth.getSession();
@@ -83,9 +80,7 @@ export default async function RootLayout({
             ]}
           />
         </NavigationShell>
-        <SpeedInsights />
         <GoogleAnalytics />
-        <Analytics />
       </body>
     </html>
   );
