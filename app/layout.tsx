@@ -4,8 +4,6 @@ import "./globals.css";
 import NavigationShell from "./components/NavigationShell";
 import { ReactNode } from "react";
 import dynamic from "next/dynamic";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import GoogleAnalytics from "./components/GoogleAnanlytics";
 
 const inter = Inter({
@@ -61,8 +59,6 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  // 1. Récupérer l'utilisateur authentifié d'abord (méthode sécurisée)
-
   // 2. Récupérer la session ensuite (si nécessaire pour d'autres données de session)
   // mais nous n'utiliserons pas session.user qui n'est pas sécurisé
   // const { data: sessionData } = await supabase.auth.getSession();
@@ -72,7 +68,7 @@ export default async function RootLayout({
 
   return (
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
-      <body className="bg-[#f6f8fa] text-gray-900 antialiased min-h-screen font-sans">
+      <body className="bg-[#f6f8fa] text-white antialiased min-h-screen font-sans">
         <NavigationShell>
           {children}
           <Footer
@@ -84,9 +80,7 @@ export default async function RootLayout({
             ]}
           />
         </NavigationShell>
-        <SpeedInsights />
         <GoogleAnalytics />
-        <Analytics />
       </body>
     </html>
   );
