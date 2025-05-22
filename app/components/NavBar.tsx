@@ -18,9 +18,9 @@ interface NavComponentProps {
 const navlinks: NavLink[] = [
   { name: "Fonctionnalités", href: "/functions" },
   { name: "Tarifs", href: "/price" },
-  { name: "À propos", href: "/about" },
-  { name: "Blog", href: "/blog" },
-  { name: "Métiers", href: "/jobs" },
+  // { name: "À propos", href: "/about" },
+  // { name: "Blog", href: "/blog" },
+  // { name: "Métiers", href: "/jobs" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -115,12 +115,12 @@ export default function NavBar() {
             transition-all duration-300 ease-in-out
             w-full md:w-auto
             md:bg-transparent
-            ${menuOpen ? "flex navbar-menu-open" : "hidden md:flex"}
+            ${menuOpen ? "flex" : "hidden md:flex"}
             ${menuOpen ? "opacity-100" : "opacity-0 md:opacity-100"}
             ${menuOpen ? "translate-y-0" : "-translate-y-5 md:translate-y-0"}
           `}
         >
-          <div className="block md:hidden">
+          <div className="block w-full md:hidden">
             <MobileNav links={navlinks} toggleMenu={toggleMenu} />
           </div>
           <div className="hidden md:block">

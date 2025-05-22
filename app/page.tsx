@@ -77,7 +77,7 @@ export default function Home() {
           <div className="relative w-[30%] h-full flex mt-[4vh] mr-[2vw] justify-center md:justify-center overflow-hidden">
             <div className="w-[160px] h-[250px] md:w-[220px] md:h-[340px] lg:w-[280px] lg:h-[430px] relative">
               <Image
-                src="/images/sans-titre.png"
+                src="/images/mockup/main.png"
                 alt="Application mobile Qrenoo"
                 fill
                 sizes="(max-width: 768px) 160px, (max-width: 1024px) 220px, 280px"
