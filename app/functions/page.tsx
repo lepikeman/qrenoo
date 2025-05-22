@@ -162,47 +162,60 @@ export default function FunctionsPage() {
       </section>
 
       {/* Section Augmenter vos réservations - exactement comme sur la maquette */}
-      <section className="w-full px-5 py-8 border-t border-white/10">
-        <h2 className="text-xl font-medium mb-1">
-          Augmenter vos{" "}
-          <span className="text-[#B157FF] font-semibold">réservations</span>
-        </h2>
-        <p className="text-white/80 text-xs mb-5">
-          Prenez des réservations 24/7 sans être dérangé
-        </p>
-
-        <ul className="space-y-4">
-          <li className="flex items-start gap-2">
-            <FiCheck className="text-[#B157FF] text-base flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-white/90">
-              Créez un profil en ligne disponible à toute heure, qui affiche
-              automatiquement vos disponibilités
-            </p>
-          </li>
-          <li className="flex items-start gap-2">
-            <FiCheck className="text-[#B157FF] text-base flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-white/90">
-              Personnalisez les informations, prestations et horaires
-              disponibles pour vos client, depuis le tableau de bord
-            </p>
-          </li>
-          <li className="flex items-start gap-2">
-            <FiCheck className="text-[#B157FF] text-base flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-white/90">
-              Soyez référencé dans notre moteur de recherche, pour augmenter
-              votre nombre de réservations
-            </p>
-          </li>
-        </ul>
-
-        <div className="mt-5">
-          <Image
-            src="/images/mockup/iMockup-droite.png"
-            alt="Réservations sur Qrenoo"
-            width={300}
-            height={600}
-            className="w-9/12 h-auto mx-auto"
-          />
+      <section className="w-full px-4 sm:px-6 py-8 border-t border-white/10">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-xl md:text-2xl font-medium mb-1">
+            Augmenter vos{" "}
+            <span className="text-[#B157FF] font-semibold">réservations</span>
+          </h2>
+          <p className="text-white/80 text-xs md:text-sm mb-5">
+            Prenez des réservations 24/7 sans être dérangé
+          </p>
+          <div className="flex flex-row w-full items-start space-x-2 sm:space-x-4 md:space-x-6">
+            <div className="flex-shrink-0">
+              <Image
+                src="/images/mockup/iMockup-droite-crop.png"
+                alt="Réservations sur Qrenoo"
+                width={300}
+                height={600}
+                className="w-[100px] sm:w-[140px] md:w-[180px] lg:w-[220px] h-auto object-contain md:hidden"
+                priority
+              />
+              <Image
+                src="/images/mockup/iMockup-droite.png"
+                alt="Réservations sur Qrenoo"
+                width={300}
+                height={600}
+                className="w-[100px] sm:w-[140px] md:w-[180px] lg:w-[220px] h-auto object-contain hidden md:block"
+                priority
+              />
+            </div>
+            <div className="flex-1">
+              <ul className="space-y-3 md:space-y-4">
+                <li className="flex items-start gap-2">
+                  <FiCheck className="text-[#B157FF] text-base flex-shrink-0 mt-0.5" />
+                  <p className="text-xs sm:text-sm md:text-base text-white/90">
+                    Créez un profil en ligne disponible à toute heure, qui
+                    affiche automatiquement vos disponibilités
+                  </p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <FiCheck className="text-[#B157FF] text-base flex-shrink-0 mt-0.5" />
+                  <p className="text-xs sm:text-sm md:text-base text-white/90">
+                    Personnalisez les informations, prestations et horaires
+                    disponibles pour vos client, depuis le tableau de bord
+                  </p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <FiCheck className="text-[#B157FF] text-base flex-shrink-0 mt-0.5" />
+                  <p className="text-xs sm:text-sm md:text-base text-white/90">
+                    Soyez référencé dans notre moteur de recherche, pour
+                    augmenter votre nombre de réservations
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
