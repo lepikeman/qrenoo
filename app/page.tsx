@@ -57,15 +57,15 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center min-h-screen w-full">
       <section className="w-full max-w-7xl mx-auto md:pb-10 lg:pb-16 lg:mt-10">
-        <div className="flex flex-col md:flex-row mb-5">
-          {/* Colonne texte */}
-          <div className="flex flex-col w-3/5 gap-7 ml-8 mt-10 mb-10 md:mt-20 md:w-1/2 lg:w-3/5 md:pr-8">
+        <div className="flex flex-row mb-5 relative items-center">
+          {/* Colonne texte - prend 70% de la largeur */}
+          <div className="flex flex-col w-[70%] px-6 gap-5 mt-8 mb-6 md:mt-10 lg:mt-16 md:pr-8 md:pl-8 md:gap-7">
             <h1 className="text-3xl font-medium md:font-bold md:text-4xl lg:text-5xl md:leading-tight">
               Laissez vos clients{" "}
               <strong className="text-[#8F0FFF]">réserver</strong> pendant que
               vous <strong className="text-[#8F0FFF]">travaillez</strong>.
             </h1>
-            <p className="font-light text-white/75 md:text-lg lg:text-xl md:pr-4">
+            <p className="font-light text-white/75 md:text-lg lg:text-xl">
               <strong className="text-[#8F0FFF] font-bold">Qrenoo</strong> est
               l&apos;app tout-en-un pour les{" "}
               <strong className="text-[#8F0FFF] font-bold">pros</strong> : prise
@@ -73,15 +73,22 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Colonne image */}
-          <div className="w-2/5 mb-5 md:w-1/2 lg:w-2/5 md:mt-10 lg:mt-10">
-            <Image
-              src="/images/sans-titre.png"
-              alt="Application mobile Qrenoo"
-              width={150}
-              height={150}
-              className="mb-4 absolute md:static top-20 right-[-60px] md:ml-15 md:right-auto md:w-auto md:h-auto md:max-w-[250px] lg:max-w-[300px]"
-            />
+          {/* Colonne image - prend 30% de la largeur avec image entière */}
+          <div className="relative w-[30%] h-full flex mt-[4vh] mr-[2vw] justify-center md:justify-center overflow-hidden">
+            <div className="w-[160px] h-[250px] md:w-[220px] md:h-[340px] lg:w-[280px] lg:h-[430px] relative">
+              <Image
+                src="/images/sans-titre.png"
+                alt="Application mobile Qrenoo"
+                fill
+                sizes="(max-width: 768px) 160px, (max-width: 1024px) 220px, 280px"
+                style={{
+                  objectFit: "contain",
+                  objectPosition: "center right",
+                }}
+                className="transform"
+                priority
+              />
+            </div>
           </div>
         </div>
 
