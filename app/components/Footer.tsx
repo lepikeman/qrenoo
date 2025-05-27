@@ -127,7 +127,7 @@ export default function Footer({}: FooterProps) {
               </h4>
               <ul className="space-y-3 text-white/80">
                 <li>
-                  <Link href="/function" className="hover:text-white">
+                  <Link href="/functions" className="hover:text-white">
                     Fonctionnalités
                   </Link>
                 </li>

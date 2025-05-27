@@ -1,5 +1,5 @@
 # Robots.txt for https://www.qrenoo.com
-# Dernière mise à jour : 16 mai 2025
+# Dernière mise à jour : 27 mai 2025
 
 User-agent: *
 Allow: /
