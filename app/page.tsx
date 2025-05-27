@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import DevPopup, { useDevPopup } from "./components/DevPopup";
 import PlayStorePopup, { usePlayStorePopup } from "./components/PlayStorePopup";
 
+// Import des icônes
 import { FiMessageSquare } from "react-icons/fi";
 import { GoBell } from "react-icons/go";
 import { CiCalendar } from "react-icons/ci";
@@ -144,7 +145,11 @@ export default function Home() {
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const { isPopupOpen, openPopup, closePopup } = useDevPopup();
-  const { isPopupOpen: isPlayStorePopupOpen, openPopup: openPlayStorePopup, closePopup: closePlayStorePopup } = usePlayStorePopup();
+  const {
+    isPopupOpen: isPlayStorePopupOpen,
+    openPopup: openPlayStorePopup,
+    closePopup: closePlayStorePopup,
+  } = usePlayStorePopup();
 
   return (
     <main className="flex flex-col items-center min-h-screen w-full">
@@ -639,7 +644,10 @@ export default function Home() {
 
       {/* Popups */}
       <DevPopup isOpen={isPopupOpen} onClose={closePopup} />
-      <PlayStorePopup isOpen={isPlayStorePopupOpen} onClose={closePlayStorePopup} />
+      <PlayStorePopup
+        isOpen={isPlayStorePopupOpen}
+        onClose={closePlayStorePopup}
+      />
     </main>
   );
 }
