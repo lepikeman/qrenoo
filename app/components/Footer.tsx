@@ -87,7 +87,7 @@ export default function Footer({}: FooterProps) {
                 className="w-full py-3 bg-[#471d70] hover:bg-[#522180] rounded-full text-white font-medium"
                 disabled={loading}
               >
-                {loading ? 'Inscription...' : 'M\'inscrire à la newsletter'}
+                {loading ? "Inscription..." : "M'inscrire à la newsletter"}
               </button>
             </>
           )}
@@ -127,7 +127,7 @@ export default function Footer({}: FooterProps) {
               </h4>
               <ul className="space-y-3 text-white/80">
                 <li>
-                  <Link href="/function" className="hover:text-white">
+                  <Link href="/functions" className="hover:text-white">
                     Fonctionnalités
                   </Link>
                 </li>
@@ -136,7 +136,7 @@ export default function Footer({}: FooterProps) {
                     Tarifs
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link href="/about" className="hover:text-white">
                     À propos
                   </Link>
@@ -150,7 +150,7 @@ export default function Footer({}: FooterProps) {
                   <Link href="/jobs" className="hover:text-white">
                     Métiers
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link href="/contact" className="hover:text-white">
                     Contact
@@ -180,12 +180,12 @@ export default function Footer({}: FooterProps) {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/legal/terms" className="hover:text-white">
+                  <Link href="/legal/cgu" className="hover:text-white">
                     CGU et CGV
                   </Link>
                 </li>
                 <li>
-                  <Link href="/legal/gdpr" className="hover:text-white">
+                  <Link href="/legal/rgpd" className="hover:text-white">
                     RGPD
                   </Link>
                 </li>
