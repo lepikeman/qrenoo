@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import Image from "next/image";
 import { FiCheck, FiX, FiArrowRight } from "react-icons/fi";
 import { IoFlashOutline, IoRocketOutline } from "react-icons/io5";
+import StructuredData from "../components/StructuredData";
 
 // Composant principal avec Suspense
 export default function Price() {
@@ -163,8 +164,28 @@ function PriceContent() {
     }, 3000);
   };
 
+  const pricingSchema = {
+    "@context": "https://schema.org",
+    "@type": "PriceSpecification",
+    "priceCurrency": "EUR",
+    "price": "0-29.99",
+    "description": "Plans tarifaires pour la solution de prise de rendez-vous en ligne Qrenoo",
+    "eligibleTransactionVolume": {
+      "@type": "PriceSpecification",
+      "price": "0",
+      "priceCurrency": "EUR",
+      "eligibleQuantity": {
+        "@type": "QuantitativeValue",
+        "value": "1",
+        "unitText": "mois"
+      },
+      "name": "Plan gratuit"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center w-full">
+      <StructuredData data={pricingSchema} />
       {/* Hero section with gradient background */}
       <div className="w-full relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#B157FF]/10 to-transparent pointer-events-none"></div>

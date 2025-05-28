@@ -5,7 +5,10 @@ import { FiCheck } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import DevPopup, { useDevPopup } from "../components/DevPopup";
-import PlayStorePopup, { usePlayStorePopup } from "../components/PlayStorePopup";
+import PlayStorePopup, {
+  usePlayStorePopup,
+} from "../components/PlayStorePopup";
+import StructuredData from "../components/StructuredData";
 
 export default function FunctionsPage() {
   // Animation variants améliorés
@@ -99,8 +102,44 @@ export default function FunctionsPage() {
     closePopup: closePlayStorePopup,
   } = usePlayStorePopup();
 
+  const functionsSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Agenda intelligent",
+        description:
+          "Tous les rendez-vous pris par vos clients depuis votre page de réservation sont automatiquement ajoutés à votre calendrier.",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Rappels automatiques",
+        description:
+          "Fini les oublis avec nos rappels automatisés par SMS et email.",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Planning en temps réel",
+        description:
+          "Gérez votre emploi du temps depuis n'importe quel appareil.",
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: "Lien de réservation unique",
+        description:
+          "Partagez un lien personnalisé pour les réservations en 1 clic.",
+      },
+    ],
+  };
+
   return (
     <main className="flex flex-col min-h-screen md:w-[80vw] items-center justify-center mx-auto">
+      <StructuredData data={functionsSchema} />
       {/* Section Agenda avec animations améliorées */}
       <section ref={agendaRef} className="w-full pt-6 pb-8 overflow-hidden">
         <div className="flex flex-col md:flex-row items-center justify-center mb-6">
@@ -422,7 +461,10 @@ export default function FunctionsPage() {
 
       {/* Popups */}
       <DevPopup isOpen={isPopupOpen} onClose={closePopup} />
-      <PlayStorePopup isOpen={isPlayStorePopupOpen} onClose={closePlayStorePopup} />
+      <PlayStorePopup
+        isOpen={isPlayStorePopupOpen}
+        onClose={closePlayStorePopup}
+      />
     </main>
   );
 }

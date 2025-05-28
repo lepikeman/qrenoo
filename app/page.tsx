@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import DevPopup, { useDevPopup } from "./components/DevPopup";
 import PlayStorePopup, { usePlayStorePopup } from "./components/PlayStorePopup";
+import StructuredData from "./components/StructuredData";
 
 // Import des icônes
 import { FiMessageSquare } from "react-icons/fi";
@@ -151,8 +152,24 @@ export default function Home() {
     closePopup: closePlayStorePopup,
   } = usePlayStorePopup();
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Qrenoo",
+    applicationCategory: "BusinessApplication",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "EUR",
+    },
+    operatingSystem: "Web",
+    description:
+      "Qrenoo est l'application tout-en-un pour les professionnels : prise de rendez-vous automatisée, rappels clients, et gestion optimisée de votre agenda.",
+  };
+
   return (
     <main className="flex flex-col items-center min-h-screen w-full">
+      <StructuredData data={organizationSchema} />
       {/* Section Hero */}
       <section
         ref={heroRef}

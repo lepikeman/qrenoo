@@ -1,9 +1,8 @@
-// Métadonnées pour la page d'accueil et valeurs par défaut pour le site
-
 import { Metadata } from "next";
 
+// Métadonnées par défaut pour tout le site
 export const defaultMetadata: Metadata = {
-  metadataBase: new URL("https://qrenoo.com"),
+  metadataBase: new URL("https://www.qrenoo.com"),
   title: "Qrenoo - Rendez-vous en ligne pour professionnels",
   description:
     "Qrenoo est l'application tout-en-un pour les professionnels : prise de rendez-vous automatisée, rappels clients, et gestion optimisée de votre agenda.",
@@ -29,7 +28,7 @@ export const defaultMetadata: Metadata = {
     title: "Qrenoo - Gestion de rendez-vous en ligne pour professionnels",
     description:
       "Automatisez vos rendez-vous, réduisez les absences avec nos rappels automatiques et gérez votre planning efficacement avec Qrenoo.",
-    url: "https://qrenoo.com",
+    url: "https://www.qrenoo.com",
     images: [
       {
         url: "/images/og-image.jpg",
@@ -61,25 +60,20 @@ export const defaultMetadata: Metadata = {
     icon: ["/favicon.ico"],
     apple: ["/apple-icon.png"],
   },
-  viewport: "width=device-width, initial-scale=1",
   verification: {
     google: "verification_token_google",
   },
   alternates: {
-    canonical: "https://qrenoo.com",
+    canonical: "https://www.qrenoo.com",
     languages: {
-      "fr-FR": "https://qrenoo.com/fr",
+      "fr-FR": "https://www.qrenoo.com/fr",
+      fr: "https://www.qrenoo.com",
     },
   },
-};
-
-// Métadonnées pour la page d'accueil
-export const homeMetadata: Metadata = {
-  ...defaultMetadata,
-  alternates: {
-    canonical: "https://qrenoo.com",
-    languages: {
-      "fr-FR": "https://qrenoo.com",
-    },
+  appleWebApp: {
+    title: "Qrenoo",
+    statusBarStyle: "black-translucent",
+    capable: true,
   },
+  manifest: "/manifest.json",
 };

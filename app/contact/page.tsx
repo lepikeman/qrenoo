@@ -3,6 +3,7 @@ import { FiMail, FiSend } from "react-icons/fi";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import StructuredData from "../components/StructuredData";
 
 export default function ContactPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -89,8 +90,22 @@ export default function ContactPage() {
     }
   };
 
+  const contactSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Qrenoo",
+    url: "https://www.qrenoo.com",
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      email: "contact@qrenoo.com",
+      availableLanguage: ["French"],
+    },
+  };
+
   return (
     <main className="bg-black text-white min-h-screen p-6 md:p-8">
+      <StructuredData data={contactSchema} />
       <div className="container mx-auto max-w-4xl relative z-10">
         {/* Gradient background effect */}
         <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-[#B157FF]/10 to-transparent -z-10"></div>

@@ -1,0 +1,21 @@
+{
+  "name": "Qrenoo - Rendez-vous en ligne pour professionnels",
+  "short_name": "Qrenoo",
+  "description": "Solution de prise de rendez-vous en ligne pour professionnels",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#13072D",
+  "theme_color": "#B157FF",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
